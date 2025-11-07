@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes Avanzados - BS Dash</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --ubuntu-dark: #2D0922;
+            --ubuntu-purple: #77216F;
+            --ubuntu-orange: #E95420;
+            --ubuntu-light: #f5f5f5;
+        }
+        
+        .bs-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .bs-btn {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(119, 33, 111, 0.2);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        
+        .bs-btn:hover {
+            background: rgba(119, 33, 111, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .bs-btn-primary {
+            background: linear-gradient(135deg, var(--ubuntu-purple), var(--ubuntu-orange));
+            color: white;
+            border: none;
+        }
+        
+        .bs-btn-primary:hover {
+            background: linear-gradient(135deg, var(--ubuntu-orange), var(--ubuntu-purple));
+            transform: translateY(-1px);
+        }
+        
+        .bs-input, .bs-select {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(119, 33, 111, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .bs-input:focus, .bs-select:focus {
+            outline: none;
+            border-color: var(--ubuntu-purple);
+            box-shadow: 0 0 0 2px rgba(119, 33, 111, 0.2);
+        }
+        
+        .bs-stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .bs-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(45, 9, 34, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .tabla-fila:hover {
+            background: rgba(119, 33, 111, 0.05);
+        }
+        
+        .reporte-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .reporte-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .kpi-card {
+            background: linear-gradient(135deg, rgba(119, 33, 111, 0.1), rgba(233, 84, 32, 0.1));
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid var(--ubuntu-purple);
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+        
+        .tab-panel {
+            display: none;
+        }
+        
+        .tab-panel.active {
+            display: block;
+        }
+        
+        .tab-button {
+            background: transparent;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(135deg, var(--ubuntu-purple), var(--ubuntu-orange));
+            color: white;
+        }
+        
+        .predictive-badge {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .trend-up {
+            color: #10B981;
+        }
+        
+        .trend-down {
+            color: #EF4444;
+        }
+        
+        .filtro-avanzado {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(119, 33, 111, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-[#2D0922] to-[#77216F] min-h-screen">
+    <!-- Header -->
+    <header class="bs-card mx-4 mt-4 mb-6">
+        <div class="flex items-center justify-between p-4">
+            <div class="flex items-center gap-4">
+                <a href="../dashboard.html" class="bs-btn">
+                    <i class="bi bi-arrow-left"></i> Volver al Dashboard
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-[#77216F] to-[#E95420] rounded-xl flex items-center justify-center text-white">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800">Reportes Avanzados</h1>
+                        <p class="text-sm text-gray-600">Análisis predictivo y dashboards ejecutivos</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <span class="text-gray-700" id="userName">Admin</span>
+                <button onclick="programarReporte()" class="bs-btn">
+                    <i class="bi bi-clock"></i> Programar
+                </button>
+                <button onclick="logout()" class="bs-btn bg-red-500 text-white hover:bg-red-600">
+                    <i class="bi bi-box-arrow-right"></i> Salir
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4">
+        <!-- Tabs de Navegación -->
+        <div class="bs-card p-4 mb-6">
+            <div class="flex flex-wrap gap-2">
+                <button class="tab-button active" onclick="cambiarTab('dashboard')">
+                    <i class="bi bi-speedometer2"></i> Dashboard Ejecutivo
+                </button>
+                <button class="tab-button" onclick="cambiarTab('ventas')">
+                    <i class="bi bi-currency-dollar"></i> Reportes de Ventas
+                </button>
+                <button class="tab-button" onclick="cambiarTab('inventario')">
+                    <i class="bi bi-box-seam"></i> Reportes de Inventario
+                </button>
+                <button class="tab-button" onclick="cambiarTab('clientes')">
+                    <i class="bi bi-people"></i> Reportes de Clientes
+                </button>
+                <button class="tab-button" onclick="cambiarTab('financiero')">
+                    <i class="bi bi-piggy-bank"></i> Reportes Financieros
+                </button>
+                <button class="tab-button" onclick="cambiarTab('personalizado')">
+                    <i class="bi bi-sliders"></i> Reportes Personalizados
+                </button>
+            </div>
+        </div>
+
+        <!-- Filtros Globales -->
+        <div class="bs-card p-6 mb-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Filtros del Reporte</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Inicio</label>
+                    <input type="date" id="startDate" class="bs-input w-full" value="2024-01-01">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Fin</label>
+                    <input type="date" id="endDate" class="bs-input w-full" value="2024-12-31">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Comparar con</label>
+                    <select id="comparisonPeriod" class="bs-select w-full">
+                        <option value="previous">Período Anterior</option>
+                        <option value="last-year">Mismo Período Año Anterior</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                <div class="flex items-end gap-2">
+                    <button onclick="aplicarFiltros()" class="bs-btn bs-btn-primary flex-1">
+                        <i class="bi bi-funnel"></i>
+                        Aplicar Filtros
+                    </button>
+                    <button onclick="toggleFiltrosAvanzados()" class="bs-btn">
+                        <i class="bi bi-gear"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filtros Avanzados -->
+            <div id="filtrosAvanzados" class="filtro-avanzado hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+                        <select id="filtroCategoria" class="bs-input w-full">
+                            <option value="">Todas las categorías</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Vendedor</label>
+                        <select id="filtroVendedor" class="bs-input w-full">
+                            <option value="">Todos los vendedores</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Sucursal</label>
+                        <select id="filtroSucursal" class="bs-input w-full">
+                            <option value="">Todas las sucursales</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Ejecutivo -->
+        <div id="dashboard" class="tab-panel active">
+            <!-- KPIs Principales -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="kpi-card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm text-gray-500">Ventas Totales</p>
+                            <h3 class="text-2xl font-bold text-gray-800">RD$ 1,245,680</h3>
+                            <p class="text-sm trend-up">
+                                <i class="bi bi-arrow-up-right"></i> 15.2% vs período anterior
+                            </p>
+                        </div>
+                        <span class="predictive-badge">PROY: RD$ 1.4M</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm text-gray-500">Margen de Utilidad</p>
+                            <h3 class="text-2xl font-bold text-gray-800">32.4%</h3>
+                            <p class="text-sm trend-up">
+                                <i class="bi bi-arrow-up-right"></i> 2.1% vs período anterior
+                            </p>
+                        </div>
+                        <span class="predictive-badge">OBJ: 35%</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm text-gray-500">Clientes Activos</p>
+                            <h3 class="text-2xl font-bold text-gray-800">1,248</h3>
+                            <p class="text-sm trend-up">
+                                <i class="bi bi-arrow-up-right"></i> 8.7% vs período anterior
+                            </p>
+                        </div>
+                        <span class="predictive-badge">NUEVOS: 45</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm text-gray-500">ROI Marketing</p>
+                            <h3 class="text-2xl font-bold text-gray-800">4.2x</h3>
+                            <p class="text-sm trend-down">
+                                <i class="bi bi-arrow-down-right"></i> 0.3x vs período anterior
+                            </p>
+                        </div>
+                        <span class="predictive-badge">META: 5x</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos Principales -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Tendencia de Ventas -->
+                <div class="bs-card p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-gray-800">Tendencia de Ventas</h3>
+                        <div class="flex gap-2">
+                            <button class="bs-btn text-sm">Diario</button>
+                            <button class="bs-btn bs-btn-primary text-sm">Mensual</button>
+                            <button class="bs-btn text-sm">Anual</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salesTrendChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Distribución por Categoría -->
+                <div class="bs-card p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-gray-800">Ventas por Categoría</h3>
+                        <button class="bs-btn text-sm">
+                            <i class="bi bi-download"></i> Exportar
+                        </button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="categorySalesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métricas Secundarias -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <!-- Productos Más Vendidos -->
+                <div class="bs-card p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Productos Más Vendidos</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span>Laptop Dell Inspiron</span>
+                            <span class="font-semibold">RD$ 245,600</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>iPhone 14 Pro</span>
+                            <span class="font-semibold">RD$ 189,400</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>Samsung Galaxy S23</span>
+                            <span class="font-semibold">RD$ 167,800</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Alertas de Stock -->
+                <div class="bs-card p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Alertas de Stock</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center text-red-600">
+                            <span>Mouse Inalámbrico</span>
+                            <span class="font-semibold">Stock: 2</span>
+                        </div>
+                        <div class="flex justify-between items-center text-yellow-600">
+                            <span>Teclado Mecánico</span>
+                            <span class="font-semibold">Stock: 8</span>
+                        </div>
+                        <div class="flex justify-between items-center text-yellow-600">
+                            <span>Monitor 24"</span>
+                            <span class="font-semibold">Stock: 12</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Métricas de Clientes -->
+                <div class="bs-card p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Métricas de Clientes</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span>Ticket Promedio</span>
+                            <span class="font-semibold">RD$ 2,456</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Frecuencia de Compra</span>
+                            <span class="font-semibold">2.3 veces/mes</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Valor Vida Cliente</span>
+                            <span class="font-semibold">RD$ 28,450</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análisis Predictivo -->
+            <div class="bs-card p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="bi bi-graph-up-arrow text-purple-600"></i>
+                    Análisis Predictivo
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-medium text-gray-700 mb-3">Pronóstico de Ventas (Próximos 3 meses)</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span>Enero 2024</span>
+                                <span class="font-semibold">RD$ 1,345,200 ± 5%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Febrero 2024</span>
+                                <span class="font-semibold">RD$ 1,289,400 ± 7%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Marzo 2024</span>
+                                <span class="font-semibold">RD$ 1,412,800 ± 6%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-700 mb-3">Recomendaciones</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-start gap-2">
+                                <i class="bi bi-lightbulb text-yellow-500 mt-1"></i>
+                                <span>Aumentar stock de productos de temporada en 15%</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="bi bi-lightbulb text-yellow-500 mt-1"></i>
+                                <span>Optimizar campañas de marketing para Q1</span>
+                            </div>
+                            <div class="flex items-start gap-2">
+                                <i class="bi bi-lightbulb text-yellow-500 mt-1"></i>
+                                <span>Considerar expansión de línea de productos tecnológicos</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reportes de Ventas -->
+        <div id="ventas" class="tab-panel">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Reporte de Ventas Diarias -->
+                <div class="bs-card p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Ventas por Día</h3>
+                    <div class="chart-container">
+                        <canvas id="dailySalesChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Ventas por Vendedor -->
+                <div class="bs-card p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Top Vendedores</h3>
+                    <div class="chart-container">
+                        <canvas id="salesBySellerChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabla Detallada de Ventas -->
+            <div class="bs-card p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">Detalle de Ventas</h3>
+                    <div class="flex gap-2">
+                        <button onclick="exportVentasPDF()" class="bs-btn bs-btn-primary">
+                            <i class="bi bi-file-pdf"></i> PDF
+                        </button>
+                        <button onclick="exportVentasExcel()" class="bs-btn bs-btn-success">
+                            <i class="bi bi-file-spreadsheet"></i> Excel
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Fecha</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Orden</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Cliente</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Productos</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Total</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaVentas">
+                            <!-- Datos de ventas se cargan aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reportes de Inventario -->
+        <div id="inventario" class="tab-panel">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Valorización de Inventario -->
+                <div class="bs-card p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Valorización por Categoría</h3>
+                    <div class="chart-container">
+                        <canvas id="inventoryValueChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Rotación de Inventario -->
+                <div class="bs-card p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Rotación de Productos</h3>
+                    <div class="chart-container">
+                        <canvas id="inventoryTurnoverChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reporte de Stock -->
+            <div class="bs-card p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">Reporte de Stock</h3>
+                    <div class="flex gap-2">
+                        <button onclick="exportInventarioPDF()" class="bs-btn bs-btn-primary">
+                            <i class="bi bi-file-pdf"></i> PDF
+                        </button>
+                        <button onclick="exportInventarioExcel()" class="bs-btn bs-btn-success">
+                            <i class="bi bi-file-spreadsheet"></i> Excel
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Producto</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Categoría</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Stock Actual</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Stock Mínimo</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Valor Unitario</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Valor Total</th>
+                                <th class="text-left py-3 px-4 font-semibold text-gray-700">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaInventario">
+                            <!-- Datos de inventario se cargan aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reportes Personalizados -->
+        <div id="personalizado" class="tab-panel">
+            <div class="bs-card p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Constructor de Reportes Personalizados</h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Configuración de Campos -->
+                    <div class="space-y-4">
+                        <h4 class="font-medium text-gray-700">Seleccionar Campos</h4>
+                        <div class="space-y-3 max-h-96 overflow-y-auto">
+                            <div>
+                                <h5 class="font-medium text-gray-600 mb-2">Información de Ventas</h5>
+                                <div class="space-y-2 ml-4">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="bs-checkbox" checked data-field="ventas.total">
+                                        <span class="ml-2 text-gray-700">Ventas totales</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="bs-checkbox" checked data-field="ventas.diarias">
+                                        <span class="ml-2 text-gray-700">Ventas por día</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="bs-checkbox" data-field="ventas.categoria">
+                                        <span class="ml-2 text-gray-700">Ventas por categoría</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5 class="font-medium text-gray-600 mb-2">Información de Inventario</h5>
+                                <div class="space-y-2 ml-4">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="bs-checkbox" data-field="inventario.stock">
+                                        <span class="ml-2 text-gray-700">Niveles de stock</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="bs-checkbox" data-field="inventario.valorizacion">
+                                        <span class="ml-2 text-gray-700">Valorización</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5 class="font-medium text-gray-600 mb-2">Información de Clientes</h5>
+                                <div class="space-y-2 ml-4">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="bs-checkbox" data-field="clientes.comportamiento">
+                                        <span class="ml-2 text-gray-700">Comportamiento</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="bs-checkbox" data-field="clientes.retention">
+                                        <span class="ml-2 text-gray-700">Tasa de retención</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Configuración de Visualización -->
+                    <div class="space-y-4">
+                        <h4 class="font-medium text-gray-700">Formato de Salida</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="radio" name="outputFormat" value="table" class="bs-radio" checked>
+                                <span class="ml-2 text-gray-700">Tabla</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="outputFormat" value="chart" class="bs-radio">
+                                <span class="ml-2 text-gray-700">Gráficos</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="outputFormat" value="both" class="bs-radio">
+                                <span class="ml-2 text-gray-700">Tabla y Gráficos</span>
+                            </label>
+                        </div>
+                        
+                        <h4 class="font-medium text-gray-700 mt-6">Opciones Avanzadas</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" class="bs-checkbox" id="incluirComparativa">
+                                <span class="ml-2 text-gray-700">Incluir comparativa con período anterior</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="bs-checkbox" id="incluirProyecciones">
+                                <span class="ml-2 text-gray-700">Incluir proyecciones</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="bs-checkbox" id="incluirRecomendaciones">
+                                <span class="ml-2 text-gray-700">Incluir recomendaciones IA</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Vista Previa y Exportación -->
+                    <div class="space-y-4">
+                        <h4 class="font-medium text-gray-700">Exportación</h4>
+                        <div class="space-y-3">
+                            <button onclick="generarReportePersonalizado()" class="bs-btn bs-btn-primary w-full">
+                                <i class="bi bi-eye"></i> Vista Previa
+                            </button>
+                            <button onclick="exportPersonalizadoPDF()" class="bs-btn w-full">
+                                <i class="bi bi-file-pdf"></i> Exportar a PDF
+                            </button>
+                            <button onclick="exportPersonalizadoExcel()" class="bs-btn w-full">
+                                <i class="bi bi-file-spreadsheet"></i> Exportar a Excel
+                            </button>
+                            <button onclick="programarReportePersonalizado()" class="bs-btn w-full">
+                                <i class="bi bi-clock"></i> Programar Envío
+                            </button>
+                        </div>
+                        
+                        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                            <h5 class="font-medium text-gray-700 mb-2">Plantillas Guardadas</h5>
+                            <select class="bs-input w-full mb-2">
+                                <option>Reporte Ejecutivo Semanal</option>
+                                <option>Análisis de Ventas Mensual</option>
+                                <option>Reporte de Inventario</option>
+                            </select>
+                            <button class="bs-btn w-full">
+                                <i class="bi bi-download"></i> Cargar Plantilla
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Vista Previa del Reporte Personalizado -->
+            <div id="vistaPreviaReporte" class="bs-card p-6 mt-6 hidden">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Vista Previa del Reporte</h3>
+                <div id="contenidoVistaPrevia">
+                    <!-- El contenido del reporte se genera aquí -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Programación de Reportes -->
+    <div id="modalProgramacion" class="modal-overlay">
+        <div class="modal-content p-6 w-full max-w-md">
+            <h3 class="text-xl font-bold mb-4">Programar Reporte</h3>
+            
+            <form class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Frecuencia</label>
+                    <select class="bs-input w-full">
+                        <option>Diario</option>
+                        <option>Semanal</option>
+                        <option>Mensual</option>
+                        <option>Trimestral</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Día/Hora</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <select class="bs-input">
+                            <option>Lunes</option>
+                            <option>Martes</option>
+                            <option>Miércoles</option>
+                            <option>Jueves</option>
+                            <option>Viernes</option>
+                        </select>
+                        <input type="time" class="bs-input" value="08:00">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Destinatarios</label>
+                    <input type="text" class="bs-input w-full" placeholder="correos separados por coma">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Formato</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="bs-checkbox" checked>
+                            <span class="ml-2 text-gray-700">PDF</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="bs-checkbox">
+                            <span class="ml-2 text-gray-700">Excel</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="cerrarModalProgramacion()" class="bs-btn flex-1">Cancelar</button>
+                    <button type="submit" class="bs-btn bs-btn-primary flex-1">Programar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let charts = {};
+        let datosReporte = {};
+
+        // Inicializar reportes
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarDatosEjemplo();
+            inicializarGraficos();
+            cargarFiltros();
+            cargarDatosVentas();
+            cargarDatosInventario();
+        });
+
+        // Funciones de Navegación
+        function cambiarTab(tabName) {
+            // Ocultar todos los tabs
+            document.querySelectorAll('.tab-panel').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Mostrar el tab seleccionado
+            document.getElementById(tabName).classList.add('active');
+            
+            // Actualizar botones de tabs
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Actualizar gráficos si es necesario
+            if (tabName === 'dashboard') {
+                actualizarGraficosDashboard();
+            }
+        }
+
+        function toggleFiltrosAvanzados() {
+            const filtros = document.getElementById('filtrosAvanzados');
+            filtros.classList.toggle('hidden');
+        }
+
+        function aplicarFiltros() {
+            // Aquí se aplicarían los filtros a los datos
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const comparison = document.getElementById('comparisonPeriod').value;
+            
+            console.log('Aplicando filtros:', { startDate, endDate, comparison });
+            
+            // En una implementación real, aquí se haría una llamada a la API
+            // o se filtrarían los datos locales
+            
+            actualizarTodosLosGraficos();
+            mostrarNotificacion('Filtros aplicados correctamente', 'success');
+        }
+
+        // Funciones de Gráficos
+        function inicializarGraficos() {
+            // Gráfico de Tendencia de Ventas
+            const salesTrendCtx = document.getElementById('salesTrendChart').getContext('2d');
+            charts.salesTrend = new Chart(salesTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                    datasets: [{
+                        label: 'Ventas 2024',
+                        data: [1200000, 1350000, 1100000, 1450000, 1600000, 1550000, 1700000, 1650000, 1800000, 1750000, 1900000, 1850000],
+                        borderColor: '#77216F',
+                        backgroundColor: 'rgba(119, 33, 111, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Ventas 2023',
+                        data: [1000000, 1150000, 1050000, 1250000, 1400000, 1350000, 1500000, 1450000, 1600000, 1550000, 1700000, 1650000],
+                        borderColor: '#E95420',
+                        backgroundColor: 'rgba(233, 84, 32, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderDash: [5, 5]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return `RD$ ${context.parsed.y.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'RD$ ' + (value / 1000000).toFixed(1) + 'M';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Ventas por Categoría
+            const categorySalesCtx = document.getElementById('categorySalesChart').getContext('2d');
+            charts.categorySales = new Chart(categorySalesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tecnología', 'Electrodomésticos', 'Muebles', 'Ropa', 'Otros'],
+                    datasets: [{
+                        data: [45, 25, 15, 10, 5],
+                        backgroundColor: [
+                            '#77216F',
+                            '#E95420',
+                            '#10B981',
+                            '#3B82F6',
+                            '#F59E0B'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+
+            // Inicializar más gráficos...
+        }
+
+        function actualizarGraficosDashboard() {
+            // Actualizar gráficos con datos frescos
+            if (charts.salesTrend) {
+                charts.salesTrend.update();
+            }
+            if (charts.categorySales) {
+                charts.categorySales.update();
+            }
+        }
+
+        function actualizarTodosLosGraficos() {
+            Object.values(charts).forEach(chart => {
+                if (chart) {
+                    chart.update();
+                }
+            });
+        }
+
+        // Funciones de Exportación
+        function exportVentasPDF() {
+            generarPDF('Reporte de Ventas', 'ventas');
+        }
+
+        function exportVentasExcel() {
+            generarExcel('Reporte de Ventas', 'ventas');
+        }
+
+        function exportInventarioPDF() {
+            generarPDF('Reporte de Inventario', 'inventario');
+        }
+
+        function exportInventarioExcel() {
+            generarExcel('Reporte de Inventario', 'inventario');
+        }
+
+        function exportPersonalizadoPDF() {
+            generarPDF('Reporte Personalizado', 'personalizado');
+        }
+
+        function exportPersonalizadoExcel() {
+            generarExcel('Reporte Personalizado', 'personalizado');
+        }
+
+        function generarPDF(titulo, tipo) {
+            // Simulación de generación de PDF
+            console.log(`Generando PDF: ${titulo}`);
+            mostrarNotificacion(`PDF "${titulo}" generado correctamente`, 'success');
+            
+            // En una implementación real, usaríamos jsPDF
+            // const doc = new jsPDF();
+            // doc.text(titulo, 20, 20);
+            // doc.save(`${titulo.toLowerCase().replace(/\s+/g, '-')}.pdf`);
+        }
+
+        function generarExcel(titulo, tipo) {
+            // Simulación de generación de Excel
+            console.log(`Generando Excel: ${titulo}`);
+            mostrarNotificacion(`Excel "${titulo}" generado correctamente`, 'success');
+            
+            // En una implementación real, usaríamos ExcelJS
+        }
+
+        // Funciones de Reportes Personalizados
+        function generarReportePersonalizado() {
+            const camposSeleccionados = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                camposSeleccionados.push(checkbox.getAttribute('data-field'));
+            });
+            
+            const formato = document.querySelector('input[name="outputFormat"]:checked').value;
+            const incluirComparativa = document.getElementById('incluirComparativa').checked;
+            const incluirProyecciones = document.getElementById('incluirProyecciones').checked;
+            const incluirRecomendaciones = document.getElementById('incluirRecomendaciones').checked;
+            
+            console.log('Generando reporte personalizado:', {
+                campos: camposSeleccionados,
+                formato,
+                incluirComparativa,
+                incluirProyecciones,
+                incluirRecomendaciones
+            });
+            
+            // Generar vista previa
+            const vistaPrevia = document.getElementById('vistaPreviaReporte');
+            const contenido = document.getElementById('contenidoVistaPrevia');
+            
+            contenido.innerHTML = `
+                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                    <h4 class="font-semibold text-gray-800">Resumen del Reporte</h4>
+                    <p class="text-sm text-gray-600">Campos incluidos: ${camposSeleccionados.join(', ')}</p>
+                    <p class="text-sm text-gray-600">Formato: ${formato}</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div class="bs-stat-card">
+                        <p class="text-sm text-gray-500">Ventas del Período</p>
+                        <h3 class="text-2xl font-bold text-gray-800">RD$ 1,245,680</h3>
+                    </div>
+                    <div class="bs-stat-card">
+                        <p class="text-sm text-gray-500">Crecimiento</p>
+                        <h3 class="text-2xl font-bold text-green-600">+15.2%</h3>
+                    </div>
+                </div>
+                
+                ${incluirRecomendaciones ? `
+                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <h4 class="font-semibold text-gray-800 mb-2">Recomendaciones de IA</h4>
+                    <ul class="text-sm text-gray-700 space-y-1">
+                        <li>• Incrementar presupuesto de marketing en categoría Tecnología</li>
+                        <li>• Optimizar niveles de stock para productos de alta rotación</li>
+                        <li>• Considerar campañas de fidelización para clientes recurrentes</li>
+                    </ul>
+                </div>
+                ` : ''}
+            `;
+            
+            vistaPrevia.classList.remove('hidden');
+            mostrarNotificacion('Reporte personalizado generado', 'success');
+        }
+
+        // Funciones de Programación
+        function programarReporte() {
+            document.getElementById('modalProgramacion').style.display = 'flex';
+        }
+
+        function cerrarModalProgramacion() {
+            document.getElementById('modalProgramacion').style.display = 'none';
+        }
+
+        function programarReportePersonalizado() {
+            programarReporte();
+        }
+
+        // Funciones de Utilidad
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            // Crear notificación
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 bs-card p-4 z-50 ${
+                tipo === 'success' ? 'border-l-4 border-green-500' : 
+                tipo === 'error' ? 'border-l-4 border-red-500' : 
+                'border-l-4 border-blue-500'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <i class="bi bi-${tipo === 'success' ? 'check-circle' : tipo === 'error' ? 'exclamation-circle' : 'info-circle'} 
+                       ${tipo === 'success' ? 'text-green-500' : tipo === 'error' ? 'text-red-500' : 'text-blue-500'}"></i>
+                    <span>${mensaje}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function cargarFiltros() {
+            // Cargar opciones de filtros desde localStorage o API
+            const categorias = ['Tecnología', 'Electrodomésticos', 'Muebles', 'Ropa', 'Otros'];
+            const vendedores = ['Juan Pérez', 'María García', 'Carlos Rodríguez', 'Ana Martínez'];
+            const sucursales = ['Sucursal Central', 'Sucursal Norte', 'Sucursal Sur'];
+            
+            cargarSelect('filtroCategoria', categorias);
+            cargarSelect('filtroVendedor', vendedores);
+            cargarSelect('filtroSucursal', sucursales);
+        }
+
+        function cargarSelect(elementId, opciones) {
+            const select = document.getElementById(elementId);
+            opciones.forEach(opcion => {
+                const option = document.createElement('option');
+                option.value = opcion;
+                option.textContent = opcion;
+                select.appendChild(option);
+            });
+        }
+
+        function cargarDatosVentas() {
+            // Simular carga de datos de ventas
+            const tabla = document.getElementById('tablaVentas');
+            const ventasEjemplo = [
+                { fecha: '2024-01-15', orden: 'ORD-001', cliente: 'Juan Pérez', productos: 3, total: 15400, estado: 'Completada' },
+                { fecha: '2024-01-16', orden: 'ORD-002', cliente: 'María García', productos: 2, total: 8900, estado: 'Completada' },
+                { fecha: '2024-01-17', orden: 'ORD-003', cliente: 'Empresa XYZ', productos: 5, total: 23400, estado: 'Pendiente' }
+            ];
+            
+            ventasEjemplo.forEach(venta => {
+                const fila = `
+                    <tr class="tabla-fila border-b border-gray-200">
+                        <td class="py-3 px-4">${venta.fecha}</td>
+                        <td class="py-3 px-4 font-mono">${venta.orden}</td>
+                        <td class="py-3 px-4">${venta.cliente}</td>
+                        <td class="py-3 px-4">${venta.productos}</td>
+                        <td class="py-3 px-4 font-semibold">RD$ ${venta.total.toLocaleString()}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 ${venta.estado === 'Completada' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'} text-xs rounded-full">
+                                ${venta.estado}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                tabla.innerHTML += fila;
+            });
+        }
+
+        function cargarDatosInventario() {
+            // Simular carga de datos de inventario
+            const tabla = document.getElementById('tablaInventario');
+            const inventarioEjemplo = [
+                { producto: 'Laptop Dell Inspiron', categoria: 'Tecnología', stock: 15, min: 5, precio: 45000, estado: 'Normal' },
+                { producto: 'Mouse Inalámbrico', categoria: 'Tecnología', stock: 2, min: 10, precio: 1200, estado: 'Bajo' },
+                { producto: 'Silla Oficina', categoria: 'Muebles', stock: 25, min: 8, precio: 8500, estado: 'Normal' }
+            ];
+            
+            inventarioEjemplo.forEach(item => {
+                const valorTotal = item.stock * item.precio;
+                const estadoColor = item.estado === 'Normal' ? 'bg-green-100 text-green-800' : 
+                                  item.estado === 'Bajo' ? 'bg-yellow-100 text-yellow-800' : 
+                                  'bg-red-100 text-red-800';
+                
+                const fila = `
+                    <tr class="tabla-fila border-b border-gray-200">
+                        <td class="py-3 px-4">${item.producto}</td>
+                        <td class="py-3 px-4">
+                            <span class="categoria-badge">${item.categoria}</span>
+                        </td>
+                        <td class="py-3 px-4 font-semibold ${item.stock <= item.min ? 'text-red-600' : 'text-green-600'}">
+                            ${item.stock}
+                        </td>
+                        <td class="py-3 px-4">${item.min}</td>
+                        <td class="py-3 px-4">RD$ ${item.precio.toLocaleString()}</td>
+                        <td class="py-3 px-4 font-semibold">RD$ ${valorTotal.toLocaleString()}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 ${estadoColor} text-xs rounded-full">
+                                ${item.estado}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                tabla.innerHTML += fila;
+            });
+        }
+
+        function inicializarDatosEjemplo() {
+            // Inicializar datos de ejemplo para demostración
+            if (!localStorage.getItem('reportes_config')) {
+                const config = {
+                    ultimo_reporte: new Date().toISOString(),
+                    filtros_guardados: [],
+                    plantillas: []
+                };
+                localStorage.setItem('reportes_config', JSON.stringify(config));
+            }
+        }
+
+        function logout() {
+            if (confirm('¿Está seguro de que desea cerrar sesión?')) {
+                window.location.href = '../index.html';
+            }
+        }
+    </script>
+</body>
+</html>

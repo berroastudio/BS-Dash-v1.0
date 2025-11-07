@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; margin: 15px; }
+        .header { text-align: center; margin-bottom: 15px; }
+        .client-info, .document-info { margin: 10px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #ddd; padding: 6px; }
+        .totals { float: right; width: 200px; margin-top: 10px; }
+        .footer { margin-top: 20px; text-align: center; font-size: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>{{empresa_nombre}}</h2>
+        <p>{{empresa_direccion}} | Tel: {{empresa_telefono}}</p>
+    </div>
+
+    <div class="document-info">
+        <p><strong>{{tipo_documento}}:</strong> {{numero_documento}}</p>
+        <p><strong>Fecha:</strong> {{fecha}}</p>
+    </div>
+
+    <div class="client-info">
+        <p><strong>Cliente:</strong> {{cliente_nombre}}</p>
+        <p><strong>Identificación:</strong> {{cliente_identificacion}}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cant</th>
+                <th>Descripción</th>
+                <th>P. Unit.</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#items}}
+            <tr>
+                <td>{{cantidad}}</td>
+                <td>{{nombre}}</td>
+                <td>${{precio_unitario}}</td>
+                <td>${{subtotal}}</td>
+            </tr>
+            {{/items}}
+        </tbody>
+    </table>
+
+    <div class="totals">
+        <p>Subtotal: ${{subtotal}}</p>
+        <p>IVA: ${{iva}}</p>
+        <p><strong>Total: ${{total}}</strong></p>
+    </div>
+
+    <div class="footer">
+        <p>Página {{pagina_actual}} de {{total_paginas}} | Generado por: {{usuario_nombre}}</p>
+    </div>
+</body>
+</html>

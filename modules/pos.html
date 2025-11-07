@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto de Venta - BS Dash Ubuntu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        /* Estilos Ubuntu */
+        :root {
+            --ubuntu-dark: #2D0922;
+            --ubuntu-purple: #77216F;
+            --ubuntu-orange: #E95420;
+            --ubuntu-light: #AEA79F;
+            --ubuntu-text: #FFFFFF;
+        }
+
+        .ubuntu-dark-theme {
+            background: linear-gradient(135deg, var(--ubuntu-dark) 0%, #1a0a15 100%);
+            color: var(--ubuntu-text);
+            min-height: 100vh;
+            font-family: 'Ubuntu', sans-serif;
+        }
+
+        .ubuntu-top-bar {
+            background: rgba(45, 9, 34, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--ubuntu-purple);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .ubuntu-window {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(119, 33, 111, 0.3);
+            border-radius: 12px;
+            margin: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .ubuntu-window-header {
+            background: linear-gradient(135deg, var(--ubuntu-purple), #5c1a5a);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ubuntu-window-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ubuntu-control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .ubuntu-control.close { background: #ff5f57; }
+        .ubuntu-control.minimize { background: #ffbd2e; }
+        .ubuntu-control.maximize { background: #28ca42; }
+
+        .ubuntu-window-title {
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ubuntu-window-content {
+            padding: 20px;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .ubuntu-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        .ubuntu-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .ubuntu-btn-primary {
+            background: linear-gradient(135deg, var(--ubuntu-orange), #ff6b35);
+            border-color: var(--ubuntu-orange);
+        }
+
+        .ubuntu-btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-color: #20c997;
+        }
+
+        .ubuntu-btn-danger {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+            border-color: #dc3545;
+        }
+
+        .ubuntu-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .ubuntu-stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .ubuntu-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .ubuntu-stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .ubuntu-orange { color: var(--ubuntu-orange); }
+        .ubuntu-purple { color: var(--ubuntu-purple); }
+        .ubuntu-green { color: #20c997; }
+        .ubuntu-blue { color: #17a2b8; }
+
+        .bg-ubuntu-orange { background: var(--ubuntu-orange); }
+        .bg-ubuntu-purple { background: var(--ubuntu-purple); }
+        .bg-ubuntu-green { background: #20c997; }
+        .bg-ubuntu-blue { background: #17a2b8; }
+
+        .ubuntu-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: white;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .ubuntu-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .ubuntu-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .ubuntu-table th {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ubuntu-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ubuntu-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ubuntu-main-content {
+            margin-top: 60px;
+            padding: 20px;
+        }
+
+        .ubuntu-toolbar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .ubuntu-badge {
+            background: var(--ubuntu-orange);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .ubuntu-chip {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ubuntu-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .ubuntu-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .ubuntu-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .ubuntu-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .ubuntu-slider {
+            background-color: var(--ubuntu-orange);
+        }
+
+        input:checked + .ubuntu-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Estilos específicos para POS */
+        .pos-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            height: calc(100vh - 180px);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            overflow-y: auto;
+            padding: 8px;
+            max-height: 500px;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 140px;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            border-color: var(--ubuntu-orange);
+        }
+
+        .cart-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            backdrop-filter: blur(15px);
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .cart-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .total-display {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            margin: 16px 0;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--ubuntu-orange), #ff6b35);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(233, 84, 32, 0.3);
+        }
+
+        .cart-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+        }
+
+        .cart-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quantity-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quantity-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .category-btn {
+            transition: all 0.2s;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .category-btn.active {
+            background: var(--ubuntu-orange);
+            color: white;
+            border-color: var(--ubuntu-orange);
+        }
+
+        .product-image-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .add-to-cart-btn {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--ubuntu-orange);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-to-cart-btn:hover {
+            background: #ff6b35;
+            transform: scale(1.1);
+        }
+
+        .service-indicator {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #f59e0b;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-input-container {
+            position: relative;
+            flex: 1;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal-backdrop.active {
+            display: flex;
+        }
+
+        .modal-container {
+            background: rgba(45, 9, 34, 0.95);
+            border: 1px solid var(--ubuntu-purple);
+            border-radius: 12px;
+            backdrop-filter: blur(15px);
+            max-width: 90%;
+            max-height: 90%;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-large {
+            width: 600px;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--ubuntu-purple), #5c1a5a);
+            padding: 16px;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .designacion-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100px); }
+        }
+    </style>
+</head>
+<body class="ubuntu-dark-theme">
+    <!-- Top Bar Ubuntu -->
+    <div class="ubuntu-top-bar">
+        <div class="ubuntu-top-left">
+            <div class="ubuntu-apps-menu">
+                <i class="bi bi-grid-3x3-gap"></i>
+            </div>
+            <div class="ubuntu-breadcrumb">
+                <span>BS Dash</span>
+                <i class="bi bi-chevron-right"></i>
+                <span>Punto de Venta</span>
+            </div>
+        </div>
+        <div class="ubuntu-top-center">
+            <div class="ubuntu-search">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Buscar en sistema..." class="ubuntu-input" style="width: 300px;">
+            </div>
+        </div>
+        <div class="ubuntu-top-right">
+            <div class="ubuntu-system-tray">
+                <i class="bi bi-wifi"></i>
+                <i class="bi bi-battery-half"></i>
+                <span id="ubuntu-time">14:30</span>
+                <i class="bi bi-person-circle"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="ubuntu-main-content">
+        <!-- Ventana Principal de POS -->
+        <div class="ubuntu-window">
+            <div class="ubuntu-window-header">
+                <div class="ubuntu-window-controls">
+                    <div class="ubuntu-control close" onclick="window.history.back()"></div>
+                    <div class="ubuntu-control minimize"></div>
+                    <div class="ubuntu-control maximize"></div>
+                </div>
+                <div class="ubuntu-window-title">
+                    <i class="bi bi-cash-coin ubuntu-green"></i>
+                    Punto de Venta - Terminal Avanzado
+                </div>
+                <div class="ubuntu-window-actions">
+                    <a href="../dashboard.html" class="ubuntu-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Volver al Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <div class="ubuntu-window-content">
+                <!-- Estadísticas Rápidas -->
+                <div class="ubuntu-stats-grid">
+                    <div class="ubuntu-stat-card animate-fade-in">
+                        <div class="ubuntu-stat-icon bg-ubuntu-orange">
+                            <i class="bi bi-cash-coin"></i>
+                        </div>
+                        <div class="ubuntu-stat-info">
+                            <h3 id="ventasHoy">0</h3>
+                            <p>Ventas Hoy</p>
+                        </div>
+                    </div>
+                    
+                    <div class="ubuntu-stat-card animate-fade-in" style="animation-delay: 0.1s;">
+                        <div class="ubuntu-stat-icon bg-ubuntu-purple">
+                            <i class="bi bi-currency-dollar"></i>
+                        </div>
+                        <div class="ubuntu-stat-info">
+                            <h3 id="ingresoHoy">$0.00</h3>
+                            <p>Ingreso del Día</p>
+                        </div>
+                    </div>
+                    
+                    <div class="ubuntu-stat-card animate-fade-in" style="animation-delay: 0.2s;">
+                        <div class="ubuntu-stat-icon bg-ubuntu-green">
+                            <i class="bi bi-cart-check"></i>
+                        </div>
+                        <div class="ubuntu-stat-info">
+                            <h3 id="productosVendidos">0</h3>
+                            <p>Productos Vendidos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="ubuntu-stat-card animate-fade-in" style="animation-delay: 0.3s;">
+                        <div class="ubuntu-stat-icon bg-ubuntu-blue">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div class="ubuntu-stat-info">
+                            <h3 id="ticketPromedio">$0.00</h3>
+                            <p>Ticket Promedio</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pos-container">
+                    <!-- Panel Izquierdo - Productos -->
+                    <div class="space-y-6">
+                        <!-- Información del Cliente -->
+                        <div class="ubuntu-window">
+                            <div class="ubuntu-window-header">
+                                <div class="ubuntu-window-title">
+                                    <i class="bi bi-person ubuntu-blue"></i>
+                                    Información del Cliente
+                                </div>
+                            </div>
+                            <div class="ubuntu-window-content">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm mb-2">Cliente</label>
+                                        <div class="search-container">
+                                            <div class="ubuntu-input flex items-center gap-2">
+                                                <i class="bi bi-search"></i>
+                                                <input type="text" id="clienteSearch" 
+                                                       class="bg-transparent border-none outline-none flex-1" 
+                                                       placeholder="Buscar cliente..."
+                                                       onkeyup="buscarClientesLive(this.value)">
+                                            </div>
+                                            <button onclick="mostrarModalNuevoCliente()" class="ubuntu-btn ubuntu-btn-success">
+                                                <i class="bi bi-person-plus"></i>
+                                            </button>
+                                        </div>
+                                        <div id="clientesResults" class="hidden mt-2 glass-effect rounded-lg p-2 max-h-32 overflow-y-auto"></div>
+                                        <div class="text-sm mt-2" id="clienteSeleccionadoInfo">
+                                            <span id="clienteSeleccionado">Consumidor Final</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm mb-2">Tipo Documento</label>
+                                        <select id="tipoDocumento" class="ubuntu-input w-full">
+                                            <option value="factura">Factura</option>
+                                            <option value="boleta">Boleta</option>
+                                            <option value="ticket">Ticket</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Productos -->
+                        <div class="ubuntu-window">
+                            <div class="ubuntu-window-header">
+                                <div class="ubuntu-window-title">
+                                    <i class="bi bi-grid-3x3-gap ubuntu-orange"></i>
+                                    Productos Disponibles
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="activarLectorCodigoBarras()" class="ubuntu-btn">
+                                        <i class="bi bi-upc-scan"></i>
+                                    </button>
+                                    <button onclick="cargarProductosEjemplo()" class="ubuntu-btn ubuntu-btn-primary">
+                                        <i class="bi bi-download"></i> Ejemplos
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="ubuntu-window-content">
+                                <!-- Búsqueda -->
+                                <div class="search-container mb-4">
+                                    <div class="ubuntu-input flex items-center gap-2 flex-1">
+                                        <i class="bi bi-search"></i>
+                                        <input type="text" id="searchProduct" 
+                                               class="bg-transparent border-none outline-none flex-1" 
+                                               placeholder="Buscar productos..."
+                                               onkeyup="filtrarProductos()">
+                                    </div>
+                                </div>
+
+                                <!-- Categorías -->
+                                <div class="flex flex-wrap gap-2 mb-4" id="categoriasContainer">
+                                    <!-- Las categorías se cargarán dinámicamente -->
+                                </div>
+
+                                <!-- Grid de Productos -->
+                                <div class="products-grid" id="productsGrid">
+                                    <div class="col-span-full text-center py-12 text-gray-400">
+                                        <i class="bi bi-inbox text-4xl mb-3 opacity-50"></i>
+                                        <p class="text-lg mb-2">No hay productos cargados</p>
+                                        <p class="text-sm mb-4">Agrega productos para comenzar</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel Derecho - Carrito -->
+                    <div class="cart-container">
+                        <div class="bg-gradient-to-r from-ubuntu-purple to-purple-600 p-6 text-white">
+                            <h2 class="text-xl font-bold flex items-center gap-2">
+                                <i class="bi bi-cart-check"></i>
+                                Carrito de Venta
+                            </h2>
+                            <div class="flex justify-between items-center mt-2">
+                                <p class="text-purple-200" id="itemsCount">0 items</p>
+                                <p class="text-purple-200 text-sm" id="fechaHoraCarrito"></p>
+                            </div>
+                        </div>
+                        
+                        <div class="cart-items" id="cartItems">
+                            <div class="text-center py-12 text-gray-400">
+                                <i class="bi bi-cart-x text-4xl mb-3"></i>
+                                <p class="text-lg font-medium mb-2">Carrito vacío</p>
+                                <p class="text-sm">Agrega productos desde el panel izquierdo</p>
+                            </div>
+                        </div>
+
+                        <div class="cart-footer">
+                            <!-- Información de Servicios -->
+                            <div id="resumenServicios" class="mb-4 hidden">
+                                <div class="ubuntu-stat-card bg-yellow-500/20 border-yellow-500/30">
+                                    <i class="bi bi-info-circle text-yellow-400"></i>
+                                    <div class="flex-1">
+                                        <h4 class="font-bold">Resumen de Servicios</h4>
+                                        <div class="text-sm">
+                                            <div>Productos: <span id="countProductos">0</span></div>
+                                            <div>Servicios: <span id="countServicios">0</span></div>
+                                            <div class="mt-1 font-medium">Depósito mínimo: <span id="depositoMinimo">$0.00</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Campos de Servicios -->
+                            <div id="camposServicios" class="mb-4 hidden">
+                                <div class="ubuntu-stat-card bg-blue-500/20 border-blue-500/30">
+                                    <i class="bi bi-calendar-check text-blue-400"></i>
+                                    <div class="flex-1">
+                                        <h4 class="font-bold mb-2">Información de Servicio</h4>
+                                        <div class="space-y-2">
+                                            <input type="date" id="fechaEntregaServicio" class="ubuntu-input text-sm">
+                                            <input type="url" id="linkArteServicio" class="ubuntu-input text-sm" placeholder="Link del arte (opcional)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Total -->
+                            <div class="total-display" id="totalDisplay">
+                                Total: $0.00
+                            </div>
+
+                            <!-- Método de Pago -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm mb-2">
+                                        <i class="bi bi-credit-card"></i> Método de Pago
+                                    </label>
+                                    <select id="metodoPago" class="ubuntu-input w-full" onchange="toggleEfectivoSection()">
+                                        <option value="efectivo">💵 Efectivo</option>
+                                        <option value="tarjeta">💳 Tarjeta</option>
+                                        <option value="transferencia">🏦 Transferencia</option>
+                                        <option value="mixto">🔀 Pago Mixto</option>
+                                    </select>
+                                </div>
+
+                                <!-- Sección Efectivo -->
+                                <div id="efectivoSection">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="block text-sm mb-1">Efectivo Recibido</label>
+                                            <input type="number" id="efectivoRecibido" 
+                                                   class="ubuntu-input" 
+                                                   step="0.01" 
+                                                   placeholder="0.00" 
+                                                   onchange="calcularCambio()">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm mb-1">Cambio</label>
+                                            <input type="text" id="cambio" class="ubuntu-input bg-gray-500/20" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Campos de Pago Adicionales -->
+                                <div id="camposPagoAdicionales"></div>
+
+                                <!-- Botones de Acción -->
+                                <div class="grid grid-cols-2 gap-3 mt-6">
+                                    <button onclick="limpiarCarrito()" class="ubuntu-btn ubuntu-btn-danger h-12">
+                                        <i class="bi bi-trash"></i> Limpiar
+                                    </button>
+                                    <button onclick="procesarVenta()" class="ubuntu-btn ubuntu-btn-primary h-12" id="btnProcesarVenta">
+                                        <i class="bi bi-credit-card"></i> Finalizar Venta
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODALES ==================== -->
+    
+    <!-- Modal Apertura de Caja -->
+    <div id="modalAbrirCajaBackdrop" class="modal-backdrop">
+        <div class="modal-container modal-large">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="bi bi-cash-coin text-green-600"></i>
+                    Apertura de Caja
+                </h3>
+                <button class="modal-close" onclick="cerrarModalActual()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="space-y-4">
+                    <div class="ubuntu-stat-card bg-blue-500/20 border-blue-500/30">
+                        <i class="bi bi-info-circle text-blue-400"></i>
+                        <span>Para realizar ventas debe abrir la caja primero</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm mb-2">Monto Inicial</label>
+                        <input type="number" id="montoInicial" class="ubuntu-input w-full" placeholder="0.00" step="0.01" min="0">
+                    </div>
+
+                    <div class="ubuntu-stat-card bg-gray-500/20">
+                        <h4 class="font-medium mb-3">Designaciones de Efectivo</h4>
+                        <div id="designacionesContainer" class="space-y-2">
+                            <!-- Designaciones se cargarán aquí -->
+                        </div>
+                        <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-500/30">
+                            <span class="font-medium">Total Designaciones:</span>
+                            <span class="font-bold text-green-400" id="totalDesignaciones">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm mb-2">Comentario (opcional)</label>
+                        <textarea id="comentarioApertura" class="ubuntu-input w-full" rows="3" placeholder="Observaciones..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="cerrarModalActual()" class="ubuntu-btn">Cancelar</button>
+                <button onclick="confirmarAperturaCaja()" class="ubuntu-btn ubuntu-btn-primary">
+                    <i class="bi bi-check-lg"></i> Abrir Caja
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Cliente -->
+    <div id="modalNuevoClienteBackdrop" class="modal-backdrop">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="bi bi-person-plus text-green-600"></i>
+                    Nuevo Cliente
+                </h3>
+                <button class="modal-close" onclick="cerrarModalActual()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm mb-2">Nombre Completo</label>
+                        <input type="text" id="nuevoClienteNombre" class="ubuntu-input w-full" placeholder="Nombre del cliente">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm mb-2">Identificación</label>
+                        <input type="text" id="nuevoClienteIdentificacion" class="ubuntu-input w-full" placeholder="RUC/Cédula">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm mb-2">Teléfono</label>
+                        <input type="tel" id="nuevoClienteTelefono" class="ubuntu-input w-full" placeholder="Teléfono">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm mb-2">Email (opcional)</label>
+                        <input type="email" id="nuevoClienteEmail" class="ubuntu-input w-full" placeholder="cliente@ejemplo.com">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="cerrarModalActual()" class="ubuntu-btn">Cancelar</button>
+                <button onclick="guardarNuevoCliente()" class="ubuntu-btn ubuntu-btn-primary">
+                    <i class="bi bi-check-lg"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/config-loader.js"></script>
+    <script src="../js/secure-database.js"></script>
+    <script src="../js/auth-system.js"></script>
+    <script src="../js/database-manager.js"></script>
+    <script src="../js/empresa-context.js"></script>
+    <script src="../js/auth-checker.js"></script>
+
+    <script>
+        // ==================== SISTEMA POS COMPLETO ====================
+        
+        // Variables globales
+        let carrito = [];
+        let clienteActual = null;
+        let categoriaActual = 'todos';
+        let modalActual = null;
+        let cajaAbierta = false;
+        let tieneServicios = false;
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', async function() {
+            const authCheck = await window.authChecker.initializeModule('Punto de Venta');
+            
+            if (authCheck) {
+                console.log('🛒 Iniciando POS Ubuntu...');
+                inicializarSistemaCaja();
+                cargarCategoriasDinamicas();
+                cargarProductos();
+                actualizarCarrito();
+                actualizarFechaHora();
+                configurarMetodosPago();
+                actualizarEstadisticas();
+                
+                setInterval(actualizarFechaHora, 60000);
+                setInterval(actualizarEstadisticas, 30000);
+            }
+        });
+
+        function actualizarHora() {
+            const ahora = new Date();
+            document.getElementById('ubuntu-time').textContent = 
+                ahora.getHours().toString().padStart(2, '0') + ':' + 
+                ahora.getMinutes().toString().padStart(2, '0');
+        }
+
+        function actualizarFechaHora() {
+            const ahora = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            document.getElementById('fechaHoraCarrito').textContent = ahora.toLocaleTimeString('es-ES');
+        }
+
+        // ==================== SISTEMA DE MODALES ====================
+        
+        function mostrarModal(modalId) {
+            if (modalActual) {
+                cerrarModalActual();
+            }
+            
+            modalActual = modalId;
+            const backdrop = document.getElementById(modalId + 'Backdrop');
+            if (backdrop) {
+                backdrop.classList.add('active');
+                setTimeout(() => {
+                    const primerInput = backdrop.querySelector('input, select, textarea');
+                    if (primerInput) primerInput.focus();
+                }, 100);
+            }
+        }
+
+        function cerrarModalActual() {
+            if (modalActual) {
+                const backdrop = document.getElementById(modalActual + 'Backdrop');
+                if (backdrop) {
+                    backdrop.classList.remove('active');
+                }
+                modalActual = null;
+            }
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                cerrarModalActual();
+            }
+        });
+
+        // ==================== SISTEMA DE CAJA ====================
+        
+        function inicializarSistemaCaja() {
+            const estadoCaja = localStorage.getItem('bs_caja_abierta');
+            cajaAbierta = estadoCaja === 'true';
+            actualizarUICaja();
+            actualizarBotonVenta();
+        }
+
+        function mostrarModalAbrirCaja() {
+            cargarDesignacionesApertura();
+            mostrarModal('modalAbrirCaja');
+        }
+
+        function cargarDesignacionesApertura() {
+            const designaciones = [
+                { denominacion: 2000, cantidad: 0, tipo: 'billete' },
+                { denominacion: 1000, cantidad: 0, tipo: 'billete' },
+                { denominacion: 500, cantidad: 0, tipo: 'billete' },
+                { denominacion: 200, cantidad: 0, tipo: 'billete' },
+                { denominacion: 100, cantidad: 0, tipo: 'billete' },
+                { denominacion: 50, cantidad: 0, tipo: 'billete' },
+                { denominacion: 25, cantidad: 0, tipo: 'moneda' },
+                { denominacion: 10, cantidad: 0, tipo: 'moneda' },
+                { denominacion: 5, cantidad: 0, tipo: 'moneda' },
+                { denominacion: 1, cantidad: 0, tipo: 'moneda' }
+            ];
+
+            const container = document.getElementById('designacionesContainer');
+            let html = '';
+
+            designaciones.forEach(designacion => {
+                html += `
+                    <div class="designacion-item">
+                        <span>${designacion.tipo === 'billete' ? 'Billete' : 'Moneda'} de $${designacion.denominacion}</span>
+                        <input type="number" 
+                               class="ubuntu-input w-20 text-center" 
+                               value="${designacion.cantidad}" 
+                               min="0"
+                               onchange="actualizarTotalDesignaciones()"
+                               data-denominacion="${designacion.denominacion}">
+                        <span class="w-20 text-right">$<span id="subtotal-${designacion.denominacion}">0.00</span></span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            actualizarTotalDesignaciones();
+        }
+
+        function actualizarTotalDesignaciones() {
+            let total = 0;
+            const inputs = document.querySelectorAll('#designacionesContainer input[type="number"]');
+            
+            inputs.forEach(input => {
+                const denominacion = parseFloat(input.dataset.denominacion);
+                const cantidad = parseInt(input.value) || 0;
+                const subtotal = denominacion * cantidad;
+                total += subtotal;
+                
+                document.getElementById(`subtotal-${denominacion}`).textContent = subtotal.toFixed(2);
+            });
+
+            document.getElementById('totalDesignaciones').textContent = `$${total.toFixed(2)}`;
+        }
+
+        function confirmarAperturaCaja() {
+            const montoInicial = parseFloat(document.getElementById('montoInicial').value) || 0;
+            
+            if (montoInicial <= 0) {
+                mostrarNotificacion('❌ Ingrese un monto inicial válido', 'error');
+                return;
+            }
+
+            const cajaData = {
+                abierta: true,
+                montoInicial: montoInicial,
+                fechaApertura: new Date().toISOString(),
+                designaciones: obtenerDesignacionesActuales(),
+                comentario: document.getElementById('comentarioApertura').value,
+                ventas: []
+            };
+
+            localStorage.setItem('bs_caja_data', JSON.stringify(cajaData));
+            localStorage.setItem('bs_caja_abierta', 'true');
+            cajaAbierta = true;
+            
+            actualizarUICaja();
+            actualizarBotonVenta();
+            cerrarModalActual();
+            
+            mostrarNotificacion('✅ Caja abierta correctamente', 'success');
+        }
+
+        function obtenerDesignacionesActuales() {
+            const designaciones = [];
+            const inputs = document.querySelectorAll('#designacionesContainer input[type="number"]');
+            
+            inputs.forEach(input => {
+                designaciones.push({
+                    denominacion: parseFloat(input.dataset.denominacion),
+                    cantidad: parseInt(input.value) || 0
+                });
+            });
+
+            return designaciones;
+        }
+
+        function actualizarUICaja() {
+            // Actualizar la UI según el estado de la caja
+            actualizarBotonVenta();
+        }
+
+        function actualizarBotonVenta() {
+            const boton = document.getElementById('btnProcesarVenta');
+            if (!cajaAbierta) {
+                boton.disabled = true;
+                boton.innerHTML = '<i class="bi bi-lock"></i> Caja Cerrada';
+                boton.className = 'ubuntu-btn bg-gray-500/30 text-gray-400 h-12 cursor-not-allowed';
+            } else {
+                boton.disabled = false;
+                boton.innerHTML = '<i class="bi bi-credit-card"></i> Finalizar Venta';
+                boton.className = 'ubuntu-btn ubuntu-btn-primary h-12';
+            }
+        }
+
+        // ==================== SISTEMA DE CLIENTES ====================
+        
+        function buscarClientesLive(termino) {
+            const resultados = document.getElementById('clientesResults');
+            if (!termino) {
+                resultados.classList.add('hidden');
+                return;
+            }
+
+            // Simular búsqueda de clientes
+            const clientesEjemplo = [
+                { id: 1, nombre: 'Ana García', identificacion: '001-123456-9', telefono: '809-555-0101' },
+                { id: 2, nombre: 'Carlos López', identificacion: '002-234567-8', telefono: '809-555-0102' },
+                { id: 3, nombre: 'María Rodríguez', identificacion: '003-345678-7', telefono: '809-555-0103' }
+            ];
+
+            const resultadosFiltrados = clientesEjemplo.filter(cliente => 
+                cliente.nombre.toLowerCase().includes(termino.toLowerCase()) ||
+                cliente.identificacion.includes(termino) ||
+                cliente.telefono.includes(termino)
+            );
+
+            if (resultadosFiltrados.length === 0) {
+                resultados.innerHTML = `
+                    <div class="p-2 text-center text-sm">
+                        <p class="text-gray-400 mb-2">No se encontraron clientes</p>
+                        <button onclick="mostrarModalNuevoCliente()" class="ubuntu-btn ubuntu-btn-success text-xs">
+                            <i class="bi bi-person-plus"></i> Nuevo Cliente
+                        </button>
+                    </div>
+                `;
+            } else {
+                let html = '';
+                resultadosFiltrados.forEach(cliente => {
+                    html += `
+                        <div class="p-2 border-b border-gray-500/30 hover:bg-gray-500/20 cursor-pointer rounded" 
+                             onclick="seleccionarCliente(${cliente.id}, '${cliente.nombre}', '${cliente.identificacion}')">
+                            <div class="font-medium">${cliente.nombre}</div>
+                            <div class="text-xs text-gray-400">${cliente.identificacion} • ${cliente.telefono}</div>
+                        </div>
+                    `;
+                });
+                resultados.innerHTML = html;
+            }
+
+            resultados.classList.remove('hidden');
+        }
+
+        function mostrarModalNuevoCliente() {
+            document.getElementById('nuevoClienteNombre').value = '';
+            document.getElementById('nuevoClienteIdentificacion').value = '';
+            document.getElementById('nuevoClienteTelefono').value = '';
+            document.getElementById('nuevoClienteEmail').value = '';
+            
+            mostrarModal('modalNuevoCliente');
+        }
+
+        function guardarNuevoCliente() {
+            const nombre = document.getElementById('nuevoClienteNombre').value.trim();
+            
+            if (!nombre) {
+                mostrarNotificacion('❌ El nombre del cliente es obligatorio', 'error');
+                return;
+            }
+
+            const nuevoCliente = {
+                id: Date.now(),
+                nombre: nombre,
+                identificacion: document.getElementById('nuevoClienteIdentificacion').value.trim() || '000-000000-0',
+                telefono: document.getElementById('nuevoClienteTelefono').value.trim(),
+                email: document.getElementById('nuevoClienteEmail').value.trim(),
+                fechaRegistro: new Date().toISOString()
+            };
+
+            // Guardar en localStorage temporalmente
+            const clientes = JSON.parse(localStorage.getItem('bs_clientes') || '[]');
+            clientes.push(nuevoCliente);
+            localStorage.setItem('bs_clientes', JSON.stringify(clientes));
+
+            mostrarNotificacion('✅ Cliente guardado correctamente', 'success');
+            seleccionarCliente(nuevoCliente.id, nuevoCliente.nombre, nuevoCliente.identificacion);
+            cerrarModalActual();
+        }
+
+        function seleccionarCliente(id, nombre, identificacion) {
+            clienteActual = { id, nombre, identificacion };
+            
+            document.getElementById('clienteSeleccionado').textContent = nombre;
+            document.getElementById('clienteSeleccionadoInfo').innerHTML = `
+                <span>${nombre}</span>
+                <span class="text-gray-400 ml-2">${identificacion}</span>
+            `;
+            document.getElementById('clientesResults').classList.add('hidden');
+            document.getElementById('clienteSearch').value = '';
+        }
+
+        // ==================== SISTEMA DE PRODUCTOS ====================
+        
+        function cargarProductos() {
+            const productos = obtenerProductos();
+            if (productos.length === 0) {
+                cargarProductosEjemplo();
+                return;
+            }
+            renderizarProductos(productos);
+        }
+
+        function obtenerProductos() {
+            return JSON.parse(localStorage.getItem('bs_productos') || '[]');
+        }
+
+        function cargarProductosEjemplo() {
+            const productosEjemplo = [
+                {
+                    id: 1,
+                    nombre: 'Poloche Negro Premium',
+                    precio: 450,
+                    categoria: 'ropa',
+                    codigo: 'POL-001',
+                    tipo: 'producto',
+                    stock: 25,
+                    imagen: '../assets/poloche.jpg'
+                },
+                {
+                    id: 2,
+                    nombre: 'Servicio Personalización',
+                    precio: 500,
+                    categoria: 'servicio',
+                    codigo: 'SERV-001',
+                    tipo: 'servicio',
+                    requierePersonalizacion: true,
+                    depositoMinimo: 0.5
+                },
+                {
+                    id: 3,
+                    nombre: 'Mouse Inalámbrico RGB',
+                    precio: 250,
+                    categoria: 'electronica',
+                    codigo: 'MOU-001',
+                    tipo: 'producto',
+                    stock: 15
+                },
+                {
+                    id: 4,
+                    nombre: 'Teclado Mecánico Gaming',
+                    precio: 800,
+                    categoria: 'electronica',
+                    codigo: 'TEC-001',
+                    tipo: 'producto',
+                    stock: 10
+                },
+                {
+                    id: 5,
+                    nombre: 'Camiseta Básica',
+                    precio: 150,
+                    categoria: 'ropa',
+                    codigo: 'CAM-001',
+                    tipo: 'producto',
+                    stock: 30
+                },
+                {
+                    id: 6,
+                    nombre: 'Servicio Diseño Gráfico',
+                    precio: 1200,
+                    categoria: 'servicio',
+                    codigo: 'SERV-002',
+                    tipo: 'servicio',
+                    requierePersonalizacion: true,
+                    depositoMinimo: 0.3
+                }
+            ];
+            
+            localStorage.setItem('bs_productos', JSON.stringify(productosEjemplo));
+            renderizarProductos(productosEjemplo);
+        }
+
+        function renderizarProductos(productos) {
+            const container = document.getElementById('productsGrid');
+            
+            if (productos.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-gray-400">
+                        <i class="bi bi-inbox text-4xl mb-3 opacity-50"></i>
+                        <p class="text-lg mb-2">No hay productos cargados</p>
+                        <button onclick="cargarProductosEjemplo()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-download"></i> Cargar Ejemplos
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = productos.map(producto => `
+                <div class="product-card" onclick="agregarAlCarrito(${producto.id})">
+                    ${producto.tipo === 'servicio' ? '<span class="service-indicator">SERVICIO</span>' : ''}
+                    <div class="product-image-circle">
+                        ${producto.imagen ? 
+                            `<img src="${producto.imagen}" alt="${producto.nombre}" onerror="this.style.display='none'">` : 
+                            `<i class="bi bi-box-seam text-gray-400"></i>`
+                        }
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-medium text-sm mb-1 truncate">${producto.nombre}</h3>
+                        <div class="text-lg font-bold text-green-400">$${producto.precio.toFixed(2)}</div>
+                        ${producto.codigo ? `<div class="text-xs text-gray-400">${producto.codigo}</div>` : ''}
+                    </div>
+                    <button class="add-to-cart-btn">
+                        <i class="bi bi-cart-plus"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function filtrarProductos() {
+            const termino = document.getElementById('searchProduct').value.toLowerCase();
+            const productos = obtenerProductos();
+            const productosFiltrados = productos.filter(producto => 
+                producto.nombre.toLowerCase().includes(termino) ||
+                (producto.codigo && producto.codigo.toLowerCase().includes(termino))
+            );
+            
+            renderizarProductos(termino ? productosFiltrados : productos);
+        }
+
+        // ==================== SISTEMA DE CARRITO ====================
+        
+        function agregarAlCarrito(productoId) {
+            if (!validarCajaAbierta('agregar productos al carrito')) return;
+
+            const productos = obtenerProductos();
+            const producto = productos.find(p => p.id === productoId);
+            if (!producto) return;
+
+            const itemExistente = carrito.find(item => item.id === productoId);
+            if (itemExistente) {
+                itemExistente.cantidad += 1;
+            } else {
+                carrito.push({
+                    ...producto,
+                    cantidad: 1,
+                    nota: ''
+                });
+            }
+
+            actualizarCarrito();
+            verificarServiciosEnCarrito();
+            mostrarNotificacion('✅ Producto agregado al carrito', 'success');
+        }
+
+        function actualizarCarrito() {
+            const cartItems = document.getElementById('cartItems');
+            const itemsCount = document.getElementById('itemsCount');
+            const totalDisplay = document.getElementById('totalDisplay');
+            
+            if (carrito.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="bi bi-cart-x text-4xl mb-3"></i>
+                        <p class="text-lg font-medium mb-2">Carrito vacío</p>
+                        <p class="text-sm">Agrega productos desde el panel izquierdo</p>
+                    </div>
+                `;
+                itemsCount.textContent = '0 items';
+                totalDisplay.textContent = 'Total: $0.00';
+                document.getElementById('resumenServicios').classList.add('hidden');
+                document.getElementById('camposServicios').classList.add('hidden');
+                return;
+            }
+            
+            let total = 0;
+            let html = '';
+            
+            carrito.forEach((item, index) => {
+                const subtotal = item.precio * item.cantidad;
+                total += subtotal;
+                
+                html += `
+                    <div class="cart-item">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex-1">
+                                <div class="flex items-start gap-2">
+                                    <h4 class="font-medium">${item.nombre}</h4>
+                                    ${item.tipo === 'servicio' ? '<span class="ubuntu-chip bg-yellow-500/20 text-yellow-400 text-xs">SERVICIO</span>' : ''}
+                                </div>
+                                <p class="text-sm text-gray-400">$${item.precio.toFixed(2)} x ${item.cantidad}</p>
+                                ${item.nota ? `<p class="text-xs text-blue-400 mt-1"><i class="bi bi-sticky"></i> ${item.nota}</p>` : ''}
+                            </div>
+                            <span class="font-bold text-green-400">$${subtotal.toFixed(2)}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="actualizarCantidad(${index}, ${item.cantidad - 1})">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <span class="mx-2 font-medium">${item.cantidad}</span>
+                                <button class="quantity-btn" onclick="actualizarCantidad(${index}, ${item.cantidad + 1})">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="quantity-btn text-blue-400" onclick="agregarNotaProducto(${index})" title="Agregar nota">
+                                    <i class="bi bi-sticky"></i>
+                                </button>
+                                <button class="quantity-btn text-red-400" onclick="eliminarDelCarrito(${index})" title="Eliminar">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cartItems.innerHTML = html;
+            itemsCount.textContent = `${carrito.length} ${carrito.length === 1 ? 'item' : 'items'}`;
+            totalDisplay.textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        function agregarNotaProducto(index) {
+            const notaActual = carrito[index].nota || '';
+            const nuevaNota = prompt('Agregar nota al producto:', notaActual);
+            if (nuevaNota !== null) {
+                carrito[index].nota = nuevaNota;
+                actualizarCarrito();
+            }
+        }
+
+        function actualizarCantidad(index, nuevaCantidad) {
+            if (nuevaCantidad < 1) {
+                eliminarDelCarrito(index);
+                return;
+            }
+            carrito[index].cantidad = nuevaCantidad;
+            actualizarCarrito();
+        }
+
+        function eliminarDelCarrito(index) {
+            carrito.splice(index, 1);
+            actualizarCarrito();
+            verificarServiciosEnCarrito();
+        }
+
+        function limpiarCarrito() {
+            if (carrito.length === 0) return;
+            
+            if (confirm('¿Está seguro de que desea limpiar el carrito?')) {
+                carrito = [];
+                actualizarCarrito();
+                verificarServiciosEnCarrito();
+            }
+        }
+
+        // ==================== DETECCIÓN DE SERVICIOS ====================
+        
+        function verificarServiciosEnCarrito() {
+            const servicios = carrito.filter(item => item.tipo === 'servicio');
+            const productos = carrito.filter(item => item.tipo === 'producto');
+            
+            tieneServicios = servicios.length > 0;
+            
+            const resumenElement = document.getElementById('resumenServicios');
+            const camposElement = document.getElementById('camposServicios');
+            
+            if (tieneServicios) {
+                const totalServicios = servicios.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+                const totalProductos = productos.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+                const depositoMinimo = totalProductos + (totalServicios * 0.5);
+                
+                document.getElementById('countProductos').textContent = productos.length;
+                document.getElementById('countServicios').textContent = servicios.length;
+                document.getElementById('depositoMinimo').textContent = `$${depositoMinimo.toFixed(2)}`;
+                
+                resumenElement.classList.remove('hidden');
+                camposElement.classList.remove('hidden');
+            } else {
+                resumenElement.classList.add('hidden');
+                camposElement.classList.add('hidden');
+            }
+        }
+
+        // ==================== MÉTODOS DE PAGO ====================
+        
+        function configurarMetodosPago() {
+            const metodoPagoSelect = document.getElementById('metodoPago');
+            
+            metodoPagoSelect.onchange = function() {
+                toggleEfectivoSection();
+                mostrarCamposMetodoPago(this.value);
+            };
+            
+            mostrarCamposMetodoPago('efectivo');
+        }
+
+        function mostrarCamposMetodoPago(metodo) {
+            const container = document.getElementById('camposPagoAdicionales');
+            let html = '';
+            
+            switch(metodo) {
+                case 'tarjeta':
+                    html = `
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div>
+                                <label class="block text-sm mb-1">No. Aprobación</label>
+                                <input type="text" class="ubuntu-input" placeholder="Número de aprobación" id="aprobacionTarjeta">
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1">Últimos 4 dígitos</label>
+                                <input type="text" class="ubuntu-input" maxlength="4" placeholder="0000" id="ultimosDigitos">
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'transferencia':
+                    html = `
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div>
+                                <label class="block text-sm mb-1">Banco Destino</label>
+                                <select class="ubuntu-input" id="bancoTransferencia">
+                                    <option value="popular">Banco Popular</option>
+                                    <option value="reservas">Banco Reservas</option>
+                                    <option value="bhd">Banco BHD</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-1">No. Confirmación</label>
+                                <input type="text" class="ubuntu-input" placeholder="Número de confirmación" id="confirmacionTransferencia">
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'mixto':
+                    const total = calcularTotalCarrito();
+                    html = `
+                        <div class="mb-4 space-y-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs mb-1">Efectivo</label>
+                                    <input type="number" class="ubuntu-input text-sm" placeholder="0.00" id="montoEfectivoMixto" onchange="validarPagoMixto()">
+                                </div>
+                                <div>
+                                    <label class="block text-xs mb-1">Tarjeta</label>
+                                    <input type="number" class="ubuntu-input text-sm" placeholder="0.00" id="montoTarjetaMixto" onchange="validarPagoMixto()">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs mb-1">Transferencia</label>
+                                    <input type="number" class="ubuntu-input text-sm" placeholder="0.00" id="montoTransferenciaMixto" onchange="validarPagoMixto()">
+                                </div>
+                                <div>
+                                    <label class="block text-xs mb-1">Otro</label>
+                                    <input type="number" class="ubuntu-input text-sm" placeholder="0.00" id="montoOtroMixto" onchange="validarPagoMixto()">
+                                </div>
+                            </div>
+                            <p class="text-xs text-center">Total: $${total.toFixed(2)}</p>
+                            <div id="validacionMixto" class="text-xs text-center hidden"></div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        function validarPagoMixto() {
+            const total = calcularTotalCarrito();
+            const efectivo = parseFloat(document.getElementById('montoEfectivoMixto').value) || 0;
+            const tarjeta = parseFloat(document.getElementById('montoTarjetaMixto').value) || 0;
+            const transferencia = parseFloat(document.getElementById('montoTransferenciaMixto').value) || 0;
+            const otro = parseFloat(document.getElementById('montoOtroMixto').value) || 0;
+            const totalPagos = efectivo + tarjeta + transferencia + otro;
+            
+            const validacionElement = document.getElementById('validacionMixto');
+            
+            if (Math.abs(totalPagos - total) < 0.01) {
+                validacionElement.textContent = '✅ Montos correctos';
+                validacionElement.className = 'text-xs text-center text-green-400';
+                validacionElement.classList.remove('hidden');
+            } else if (totalPagos < total) {
+                validacionElement.textContent = `❌ Faltan $${(total - totalPagos).toFixed(2)}`;
+                validacionElement.className = 'text-xs text-center text-red-400';
+                validacionElement.classList.remove('hidden');
+            } else {
+                validacionElement.textContent = `⚠️ Sobran $${(totalPagos - total).toFixed(2)}`;
+                validacionElement.className = 'text-xs text-center text-yellow-400';
+                validacionElement.classList.remove('hidden');
+            }
+        }
+
+        function toggleEfectivoSection() {
+            const metodo = document.getElementById('metodoPago').value;
+            const efectivoSection = document.getElementById('efectivoSection');
+            
+            if (metodo === 'efectivo' || metodo === 'mixto') {
+                efectivoSection.style.display = 'block';
+            } else {
+                efectivoSection.style.display = 'none';
+            }
+        }
+
+        function calcularCambio() {
+            const total = calcularTotalCarrito();
+            const efectivoRecibido = parseFloat(document.getElementById('efectivoRecibido').value) || 0;
+            const cambio = efectivoRecibido - total;
+            
+            document.getElementById('cambio').value = cambio >= 0 ? `$${cambio.toFixed(2)}` : 'Falta dinero';
+        }
+
+        function calcularTotalCarrito() {
+            return carrito.reduce((total, item) => total + (item.precio * item.cantidad), 0);
+        }
+
+        // ==================== CATEGORÍAS DINÁMICAS ====================
+        
+        function cargarCategoriasDinamicas() {
+            const productos = obtenerProductos();
+            const categorias = ['todos'];
+            
+            productos.forEach(producto => {
+                if (producto.categoria && !categorias.includes(producto.categoria)) {
+                    categorias.push(producto.categoria);
+                }
+            });
+
+            if (!categorias.includes('servicio')) {
+                categorias.push('servicio');
+            }
+
+            const container = document.getElementById('categoriasContainer');
+            let html = '';
+
+            categorias.forEach(categoria => {
+                const label = categoria === 'todos' ? 'Todos' : 
+                             categoria === 'servicio' ? 'Servicios' : 
+                             categoria.charAt(0).toUpperCase() + categoria.slice(1);
+                
+                const esActiva = categoria === categoriaActual;
+                
+                html += `
+                    <button onclick="filtrarPorCategoria('${categoria}')" 
+                            class="category-btn ${esActiva ? 'active' : ''}">
+                        ${label}
+                    </button>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function filtrarPorCategoria(categoria) {
+            categoriaActual = categoria;
+            
+            // Actualizar botones activos
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const productos = obtenerProductos();
+            const productosFiltrados = categoria === 'todos' 
+                ? productos 
+                : productos.filter(p => p.categoria === categoria);
+            
+            renderizarProductos(productosFiltrados);
+        }
+
+        // ==================== PROCESAR VENTA ====================
+        
+        function procesarVenta() {
+            if (!validarCajaAbierta('procesar ventas')) return;
+            if (carrito.length === 0) {
+                mostrarNotificacion('❌ El carrito está vacío', 'error');
+                return;
+            }
+
+            const metodoPago = document.getElementById('metodoPago').value;
+            if (metodoPago === 'mixto') {
+                if (!validarPagoMixtoCompleto()) return;
+            }
+
+            const total = calcularTotalCarrito();
+            
+            const venta = {
+                id: 'venta_' + Date.now(),
+                numero: 'VTA-' + Date.now(),
+                cliente: clienteActual || { nombre: 'Consumidor Final', identificacion: '000-000000-0' },
+                items: [...carrito],
+                total: total,
+                metodoPago: metodoPago,
+                detallesPago: obtenerDetallesPago(),
+                servicios: tieneServicios ? {
+                    fechaEntrega: document.getElementById('fechaEntregaServicio').value,
+                    linkArte: document.getElementById('linkArteServicio').value
+                } : null,
+                fecha: new Date().toISOString(),
+                vendedor: 'Sistema Ubuntu POS'
+            };
+
+            // Guardar venta
+            const ventas = JSON.parse(localStorage.getItem('bs_ventas') || '[]');
+            ventas.push(venta);
+            localStorage.setItem('bs_ventas', JSON.stringify(ventas));
+
+            // Actualizar caja
+            const cajaData = JSON.parse(localStorage.getItem('bs_caja_data') || '{}');
+            if (!cajaData.ventas) cajaData.ventas = [];
+            cajaData.ventas.push(venta);
+            localStorage.setItem('bs_caja_data', JSON.stringify(cajaData));
+
+            mostrarNotificacion('✅ Venta procesada correctamente', 'success');
+            mostrarComprobante(venta);
+            
+            // Limpiar carrito
+            carrito = [];
+            actualizarCarrito();
+            verificarServiciosEnCarrito();
+        }
+
+        function validarPagoMixtoCompleto() {
+            const total = calcularTotalCarrito();
+            const efectivo = parseFloat(document.getElementById('montoEfectivoMixto').value) || 0;
+            const tarjeta = parseFloat(document.getElementById('montoTarjetaMixto').value) || 0;
+            const transferencia = parseFloat(document.getElementById('montoTransferenciaMixto').value) || 0;
+            const otro = parseFloat(document.getElementById('montoOtroMixto').value) || 0;
+            const totalPagos = efectivo + tarjeta + transferencia + otro;
+            
+            if (Math.abs(totalPagos - total) > 0.01) {
+                mostrarNotificacion('❌ Los montos de pago mixto no coinciden con el total', 'error');
+                return false;
+            }
+            return true;
+        }
+
+        function obtenerDetallesPago() {
+            const metodo = document.getElementById('metodoPago').value;
+            const detalles = { metodo };
+            
+            switch(metodo) {
+                case 'efectivo':
+                    detalles.efectivoRecibido = parseFloat(document.getElementById('efectivoRecibido').value) || 0;
+                    detalles.cambio = parseFloat(document.getElementById('cambio').value) || 0;
+                    break;
+                case 'tarjeta':
+                    detalles.aprobacion = document.getElementById('aprobacionTarjeta').value;
+                    detalles.ultimosDigitos = document.getElementById('ultimosDigitos').value;
+                    break;
+                case 'transferencia':
+                    detalles.banco = document.getElementById('bancoTransferencia').value;
+                    detalles.confirmacion = document.getElementById('confirmacionTransferencia').value;
+                    break;
+                case 'mixto':
+                    detalles.efectivo = parseFloat(document.getElementById('montoEfectivoMixto').value) || 0;
+                    detalles.tarjeta = parseFloat(document.getElementById('montoTarjetaMixto').value) || 0;
+                    detalles.transferencia = parseFloat(document.getElementById('montoTransferenciaMixto').value) || 0;
+                    detalles.otro = parseFloat(document.getElementById('montoOtroMixto').value) || 0;
+                    break;
+            }
+            
+            return detalles;
+        }
+
+        function mostrarComprobante(venta) {
+            const comprobanteContent = `
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="font-medium">Venta:</span>
+                        <strong>${venta.numero}</strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-medium">Cliente:</span>
+                        <span>${venta.cliente.nombre}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-medium">Total:</span>
+                        <strong class="text-green-400">$${venta.total.toFixed(2)}</strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-medium">Método:</span>
+                        <span>${venta.metodoPago}</span>
+                    </div>
+                    <div class="text-center mt-4">
+                        <i class="bi bi-check-circle text-green-400 text-2xl"></i>
+                        <p class="text-sm text-gray-400 mt-2">Venta registrada exitosamente</p>
+                    </div>
+                </div>
+            `;
+
+            // Mostrar en una alerta por simplicidad
+            alert(`✅ Venta procesada:\nNúmero: ${venta.numero}\nCliente: ${venta.cliente.nombre}\nTotal: $${venta.total.toFixed(2)}`);
+        }
+
+        // ==================== UTILIDADES ====================
+        
+        function mostrarNotificacion(mensaje, tipo) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg z-50 backdrop-blur-lg ${
+                tipo === 'success' ? 'bg-green-500/90 text-white' :
+                tipo === 'error' ? 'bg-red-500/90 text-white' :
+                'bg-blue-500/90 text-white'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i class="bi bi-${tipo === 'success' ? 'check-circle' : tipo === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${mensaje}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.5s ease-out';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        function validarCajaAbierta(accion) {
+            if (!cajaAbierta) {
+                mostrarModalAbrirCaja();
+                return false;
+            }
+            return true;
+        }
+
+        function activarLectorCodigoBarras() {
+            mostrarNotificacion('🔍 Función de lector de código de barras en desarrollo', 'info');
+        }
+
+        function actualizarEstadisticas() {
+            const ventas = JSON.parse(localStorage.getItem('bs_ventas') || '[]');
+            const hoy = new Date().toDateString();
+            const ventasHoy = ventas.filter(v => new Date(v.fecha).toDateString() === hoy);
+            
+            const totalVentasHoy = ventasHoy.length;
+            const ingresoHoy = ventasHoy.reduce((sum, v) => sum + v.total, 0);
+            const productosVendidos = ventasHoy.reduce((sum, v) => sum + v.items.reduce((itemSum, item) => itemSum + item.cantidad, 0), 0);
+            const ticketPromedio = totalVentasHoy > 0 ? ingresoHoy / totalVentasHoy : 0;
+            
+            document.getElementById('ventasHoy').textContent = totalVentasHoy;
+            document.getElementById('ingresoHoy').textContent = `$${ingresoHoy.toFixed(2)}`;
+            document.getElementById('productosVendidos').textContent = productosVendidos;
+            document.getElementById('ticketPromedio').textContent = `$${ticketPromedio.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>

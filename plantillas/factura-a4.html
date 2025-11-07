@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<h3>Factura #: {{ sequence_number }}</h3>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 14px; margin: 20px; }
+        .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 15px; }
+        .company-info { flex: 2; }
+        .document-info { flex: 1; text-align: right; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f5f5f5; }
+        .totals { float: right; width: 300px; }
+        .footer { margin-top: 50px; text-align: center; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="company-info">
+            <h1>{{empresa_nombre}}</h1>
+            <p>{{empresa_direccion}}</p>
+            <p>Tel: {{empresa_telefono}} | RUC: {{empresa_ruc}}</p>
+        </div>
+        <div class="document-info">
+            <h2>{{tipo_documento}}</h2>
+            <p><strong>No.:</strong> {{numero_documento}}</p>
+            <p><strong>Fecha:</strong> {{fecha}}</p>
+        </div>
+    </div>
+
+    <div class="client-info">
+        <h3>INFORMACIÓN DEL CLIENTE</h3>
+        <p><strong>Nombre:</strong> {{cliente_nombre}}</p>
+        <p><strong>RUC/Cédula:</strong> {{cliente_identificacion}}</p>
+        <p><strong>Dirección:</strong> {{cliente_direccion}}</p>
+        <p><strong>Teléfono:</strong> {{cliente_telefono}}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="5%">Cant</th>
+                <th width="50%">Descripción</th>
+                <th width="15%">P. Unitario</th>
+                <th width="15%">Descuento</th>
+                <th width="15%">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#items}}
+            <tr>
+                <td>{{cantidad}}</td>
+                <td>{{nombre}}</td>
+                <td>${{precio_unitario}}</td>
+                <td>${{descuento}}</td>
+                <td>${{subtotal}}</td>
+            </tr>
+            {{/items}}
+        </tbody>
+    </table>
+
+    <div class="totals">
+        <table>
+            <tr><td>Subtotal:</td><td>${{subtotal}}</td></tr>
+            <tr><td>Descuento:</td><td>${{descuento_total}}</td></tr>
+            <tr><td>IVA ({{iva_porcentaje}}%):</td><td>${{iva}}</td></tr>
+            <tr><td><strong>TOTAL:</strong></td><td><strong>${{total}}</strong></td></tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>Página {{pagina_actual}} de {{total_paginas}} | Generado por: {{usuario_nombre}}</p>
+    </div>
+</body>
+</html>

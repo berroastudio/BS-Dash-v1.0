@@ -1,0 +1,32 @@
+{
+    "quotations": {
+        "prefix": "COT",
+        "next_number": 1,
+        "padding": 6,
+        "description": "Cotizaciones"
+    },
+    "invoices": {
+        "prefix": "FAC",
+        "next_number": 1,
+        "padding": 6,
+        "description": "Facturas"
+    },
+    "payments": {
+        "prefix": "PAG",
+        "next_number": 1,
+        "padding": 6,
+        "description": "Pagos"
+    },
+    "reports": {
+        "prefix": "REP",
+        "next_number": 1,
+        "padding": 6,
+        "description": "Reportes"
+    },
+    "cash_closing": {
+        "prefix": "CIERRE",
+        "next_number": 1,
+        "padding": 4,
+        "description": "Cierres de Caja"
+    }
+}

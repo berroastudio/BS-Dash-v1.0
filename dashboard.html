@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BS Dash - Ubuntu Desktop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ====== BS DASH - ESTILOS LINUX UBUNTU CON GLASS EFFECT ====== */
+        :root {
+            --bg-primary: #0d092d;
+            --bg-secondary: #1b0040;
+            --bg-card: rgba(51, 51, 51, 0.7);
+            --bg-hover: rgba(85, 51, 126, 0.8);
+            --border-light: rgba(85, 85, 85, 0.5);
+            --text-primary: #FFFFFF;
+            --text-secondary: #CCCCCC;
+            --text-muted: #888888;
+            
+            --accent-blue: #0D6EFD;
+            --accent-green: #198754;
+            --accent-purple: #6F42C1;
+            --accent-orange: #FD7E14;
+            --accent-red: #DC3545;
+            --accent-yellow: #FFC107;
+            
+            --gradient-primary: linear-gradient(135deg, #17053f, #0b0338);
+            --gradient-secondary: linear-gradient(135deg, #5E2750, #2C001E);
+            --gradient-card: linear-gradient(135deg, rgba(51, 51, 51, 0.8), rgba(42, 42, 42, 0.8));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(rgba(38, 1, 83, 0.16), rgba(21, 0, 48, 0.046)), 
+                        url('https://plus.unsplash.com/premium_photo-1685793804465-b12bbd8b7281?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Glass moderno estilo macOS / iOS */
+        .blur-modernglass {
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background-color: rgba(185, 185, 185, 0.15);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ===== TOP BAR UBUNTU ===== */
+        .ubuntu-top-bar {
+            background: rgba(19, 3, 63, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 8px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .ubuntu-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+        }
+
+        .ubuntu-menu {
+            display: flex;
+            gap: 5px;
+        }
+
+        .menu-item {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-primary);
+        }
+
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .top-bar-center {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 30px;
+        }
+
+        .ubuntu-search {
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 25px;
+            padding: 10px 20px;
+            color: var(--text-primary);
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .ubuntu-search::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .ubuntu-search:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .system-tray {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tray-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            backdrop-filter: blur(10px);
+            color: var(--text-primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+
+        .user-menu:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* ===== DOCK UBUNTU ===== */
+        .ubuntu-dock {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(216, 216, 216, 0.55);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 10px 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 999;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        .dock-app {
+            width: 60px;
+            height: 60px;
+            background: rgba(197, 197, 197, 0.171);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-primary);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .dock-app:hover {
+            background: rgba(64, 64, 64, 0.8);
+            border-color: var(--accent-blue);
+            transform: translateY(-8px) scale(1.1);
+        }
+
+        .dock-app.active {
+            background: linear-gradient(135deg, #ffffff77, #ffffff1a);
+            color: white;
+        }
+
+        .dock-app i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .dock-app span {
+            font-size: 10px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .dock-app::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .dock-app.active::after {
+            opacity: 1;
+        }
+
+        /* ===== WORKSPACE ===== */
+        .ubuntu-workspace {
+            margin-top: 70px;
+            margin-bottom: 120px;
+            padding: 30px;
+            min-height: calc(100vh - 190px);
+        }
+
+        /* ===== WINDOW CARDS UBUNTU ===== */
+        .ubuntu-window {
+            background: rgba(8, 2, 34, 0.489);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .ubuntu-window.hidden {
+            display: none;
+        }
+
+        .window-header {
+            background: rgba(113, 113, 113, 0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .window-title {
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .window-control {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .window-control.close { background: #FF5F57; }
+        .window-control.minimize { background: #FFBD2E; }
+        .window-control.maximize { background: #28CA42; }
+
+        .window-control:hover {
+            transform: scale(1.1);
+        }
+
+        .window-content {
+            padding: 25px;
+        }
+
+        /* ===== STAT CARDS UBUNTU ===== */
+        .ubuntu-stat-card {
+            background: rgba(88, 88, 88, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .ubuntu-stat-card:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background: linear-gradient(135deg, #E95420, #77216F);
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #FFFFFF, #CCCCCC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 5px;
+            color: var(--text-secondary);
+        }
+
+        .trend-up { color: var(--accent-green) !important; }
+        .trend-down { color: var(--accent-red) !important; }
+
+        /* ===== APP GRID UBUNTU ===== */
+        .ubuntu-app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .ubuntu-app-shortcut {
+            background: rgba(95, 95, 95, 0.6);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .ubuntu-app-shortcut:hover {
+            background: rgba(152, 152, 152, 0.427);
+            border-color: var(--accent-blue);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .app-icon-container {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 12px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: linear-gradient(135deg, #d2d2d280, #f4f4f40a);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            color: white;
+        }
+
+        .app-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .app-description {
+            font-size: 11px;
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        /* ===== DESKTOP GRID ===== */
+        .desktop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* ===== NOTIFICACIONES UBUNTU ===== */
+        .ubuntu-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(51, 51, 51, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: var(--text-primary);
+            z-index: 10000;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            animation: slideInRight 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .ubuntu-top-bar {
+                padding: 8px 15px;
+            }
+            
+            .top-bar-left {
+                gap: 10px;
+            }
+            
+            .menu-item span {
+                display: none;
+            }
+            
+            .ubuntu-dock {
+                bottom: 10px;
+                padding: 8px 15px;
+            }
+            
+            .dock-app {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .dock-app i {
+                font-size: 18px;
+            }
+            
+            .ubuntu-workspace {
+                padding: 20px 15px;
+                margin-top: 60px;
+                margin-bottom: 100px;
+            }
+            
+            .desktop-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ubuntu-app-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 15px;
+            }
+        }
+
+        /* ===== ANIMACIONES ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-fade-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .animate-scale-in {
+            animation: scaleIn 0.4s ease-out;
+        }
+
+        /* Utilidades */
+        .grid { display: grid; }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .gap-6 { gap: 1.5rem; }
+        .gap-3 { gap: 0.75rem; }
+        .text-center { text-align: center; }
+        .p-4 { padding: 1rem; }
+        .rounded-xl { border-radius: 0.75rem; }
+        .border { border-width: 1px; }
+        .border-white { border-color: white; }
+        .border-opacity-10 { border-opacity: 0.1; }
+        .border-opacity-20 { border-opacity: 0.2; }
+        .text-2xl { font-size: 1.5rem; }
+        .font-bold { font-weight: 700; }
+        .text-sm { font-size: 0.875rem; }
+        .text-gray-300 { color: #D1D5DB; }
+        .mt-1 { margin-top: 0.25rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .flex { display: flex; }
+        .flex-1 { flex: 1 1 0%; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .border-none { border: none; }
+        .cursor-pointer { cursor: pointer; }
+        .transition-all { transition: all 0.3s ease; }
+        .duration-300 { transition-duration: 300ms; }
+        .hover\:scale-105:hover { transform: scale(1.05); }
+        .hover\:bg-opacity-80:hover { opacity: 0.8; }
+        .mr-2 { margin-right: 0.5rem; }
+        .hidden { display: none; }
+    </style>
+</head>
+
+<body>
+    <!-- Top Bar Ubuntu -->
+    <div class="ubuntu-top-bar">
+        <div class="top-bar-left">
+            <div class="ubuntu-logo">
+                <i class="bi bi-ubuntu"></i>
+                <span>BS Dash</span>
+            </div>
+            <div class="ubuntu-menu">
+                <div class="menu-item" onclick="toggleWindow('dashboard')">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="menu-item" onclick="toggleWindow('apps')">
+                    <i class="bi bi-folder"></i>
+                    <span>Aplicaciones</span>
+                </div>
+                <div class="menu-item" onclick="mostrarNotificacion('Navegador web - Funcionalidad en desarrollo', 'info')">
+                    <i class="bi bi-globe"></i>
+                    <span>Web</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="top-bar-center">
+            <input type="text" class="ubuntu-search" placeholder="Buscar aplicaciones, archivos y más...">
+        </div>
+        
+        <div class="top-bar-right">
+            <div class="system-tray">
+                <div class="tray-item" id="connection-status">
+                    <i class="bi bi-wifi"></i>
+                    <span>Conectado</span>
+                </div>
+                <div class="tray-item">
+                    <i class="bi bi-battery-half"></i>
+                    <span id="battery-level">78%</span>
+                </div>
+                <div class="tray-item">
+                    <i class="bi bi-clock"></i>
+                    <span id="current-time">Cargando...</span>
+                </div>
+            </div>
+            <div class="user-menu" id="user-menu">
+                <div class="user-avatar">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <span id="userName">Usuario</span>
+                <i class="bi bi-chevron-down"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workspace -->
+    <div class="ubuntu-workspace">
+        <!-- Ventana de Dashboard (Principal) -->
+        <div id="window-dashboard" class="ubuntu-window animate-fade-up">
+            <div class="window-header">
+                <div class="window-title">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard Principal</span>
+                </div>
+                <div class="window-controls">
+                    <div class="window-control minimize" onclick="minimizeWindow('dashboard')"></div>
+                    <div class="window-control maximize" onclick="maximizeWindow('dashboard')"></div>
+                    <div class="window-control close" onclick="closeWindow('dashboard')"></div>
+                </div>
+            </div>
+            <div class="window-content">
+                <!-- Estadísticas Principales -->
+                <div class="desktop-grid">
+                    <!-- Ventas -->
+                    <div class="ubuntu-stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" data-ventas>$12,458</div>
+                                <div class="stat-label">Ingresos Totales</div>
+                                <div class="stat-trend trend-up">
+                                    <i class="bi bi-arrow-up"></i>
+                                    <span id="ventasVariacion">15.2%</span> vs ayer
+                                </div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Inventario -->
+                    <div class="ubuntu-stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="totalProductos">1,248</div>
+                                <div class="stat-label">Productos en Stock</div>
+                                <div class="stat-trend trend-down">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    <span id="productosBajos">15</span> productos bajos
+                                </div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Órdenes -->
+                    <div class="ubuntu-stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="ordenesPendientes">23</div>
+                                <div class="stat-label">Órdenes por Procesar</div>
+                                <div class="stat-trend">
+                                    <i class="bi bi-clock"></i>
+                                    <span id="ordenesSinAsignar">5</span> sin asignar
+                                </div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="bi bi-clipboard-check"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Clientes -->
+                    <div class="ubuntu-stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value" id="totalClientes">856</div>
+                                <div class="stat-label">Clientes Activos</div>
+                                <div class="stat-trend trend-up">
+                                    <i class="bi bi-arrow-up"></i>
+                                    <span>12</span> nuevos este mes
+                                </div>
+                            </div>
+                            <div class="stat-icon">
+                                <i class="bi bi-people"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accesos Directos -->
+                <div class="ubuntu-window mt-6">
+                    <div class="window-header">
+                        <div class="window-title">
+                            <i class="bi bi-lightning"></i>
+                            <span>Acciones Rápidas</span>
+                        </div>
+                        <div class="window-controls">
+                            <div class="window-control minimize"></div>
+                            <div class="window-control maximize"></div>
+                            <div class="window-control close"></div>
+                        </div>
+                    </div>
+                    <div class="window-content">
+                        <div class="ubuntu-app-grid">
+                            <!-- Punto de Venta -->
+                            <a href="modules/pos.html" class="ubuntu-app-shortcut">
+                                <div class="app-icon-container">
+                                    <i class="bi bi-cash-coin"></i>
+                                </div>
+                                <div class="app-name">Punto de Venta</div>
+                                <div class="app-description">Venta rápida</div>
+                            </a>
+                            
+                            <!-- Nueva Orden -->
+                            <a href="modules/ordenes.html" class="ubuntu-app-shortcut">
+                                <div class="app-icon-container">
+                                    <i class="bi bi-plus-circle"></i>
+                                </div>
+                                <div class="app-name">Nueva Orden</div>
+                                <div class="app-description">Crear orden</div>
+                            </a>
+                            
+                            <!-- Reporte Rápido -->
+                            <a href="modules/reportes.html" class="ubuntu-app-shortcut">
+                                <div class="app-icon-container">
+                                    <i class="bi bi-graph-up"></i>
+                                </div>
+                                <div class="app-name">Reportes</div>
+                                <div class="app-description">Análisis</div>
+                            </a>
+                            
+                            <!-- Backup -->
+                            <a href="#" class="ubuntu-app-shortcut" onclick="crearBackup()">
+                                <div class="app-icon-container">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                                <div class="app-name">Backup</div>
+                                <div class="app-description">Seguridad</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sistema de Backup -->
+                <div class="ubuntu-window mt-6">
+                    <div class="window-header">
+                        <div class="window-title">
+                            <i class="bi bi-database"></i>
+                            <span>Estado del Sistema</span>
+                        </div>
+                        <div class="window-controls">
+                            <div class="window-control minimize"></div>
+                            <div class="window-control maximize"></div>
+                            <div class="window-control close"></div>
+                        </div>
+                    </div>
+                    <div class="window-content">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                            <div class="p-4 bg-gradient-card rounded-xl border border-white border-opacity-10">
+                                <div class="text-2xl font-bold" style="background: linear-gradient(135deg, #E95420, #77216F); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">3</div>
+                                <div class="text-sm text-gray-300 mt-1">Empresas</div>
+                            </div>
+                            <div class="p-4 bg-gradient-card rounded-xl border border-white border-opacity-10">
+                                <div class="text-2xl font-bold" style="background: linear-gradient(135deg, #E95420, #77216F); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">2,148</div>
+                                <div class="text-sm text-gray-300 mt-1">Registros</div>
+                            </div>
+                            <div class="p-4 bg-gradient-card rounded-xl border border-white border-opacity-10">
+                                <div class="text-2xl font-bold" style="background: linear-gradient(135deg, #E95420, #77216F); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">4.2 MB</div>
+                                <div class="text-sm text-gray-300 mt-1">Tamaño BD</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button onclick="crearBackup()" class="flex-1" style="background: linear-gradient(135deg, #E95420, #77216F); color: white; padding: 12px 16px; border-radius: 12px; border: none; font-weight: 500; cursor: pointer; transition: all 0.3s ease;">
+                                <i class="bi bi-download mr-2"></i>
+                                Crear Backup
+                            </button>
+                            <button onclick="mostrarInfoSistema()" class="flex-1" style="background: rgba(51, 51, 51, 0.6); backdrop-filter: blur(15px); color: white; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); font-weight: 500; cursor: pointer; transition: all 0.3s ease;">
+                                <i class="bi bi-info-circle mr-2"></i>
+                                Info Sistema
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ventana de Aplicaciones (Oculta inicialmente) -->
+        <div id="window-apps" class="ubuntu-window hidden animate-fade-up">
+            <div class="window-header">
+                <div class="window-title">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                    <span>Todas las Aplicaciones</span>
+                </div>
+                <div class="window-controls">
+                    <div class="window-control minimize" onclick="minimizeWindow('apps')"></div>
+                    <div class="window-control maximize" onclick="maximizeWindow('apps')"></div>
+                    <div class="window-control close" onclick="closeWindow('apps')"></div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div class="ubuntu-app-grid">
+                    <!-- Todas las aplicaciones del sistema -->
+                    <a href="modules/pos.html" class="ubuntu-app-shortcut">
+                        <div class="app-icon-container">
+                            <i class="bi bi-cash-coin"></i>
+                        </div>
+                        <div class="app-name">Punto de Venta</div>
+                        <div class="app-description">Sistema POS</div>
+                    </a>
+                    
+                    <a href="modules/inventario.html" class="ubuntu-app-shortcut">
+                        <div class="app-icon-container">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        <div class="app-name">Inventario</div>
+                        <div class="app-description">Gestión stock</div>
+                    </a>
+                    
+                    <a href="modules/cotizaciones.html" class="ubuntu-app-shortcut">
+                        <div class="app-icon-container">
+                            <i class="bi bi-file-text"></i>
+                        </div>
+                        <div class="app-name">Cotizaciones</div>
+                        <div class="app-description">Presupuestos</div>
+                    </a>
+                    
+                    <a href="modules/facturacion.html" class="ubuntu-app-shortcut">
+                        <div class="app-icon-container">
+                            <i class="bi bi-receipt"></i>
+                        </div>
+                        <div class="app-name">Facturación</div>
+                        <div class="app-description">Facturas</div>
+                    </a>
+                    
+                    <a href="modules/ordenes.html" class="ubuntu-app-shortcut">
+                        <div class="app-icon-container">
+                            <i class="bi bi-clipboard-check"></i>
+                        </div>
+                        <div class="app-name">Órdenes</div>
+                        <div class="app-description">Trabajos</div>
+                    </a>
+                    
+                    <a href="modules/contabilidad.html" class="ubuntu-app-shortcut">
+                        <div class="app-icon-container">
+                            <i class="bi bi-calculator"></i>
+                        </div>
+                        <div class="app-name">Contabilidad</div>
+                        <div class="app-description">Finanzas</div>
+                    </a>
+                    
+                    <a href="modules/reportes.html" class="ubuntu-app-shortcut">
+                        <div class="app-icon-container">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <div class="app-name">Reportes</div>
+                        <div class="app-description">Análisis</div>
+                    </a>
+                    
+                    <a href="modules/configuracion.html" class="ubuntu-app-shortcut">
+                        <div class="app-icon-container">
+                            <i class="bi bi-gear"></i>
+                        </div>
+                        <div class="app-name">Configuración</div>
+                        <div class="app-description">Ajustes</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dock Ubuntu -->
+    <div class="ubuntu-dock">
+        <div class="dock-app active" onclick="toggleWindow('dashboard')">
+            <i class="bi bi-house-door"></i>
+            <span>Inicio</span>
+        </div>
+        <div class="dock-app" onclick="toggleWindow('apps')">
+            <i class="bi bi-grid"></i>
+            <span>Apps</span>
+        </div>
+        <a href="modules/pos.html" class="dock-app">
+            <i class="bi bi-cash-coin"></i>
+            <span>POS</span>
+        </a>
+        <a href="modules/inventario.html" class="dock-app">
+            <i class="bi bi-box-seam"></i>
+            <span>Inventario</span>
+        </a>
+        <a href="modules/cotizaciones.html" class="dock-app">
+            <i class="bi bi-file-text"></i>
+            <span>Cotizaciones</span>
+        </a>
+        <a href="modules/facturacion.html" class="dock-app">
+            <i class="bi bi-receipt"></i>
+            <span>Facturación</span>
+        </a>
+        <a href="modules/ordenes.html" class="dock-app">
+            <i class="bi bi-clipboard-check"></i>
+            <span>Órdenes</span>
+        </a>
+        <a href="modules/contabilidad.html" class="dock-app">
+            <i class="bi bi-calculator"></i>
+            <span>Contabilidad</span>
+        </a>
+        <a href="modules/reportes.html" class="dock-app">
+            <i class="bi bi-graph-up"></i>
+            <span>Reportes</span>
+        </a>
+        <a href="modules/configuracion.html" class="dock-app">
+            <i class="bi bi-gear"></i>
+            <span>Ajustes</span>
+        </a>
+        <div class="dock-app" onclick="logout()">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Salir</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config-loader.js"></script>
+    <script src="js/secure-database.js"></script>
+    <script src="js/auth-system.js"></script>
+    <script src="js/database-manager.js"></script>
+    <script src="js/empresa-context.js"></script>
+
+    <script>
+        // ==================== SISTEMA DE SEGURIDAD ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Iniciando dashboard Ubuntu...');
+            
+            // Verificar autenticación
+            if (!window.auth || !window.auth.getCurrentUser()) {
+                console.log('❌ No autenticado, redirigiendo a login...');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            console.log('✅ Usuario autenticado, iniciando dashboard...');
+            
+            // Cargar información del usuario
+            const user = window.auth.getCurrentUser();
+            if (user) {
+                document.getElementById('userName').textContent = user.name || user.email;
+                console.log('👤 Usuario cargado:', user.email);
+            }
+
+            // Inicializar sistema
+            initDashboard();
+        });
+
+        function initDashboard() {
+            console.log('📊 Inicializando componentes del dashboard...');
+            
+            // Actualizar hora y estado de conexión
+            updateSystemInfo();
+            setInterval(updateSystemInfo, 1000);
+            
+            // Actualizar estadísticas
+            actualizarEstadisticas();
+            setInterval(actualizarEstadisticas, 30000);
+            
+            // Inicializar sistema de empresas
+            setTimeout(() => {
+                if (window.empresaManager) {
+                    console.log('🏢 Sistema de empresas listo');
+                    actualizarInfoSistema();
+                }
+            }, 1000);
+        }
+
+        function updateSystemInfo() {
+            // Actualizar hora
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-ES', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const dateString = now.toLocaleDateString('es-ES', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+            document.getElementById('current-time').textContent = `${timeString} • ${dateString}`;
+            
+            // Simular estado de conexión (alterna cada 30 segundos para demo)
+            const isOnline = Math.random() > 0.1; // 90% probabilidad de estar online
+            const connectionStatus = document.getElementById('connection-status');
+            if (isOnline) {
+                connectionStatus.innerHTML = '<i class="bi bi-wifi"></i><span>Conectado</span>';
+                connectionStatus.style.color = '';
+            } else {
+                connectionStatus.innerHTML = '<i class="bi bi-wifi-off"></i><span>Offline</span>';
+                connectionStatus.style.color = '#FF5F57';
+            }
+            
+            // Simular nivel de batería (cambia gradualmente)
+            const batteryElement = document.getElementById('battery-level');
+            let batteryLevel = parseInt(batteryElement.textContent);
+            if (Math.random() > 0.7) { // 30% de probabilidad de cambiar
+                batteryLevel = Math.max(10, batteryLevel - 1);
+                batteryElement.textContent = batteryLevel + '%';
+                
+                // Cambiar icono según nivel
+                const batteryIcon = batteryElement.previousElementSibling;
+                if (batteryLevel <= 20) {
+                    batteryIcon.className = 'bi bi-battery';
+                } else if (batteryLevel <= 50) {
+                    batteryIcon.className = 'bi bi-battery-half';
+                } else {
+                    batteryIcon.className = 'bi bi-battery-full';
+                }
+            }
+        }
+
+        // ==================== SISTEMA DE VENTANAS ====================
+        function toggleWindow(windowId) {
+            const window = document.getElementById(`window-${windowId}`);
+            if (window.classList.contains('hidden')) {
+                // Abrir ventana
+                window.classList.remove('hidden');
+                window.style.animation = 'fadeInUp 0.4s ease-out';
+                
+                // Actualizar dock
+                document.querySelectorAll('.dock-app').forEach(app => {
+                    app.classList.remove('active');
+                });
+                document.querySelector(`.dock-app:nth-child(${windowId === 'dashboard' ? 1 : 2})`).classList.add('active');
+            } else {
+                // Ya está abierta, llevar al frente
+                window.style.zIndex = '100';
+                setTimeout(() => {
+                    window.style.zIndex = '';
+                }, 100);
+            }
+        }
+
+        function closeWindow(windowId) {
+            const window = document.getElementById(`window-${windowId}`);
+            window.classList.add('hidden');
+            
+            // Si se cierra la ventana actual, mostrar dashboard
+            if (!window.classList.contains('hidden')) {
+                toggleWindow('dashboard');
+            }
+        }
+
+        function minimizeWindow(windowId) {
+            const window = document.getElementById(`window-${windowId}`);
+            window.style.transform = 'scale(0.8)';
+            window.style.opacity = '0';
+            setTimeout(() => {
+                window.classList.add('hidden');
+                window.style.transform = '';
+                window.style.opacity = '';
+            }, 300);
+        }
+
+        function maximizeWindow(windowId) {
+            const window = document.getElementById(`window-${windowId}`);
+            if (window.style.width === '90vw') {
+                window.style.width = '';
+                window.style.height = '';
+                window.style.top = '';
+                window.style.left = '';
+            } else {
+                window.style.width = '90vw';
+                window.style.height = '80vh';
+                window.style.top = '10%';
+                window.style.left = '5%';
+                window.style.position = 'fixed';
+                window.style.zIndex = '1000';
+            }
+        }
+
+        // ==================== FUNCIONES DEL SISTEMA ====================
+        function actualizarEstadisticas() {
+            if (!window.dbManager) {
+                console.log('⏳ Esperando dbManager...');
+                return;
+            }
+            
+            const empresaId = window.empresaManager ? window.empresaManager.empresaActual : 1;
+            const stats = window.dbManager.getEstadisticas(empresaId);
+            
+            // Actualizar tarjetas
+            if (document.querySelector('[data-ventas]')) {
+                document.querySelector('[data-ventas]').textContent = `$${stats.ventas.toLocaleString()}`;
+                document.getElementById('totalProductos').textContent = stats.productos.toLocaleString();
+                document.getElementById('productosBajos').textContent = stats.productosBajoStock;
+                document.getElementById('ordenesPendientes').textContent = stats.ordenesPendientes;
+                document.getElementById('totalClientes').textContent = stats.clientes.toLocaleString();
+                
+                // Calcular variación (simulada)
+                const variacion = Math.random() * 20 - 5;
+                document.getElementById('ventasVariacion').textContent = variacion.toFixed(1) + '%';
+            }
+        }
+
+        function actualizarInfoSistema() {
+            if (!window.dbManager) return;
+            
+            const info = window.dbManager.getInfo();
+            const empresas = window.dbManager.getEmpresas();
+            
+            document.getElementById('totalEmpresas').textContent = empresas.length;
+            document.getElementById('totalDatos').textContent = 
+                (info.clientes + info.productos + info.facturas).toLocaleString();
+            document.getElementById('tamanoBD').textContent = Math.round(info.tamaño / 1024 / 1024 * 10) / 10 + ' MB';
+            
+            actualizarEstadisticas();
+        }
+
+        function crearBackup() {
+            if (!window.dbManager) {
+                mostrarNotificacion('❌ Sistema de base de datos no disponible', 'error');
+                return;
+            }
+            
+            if (confirm('¿Crear backup de todos los datos?')) {
+                const success = window.dbManager.backup();
+                if (success) {
+                    mostrarNotificacion('✅ Backup creado correctamente', 'success');
+                } else {
+                    mostrarNotificacion('❌ Error creando backup', 'error');
+                }
+            }
+        }
+
+        function mostrarInfoSistema() {
+            if (!window.dbManager) return;
+            
+            const info = window.dbManager.getInfo();
+            const user = window.auth.getCurrentUser();
+            const empresa = window.empresaManager ? window.empresaManager.getEmpresaActual() : null;
+            
+            const mensaje = `
+Sistema BS Dashboard - Ubuntu
+-----------------------------
+👤 Usuario: ${user?.email}
+🏢 Empresa: ${empresa?.nombre || 'N/A'}
+📊 Estadísticas:
+   • Empresas: ${info.empresas}
+   • Clientes: ${info.clientes}
+   • Productos: ${info.productos}
+   • Facturas: ${info.facturas}
+💾 Tamaño BD: ${Math.round(info.tamaño / 1024)} KB
+🕐 Última actualización: ${new Date(info.ultima_actualizacion).toLocaleString()}
+            `.trim();
+            
+            alert(mensaje);
+        }
+
+        function logout() {
+            if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+                console.log('👋 Cerrando sesión...');
+                window.auth.logout();
+                window.location.href = 'login.html';
+            }
+        }
+
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            // Crear elemento de notificación
+            const notification = document.createElement('div');
+            notification.className = 'ubuntu-notification';
+            
+            const icon = tipo === 'success' ? 'bi-check-circle' : 
+                        tipo === 'error' ? 'bi-exclamation-triangle' : 'bi-info-circle';
+            const color = tipo === 'success' ? '#28CA42' : 
+                         tipo === 'error' ? '#FF5F57' : '#0D6EFD';
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="bi ${icon}" style="color: ${color}; font-size: 18px;"></i>
+                    <span>${mensaje}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        // User menu dropdown
+        document.getElementById('user-menu').addEventListener('click', function() {
+            mostrarNotificacion('Menú de usuario - Funcionalidad en desarrollo', 'info');
+        });
+    </script>
+</body>
+</html>

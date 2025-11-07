@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Órdenes - BS Dash Ubuntu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        /* Estilos Ubuntu */
+        :root {
+            --ubuntu-dark: #2D0922;
+            --ubuntu-purple: #77216F;
+            --ubuntu-orange: #E95420;
+            --ubuntu-light: #AEA79F;
+            --ubuntu-text: #FFFFFF;
+        }
+
+        .ubuntu-dark-theme {
+            background: linear-gradient(135deg, var(--ubuntu-dark) 0%, #1a0a15 100%);
+            color: var(--ubuntu-text);
+            min-height: 100vh;
+            font-family: 'Ubuntu', sans-serif;
+        }
+
+        .ubuntu-top-bar {
+            background: rgba(45, 9, 34, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--ubuntu-purple);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .ubuntu-window {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(119, 33, 111, 0.3);
+            border-radius: 12px;
+            margin: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .ubuntu-window-header {
+            background: linear-gradient(135deg, var(--ubuntu-purple), #5c1a5a);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ubuntu-window-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ubuntu-control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .ubuntu-control.close { background: #ff5f57; }
+        .ubuntu-control.minimize { background: #ffbd2e; }
+        .ubuntu-control.maximize { background: #28ca42; }
+
+        .ubuntu-window-title {
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ubuntu-window-content {
+            padding: 20px;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .ubuntu-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        .ubuntu-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .ubuntu-btn-primary {
+            background: linear-gradient(135deg, var(--ubuntu-orange), #ff6b35);
+            border-color: var(--ubuntu-orange);
+        }
+
+        .ubuntu-btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-color: #20c997;
+        }
+
+        .ubuntu-btn-danger {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+            border-color: #dc3545;
+        }
+
+        .ubuntu-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .ubuntu-stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .ubuntu-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .ubuntu-stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .ubuntu-orange { color: var(--ubuntu-orange); }
+        .ubuntu-purple { color: var(--ubuntu-purple); }
+        .ubuntu-green { color: #20c997; }
+        .ubuntu-blue { color: #17a2b8; }
+
+        .bg-ubuntu-orange { background: var(--ubuntu-orange); }
+        .bg-ubuntu-purple { background: var(--ubuntu-purple); }
+        .bg-ubuntu-green { background: #20c997; }
+        .bg-ubuntu-blue { background: #17a2b8; }
+
+        .ubuntu-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: white;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .ubuntu-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .ubuntu-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .ubuntu-table th {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ubuntu-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ubuntu-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ubuntu-main-content {
+            margin-top: 60px;
+            padding: 20px;
+        }
+
+        .ubuntu-toolbar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .ubuntu-badge {
+            background: var(--ubuntu-orange);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .ubuntu-chip {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="ubuntu-dark-theme">
+    <!-- Top Bar Ubuntu -->
+    <div class="ubuntu-top-bar">
+        <div class="ubuntu-top-left">
+            <div class="ubuntu-apps-menu">
+                <i class="bi bi-grid-3x3-gap"></i>
+            </div>
+            <div class="ubuntu-breadcrumb">
+                <span>BS Dash</span>
+                <i class="bi bi-chevron-right"></i>
+                <span>Órdenes</span>
+            </div>
+        </div>
+        <div class="ubuntu-top-center">
+            <div class="ubuntu-search">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Buscar en órdenes..." class="ubuntu-input" style="width: 300px;">
+            </div>
+        </div>
+        <div class="ubuntu-top-right">
+            <div class="ubuntu-system-tray">
+                <i class="bi bi-wifi"></i>
+                <i class="bi bi-battery-half"></i>
+                <span id="ubuntu-time">14:30</span>
+                <i class="bi bi-person-circle"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="ubuntu-main-content">
+        <!-- Ventana Principal de Órdenes -->
+        <div class="ubuntu-window">
+            <div class="ubuntu-window-header">
+                <div class="ubuntu-window-controls">
+                    <div class="ubuntu-control close" onclick="window.history.back()"></div>
+                    <div class="ubuntu-control minimize"></div>
+                    <div class="ubuntu-control maximize"></div>
+                </div>
+                <div class="ubuntu-window-title">
+                    <i class="bi bi-clipboard-check ubuntu-orange"></i>
+                    Gestión de Órdenes - Dashboard Avanzado
+                </div>
+                <div class="ubuntu-window-actions">
+                    <a href="../dashboard.html" class="ubuntu-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Volver al Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <div class="ubuntu-window-content">
+                <!-- Estadísticas Rápidas -->
+                <div class="ubuntu-stats-grid">
+                    <div class="ubuntu-stat-card animate-fade-in">
+                        <div class="ubuntu-stat-icon bg-ubuntu-orange">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div class="ubuntu-stat-info">
+                            <h3 id="ordenesPendientes">12</h3>
+                            <p>Órdenes Pendientes</p>
+                        </div>
+                    </div>
+                    
+                    <div class="ubuntu-stat-card animate-fade-in" style="animation-delay: 0.1s;">
+                        <div class="ubuntu-stat-icon bg-ubuntu-purple">
+                            <i class="bi bi-currency-dollar"></i>
+                        </div>
+                        <div class="ubuntu-stat-info">
+                            <h3 id="ingresoMensual">$45,670</h3>
+                            <p>Ingreso Mensual</p>
+                        </div>
+                    </div>
+                    
+                    <div class="ubuntu-stat-card animate-fade-in" style="animation-delay: 0.2s;">
+                        <div class="ubuntu-stat-icon bg-ubuntu-green">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="ubuntu-stat-info">
+                            <h3 id="ordenesCompletadas">89</h3>
+                            <p>Completadas Hoy</p>
+                        </div>
+                    </div>
+                    
+                    <div class="ubuntu-stat-card animate-fade-in" style="animation-delay: 0.3s;">
+                        <div class="ubuntu-stat-icon bg-ubuntu-blue">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                        <div class="ubuntu-stat-info">
+                            <h3 id="tasaCompletacion">94%</h3>
+                            <p>Tasa de Completación</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barra de Herramientas Avanzadas -->
+                <div class="ubuntu-toolbar">
+                    <button class="ubuntu-btn ubuntu-btn-primary" onclick="showNewOrderModal()">
+                        <i class="bi bi-plus-circle"></i>
+                        Nueva Orden Rápida
+                    </button>
+                    <button class="ubuntu-btn" onclick="toggleAdvancedFilters()">
+                        <i class="bi bi-funnel"></i>
+                        Filtros Avanzados
+                    </button>
+                    <button class="ubuntu-btn" onclick="showBulkActions()">
+                        <i class="bi bi-collection"></i>
+                        Acciones Masivas
+                    </button>
+                    <button class="ubuntu-btn" onclick="showOrderTemplates()">
+                        <i class="bi bi-file-earmark"></i>
+                        Plantillas
+                    </button>
+                    <button class="ubuntu-btn" onclick="showAutomationRules()">
+                        <i class="bi bi-gear"></i>
+                        Automatización
+                    </button>
+                    <button class="ubuntu-btn" onclick="showAnalytics()">
+                        <i class="bi bi-graph-up"></i>
+                        Analytics
+                    </button>
+                    <div class="flex-1"></div>
+                    <button class="ubuntu-btn ubuntu-btn-success" onclick="exportarOrdenesExcel()">
+                        <i class="bi bi-file-earmark-excel"></i>
+                        Excel
+                    </button>
+                    <button class="ubuntu-btn ubuntu-btn-danger" onclick="exportarOrdenesPDF()">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                        PDF
+                    </button>
+                    <button class="ubuntu-btn" onclick="sincronizarOrdenes()">
+                        <i class="bi bi-cloud-arrow-down"></i>
+                        Sincronizar
+                    </button>
+                </div>
+
+                <!-- Filtros Avanzados -->
+                <div id="advancedFilters" class="glass-effect p-4 rounded-lg mb-4 hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm mb-2">Buscar Live</label>
+                            <input type="text" id="searchOrders" placeholder="Buscar órdenes..." 
+                                   class="ubuntu-input" onkeyup="liveSearchOrders()">
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Desde</label>
+                            <input type="date" id="fechaDesde" class="ubuntu-input" onchange="filtrarOrdenes()">
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Hasta</label>
+                            <input type="date" id="fechaHasta" class="ubuntu-input" onchange="filtrarOrdenes()">
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Estado</label>
+                            <select id="statusFilter" class="ubuntu-input" onchange="filtrarOrdenes()">
+                                <option value="">Todos</option>
+                                <option value="pending">Pendientes</option>
+                                <option value="confirmed">Confirmadas</option>
+                                <option value="processing">En proceso</option>
+                                <option value="completed">Completadas</option>
+                                <option value="cancelled">Canceladas</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm mb-2">Cliente</label>
+                            <select id="clienteFilter" class="ubuntu-input" onchange="filtrarOrdenes()">
+                                <option value="">Todos los clientes</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Prioridad</label>
+                            <select id="prioridadFilter" class="ubuntu-input" onchange="filtrarOrdenes()">
+                                <option value="">Todas</option>
+                                <option value="baja">Baja</option>
+                                <option value="media">Media</option>
+                                <option value="alta">Alta</option>
+                                <option value="urgente">Urgente</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Monto Mínimo</label>
+                            <input type="number" id="montoMinimo" class="ubuntu-input" placeholder="0.00" onchange="filtrarOrdenes()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vista de Tarjetas de Órdenes -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mb-6" id="ordersCardView">
+                    <!-- Las órdenes se mostrarán aquí como tarjetas -->
+                </div>
+
+                <!-- Vista de Tabla (Alternativa) -->
+                <div class="ubuntu-window">
+                    <div class="ubuntu-window-header">
+                        <div class="ubuntu-window-title">
+                            <i class="bi bi-table ubuntu-blue"></i>
+                            Vista de Tabla - Órdenes
+                        </div>
+                        <div class="ubuntu-window-actions">
+                            <button class="ubuntu-btn" onclick="toggleView()">
+                                <i class="bi bi-layout-three-columns"></i>
+                                Cambiar Vista
+                            </button>
+                        </div>
+                    </div>
+                    <div class="ubuntu-window-content">
+                        <table class="ubuntu-table">
+                            <thead>
+                                <tr>
+                                    <th>N° Orden</th>
+                                    <th>Cliente</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Prioridad</th>
+                                    <th>Fecha</th>
+                                    <th>Vendedor</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <!-- Las órdenes se cargarán aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Panel de Analytics en Tiempo Real -->
+                <div class="ubuntu-window mt-4">
+                    <div class="ubuntu-window-header">
+                        <div class="ubuntu-window-title">
+                            <i class="bi bi-graph-up-arrow ubuntu-green"></i>
+                            Analytics en Tiempo Real
+                        </div>
+                    </div>
+                    <div class="ubuntu-window-content">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <canvas id="ordersChart" width="400" height="200"></canvas>
+                            </div>
+                            <div>
+                                <canvas id="statusChart" width="400" height="200"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Orden Avanzada -->
+    <div id="newOrderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="ubuntu-window w-full max-w-6xl max-h-[95vh] overflow-hidden">
+            <div class="ubuntu-window-header">
+                <div class="ubuntu-window-title">
+                    <i class="bi bi-plus-circle ubuntu-orange"></i>
+                    Nueva Orden Avanzada
+                </div>
+                <div class="ubuntu-window-actions">
+                    <button onclick="hideNewOrderModal()" class="ubuntu-btn">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="ubuntu-window-content overflow-y-auto">
+                <!-- Contenido del modal aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/config-loader.js"></script>
+    <script src="../js/secure-database.js"></script>
+    <script src="../js/auth-system.js"></script>
+    <script src="../js/database-manager.js"></script>
+    <script src="../js/empresa-context.js"></script>
+
+    <script>
+        // Variables globales
+        let todasLasOrdenes = [];
+        let ordenesFiltradas = [];
+        let currentView = 'table'; // 'table' o 'cards'
+        let ordersChart, statusChart;
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!window.auth || !window.auth.getCurrentUser()) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            inicializarModuloOrdenes();
+            cargarDatosIniciales();
+            configurarFechasPorDefecto();
+            inicializarGraficos();
+            actualizarHora();
+        });
+
+        function actualizarHora() {
+            const ahora = new Date();
+            document.getElementById('ubuntu-time').textContent = 
+                ahora.getHours().toString().padStart(2, '0') + ':' + 
+                ahora.getMinutes().toString().padStart(2, '0');
+            setTimeout(actualizarHora, 60000);
+        }
+
+        function inicializarModuloOrdenes() {
+            console.log('🚀 Inicializando módulo de órdenes avanzado...');
+            
+            // Configurar fecha por defecto (mes actual)
+            const hoy = new Date();
+            const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            
+            document.getElementById('fechaDesde').value = inicioMes.toISOString().split('T')[0];
+            document.getElementById('fechaHasta').value = hoy.toISOString().split('T')[0];
+        }
+
+        function cargarDatosIniciales() {
+            if (!window.dbManager) {
+                console.error('❌ dbManager no disponible');
+                // Datos de ejemplo para demo
+                todasLasOrdenes = generarDatosEjemplo();
+            } else {
+                todasLasOrdenes = window.dbManager.getOrdenes() || generarDatosEjemplo();
+            }
+
+            ordenesFiltradas = [...todasLasOrdenes];
+            mostrarOrdenes();
+            actualizarEstadisticas();
+        }
+
+        function generarDatosEjemplo() {
+            const estados = ['pending', 'confirmed', 'processing', 'completed', 'cancelled'];
+            const prioridades = ['baja', 'media', 'alta', 'urgente'];
+            const clientes = ['Ana García', 'Carlos López', 'María Rodríguez', 'Juan Pérez', 'Laura Martínez'];
+            const vendedores = ['Vendedor A', 'Vendedor B', 'Vendedor C'];
+
+            return Array.from({length: 50}, (_, i) => ({
+                id: i + 1,
+                numero: `ORD-${String(i + 1).padStart(4, '0')}`,
+                cliente_nombre: clientes[Math.floor(Math.random() * clientes.length)],
+                cliente_telefono: '809-' + Math.floor(Math.random() * 9000000 + 1000000),
+                total: Math.floor(Math.random() * 10000) + 100,
+                estado: estados[Math.floor(Math.random() * estados.length)],
+                prioridad: prioridades[Math.floor(Math.random() * prioridades.length)],
+                fecha: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toISOString(),
+                vendedor: vendedores[Math.floor(Math.random() * vendedores.length)],
+                items: Math.floor(Math.random() * 10) + 1
+            }));
+        }
+
+        // ==================== FILTRADO AVANZADO ====================
+        function filtrarOrdenes() {
+            const filtroTexto = document.getElementById('searchOrders').value.toLowerCase();
+            const fechaDesde = document.getElementById('fechaDesde').value;
+            const fechaHasta = document.getElementById('fechaHasta').value;
+            const estado = document.getElementById('statusFilter').value;
+            const cliente = document.getElementById('clienteFilter').value;
+            const prioridad = document.getElementById('prioridadFilter').value;
+            const montoMinimo = parseFloat(document.getElementById('montoMinimo').value) || 0;
+
+            ordenesFiltradas = todasLasOrdenes.filter(orden => {
+                const coincideTexto = !filtroTexto || 
+                    orden.numero.toLowerCase().includes(filtroTexto) ||
+                    orden.cliente_nombre.toLowerCase().includes(filtroTexto);
+
+                const fechaOrden = new Date(orden.fecha);
+                const desde = fechaDesde ? new Date(fechaDesde) : new Date('1900-01-01');
+                const hasta = fechaHasta ? new Date(fechaHasta) : new Date('2100-01-01');
+                const coincideFecha = fechaOrden >= desde && fechaOrden <= hasta;
+
+                const coincideEstado = !estado || orden.estado === estado;
+                const coincidePrioridad = !prioridad || orden.prioridad === prioridad;
+                const coincideMonto = orden.total >= montoMinimo;
+
+                return coincideTexto && coincideFecha && coincideEstado && coincidePrioridad && coincideMonto;
+            });
+
+            mostrarOrdenes();
+            actualizarEstadisticas();
+            actualizarGraficos();
+        }
+
+        function liveSearchOrders() {
+            filtrarOrdenes();
+        }
+
+        function toggleAdvancedFilters() {
+            const advancedFilters = document.getElementById('advancedFilters');
+            advancedFilters.classList.toggle('hidden');
+        }
+
+        // ==================== VISTAS ====================
+        function toggleView() {
+            currentView = currentView === 'table' ? 'cards' : 'table';
+            mostrarOrdenes();
+        }
+
+        function mostrarOrdenes() {
+            if (currentView === 'table') {
+                mostrarOrdenesTabla();
+            } else {
+                mostrarOrdenesCards();
+            }
+        }
+
+        function mostrarOrdenesTabla() {
+            const tbody = document.getElementById('ordersTableBody');
+            let html = '';
+
+            ordenesFiltradas.forEach(orden => {
+                const estadoColor = {
+                    'pending': 'ubuntu-chip bg-yellow-500/20',
+                    'confirmed': 'ubuntu-chip bg-blue-500/20',
+                    'processing': 'ubuntu-chip bg-purple-500/20',
+                    'completed': 'ubuntu-chip bg-green-500/20',
+                    'cancelled': 'ubuntu-chip bg-red-500/20'
+                }[orden.estado];
+
+                const prioridadColor = {
+                    'baja': 'text-green-400',
+                    'media': 'text-yellow-400',
+                    'alta': 'text-orange-400',
+                    'urgente': 'text-red-400'
+                }[orden.prioridad];
+
+                html += `
+                    <tr class="hover:bg-white/5">
+                        <td class="font-mono">${orden.numero}</td>
+                        <td>
+                            <div class="font-medium">${orden.cliente_nombre}</div>
+                            <div class="text-sm opacity-70">${orden.cliente_telefono}</div>
+                        </td>
+                        <td class="font-bold text-green-400">$${orden.total.toFixed(2)}</td>
+                        <td><span class="${estadoColor}">${orden.estado}</span></td>
+                        <td><i class="bi bi-circle-fill ${prioridadColor}"></i> ${orden.prioridad}</td>
+                        <td class="text-sm">${new Date(orden.fecha).toLocaleDateString()}</td>
+                        <td class="text-sm">${orden.vendedor}</td>
+                        <td>
+                            <div class="flex gap-1">
+                                <button onclick="verOrden(${orden.id})" class="ubuntu-btn text-sm">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button onclick="editarOrden(${orden.id})" class="ubuntu-btn text-sm">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button onclick="duplicarOrden(${orden.id})" class="ubuntu-btn text-sm">
+                                    <i class="bi bi-copy"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function mostrarOrdenesCards() {
+            const container = document.getElementById('ordersCardView');
+            let html = '';
+
+            ordenesFiltradas.forEach(orden => {
+                const estadoColor = {
+                    'pending': 'border-yellow-500',
+                    'confirmed': 'border-blue-500',
+                    'processing': 'border-purple-500',
+                    'completed': 'border-green-500',
+                    'cancelled': 'border-red-500'
+                }[orden.estado];
+
+                html += `
+                    <div class="ubuntu-stat-card border-l-4 ${estadoColor}">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-lg">${orden.numero}</h3>
+                                <p class="text-sm opacity-70">${orden.cliente_nombre}</p>
+                            </div>
+                            <span class="ubuntu-badge">$${orden.total.toFixed(2)}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm mb-3">
+                            <span class="ubuntu-chip">${orden.estado}</span>
+                            <span>${orden.items} items</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs opacity-70">${new Date(orden.fecha).toLocaleDateString()}</span>
+                            <div class="flex gap-1">
+                                <button onclick="verOrden(${orden.id})" class="ubuntu-btn text-xs">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button onclick="editarOrden(${orden.id})" class="ubuntu-btn text-xs">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ==================== HERRAMIENTAS AVANZADAS ====================
+        function showBulkActions() {
+            const seleccionadas = ordenesFiltradas.filter(o => o.seleccionada);
+            if (seleccionadas.length === 0) {
+                alert('Selecciona órdenes para realizar acciones masivas');
+                return;
+            }
+
+            const acciones = `
+                <div class="space-y-2">
+                    <button class="ubuntu-btn w-full" onclick="cambiarEstadoMasivo('completed')">
+                        <i class="bi bi-check-circle"></i> Marcar como Completadas
+                    </button>
+                    <button class="ubuntu-btn w-full" onclick="cambiarEstadoMasivo('cancelled')">
+                        <i class="bi bi-x-circle"></i> Cancelar Órdenes
+                    </button>
+                    <button class="ubuntu-btn w-full" onclick="asignarVendedorMasivo()">
+                        <i class="bi bi-person"></i> Asignar Vendedor
+                    </button>
+                    <button class="ubuntu-btn w-full ubuntu-btn-danger" onclick="eliminarOrdenesMasivo()">
+                        <i class="bi bi-trash"></i> Eliminar Órdenes
+                    </button>
+                </div>
+            `;
+
+            mostrarModal('Acciones Masivas', acciones);
+        }
+
+        function showOrderTemplates() {
+            const plantillas = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="ubuntu-stat-card cursor-pointer" onclick="usarPlantilla('rapida')">
+                        <i class="bi bi-lightning text-2xl ubuntu-orange"></i>
+                        <div>
+                            <h4 class="font-bold">Orden Rápida</h4>
+                            <p class="text-sm">Para ventas simples</p>
+                        </div>
+                    </div>
+                    <div class="ubuntu-stat-card cursor-pointer" onclick="usarPlantilla('servicio')">
+                        <i class="bi bi-tools text-2xl ubuntu-blue"></i>
+                        <div>
+                            <h4 class="font-bold">Servicio Técnico</h4>
+                            <p class="text-sm">Para reparaciones</p>
+                        </div>
+                    </div>
+                    <div class="ubuntu-stat-card cursor-pointer" onclick="usarPlantilla('proyecto')">
+                        <i class="bi bi-briefcase text-2xl ubuntu-purple"></i>
+                        <div>
+                            <h4 class="font-bold">Proyecto</h4>
+                            <p class="text-sm">Para trabajos complejos</p>
+                        </div>
+                    </div>
+                    <div class="ubuntu-stat-card cursor-pointer" onclick="crearPlantilla()">
+                        <i class="bi bi-plus-circle text-2xl ubuntu-green"></i>
+                        <div>
+                            <h4 class="font-bold">Nueva Plantilla</h4>
+                            <p class="text-sm">Crear desde cero</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            mostrarModal('Plantillas de Órdenes', plantillas);
+        }
+
+        function showAutomationRules() {
+            const reglas = `
+                <div class="space-y-4">
+                    <div class="ubuntu-stat-card">
+                        <i class="bi bi-robot text-2xl ubuntu-purple"></i>
+                        <div class="flex-1">
+                            <h4 class="font-bold">Auto-completar órdenes vencidas</h4>
+                            <p class="text-sm">Completar automáticamente órdenes con más de 30 días</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+                    <div class="ubuntu-stat-card">
+                        <i class="bi bi-bell text-2xl ubuntu-orange"></i>
+                        <div class="flex-1">
+                            <h4 class="font-bold">Notificaciones de prioridad alta</h4>
+                            <p class="text-sm">Enviar alertas para órdenes urgentes</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+                </div>
+            `;
+
+            mostrarModal('Reglas de Automatización', reglas);
+        }
+
+        function showAnalytics() {
+            const analytics = `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="ubuntu-stat-card">
+                            <i class="bi bi-graph-up-arrow ubuntu-green"></i>
+                            <div>
+                                <h4 class="font-bold">Tasa de Conversión</h4>
+                                <p class="text-2xl">68%</p>
+                            </div>
+                        </div>
+                        <div class="ubuntu-stat-card">
+                            <i class="bi bi-clock-history ubuntu-orange"></i>
+                            <div>
+                                <h4 class="font-bold">Tiempo Promedio</h4>
+                                <p class="text-2xl">2.3 días</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ubuntu-stat-card">
+                        <canvas id="analyticsModalChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            `;
+
+            mostrarModal('Analytics Detallados', analytics);
+        }
+
+        // ==================== GRÁFICOS ====================
+        function inicializarGraficos() {
+            // Gráfico de órdenes por día
+            const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+            ordersChart = new Chart(ordersCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Órdenes por Día',
+                        data: [12, 19, 8, 15, 12, 6, 9],
+                        borderColor: '#E95420',
+                        backgroundColor: 'rgba(233, 84, 32, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: 'white' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: 'white' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: 'white' }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de estados
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            statusChart = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Pendientes', 'Confirmadas', 'En Proceso', 'Completadas', 'Canceladas'],
+                    datasets: [{
+                        data: [12, 8, 15, 45, 5],
+                        backgroundColor: [
+                            '#FFBD2E',
+                            '#17A2B8',
+                            '#6F42C1',
+                            '#28A745',
+                            '#DC3545'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: 'white' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function actualizarGraficos() {
+            // Actualizar datos de los gráficos basado en órdenes filtradas
+            const datosPorDia = [8, 12, 6, 14, 10, 4, 7]; // Datos de ejemplo
+            ordersChart.data.datasets[0].data = datosPorDia;
+            ordersChart.update();
+
+            // Actualizar gráfico de estados
+            const conteoEstados = {
+                pending: ordenesFiltradas.filter(o => o.estado === 'pending').length,
+                confirmed: ordenesFiltradas.filter(o => o.estado === 'confirmed').length,
+                processing: ordenesFiltradas.filter(o => o.estado === 'processing').length,
+                completed: ordenesFiltradas.filter(o => o.estado === 'completed').length,
+                cancelled: ordenesFiltradas.filter(o => o.estado === 'cancelled').length
+            };
+
+            statusChart.data.datasets[0].data = [
+                conteoEstados.pending,
+                conteoEstados.confirmed,
+                conteoEstados.processing,
+                conteoEstados.completed,
+                conteoEstados.cancelled
+            ];
+            statusChart.update();
+        }
+
+        // ==================== FUNCIONES UTILITARIAS ====================
+        function mostrarModal(titulo, contenido) {
+            const modal = document.getElementById('newOrderModal');
+            const content = modal.querySelector('.ubuntu-window-content');
+            
+            modal.querySelector('.ubuntu-window-title').innerHTML = `
+                <i class="bi bi-info-circle ubuntu-orange"></i>
+                ${titulo}
+            `;
+            
+            content.innerHTML = contenido;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function hideNewOrderModal() {
+            document.getElementById('newOrderModal').classList.add('hidden');
+            document.getElementById('newOrderModal').classList.remove('flex');
+        }
+
+        function showNewOrderModal() {
+            mostrarModal('Nueva Orden', `
+                <div class="space-y-4">
+                    <p>Funcionalidad de nueva orden avanzada...</p>
+                    <button class="ubuntu-btn ubuntu-btn-primary w-full" onclick="crearOrdenRapida()">
+                        <i class="bi bi-lightning"></i>
+                        Crear Orden Rápida
+                    </button>
+                </div>
+            `);
+        }
+
+        function actualizarEstadisticas() {
+            document.getElementById('ordenesPendientes').textContent = 
+                ordenesFiltradas.filter(o => o.estado === 'pending').length;
+            
+            const ingresoMensual = ordenesFiltradas
+                .filter(o => o.estado === 'completed')
+                .reduce((sum, o) => sum + o.total, 0);
+            document.getElementById('ingresoMensual').textContent = `$${ingresoMensual.toLocaleString()}`;
+            
+            const completadasHoy = ordenesFiltradas
+                .filter(o => o.estado === 'completed' && 
+                    new Date(o.fecha).toDateString() === new Date().toDateString()).length;
+            document.getElementById('ordenesCompletadas').textContent = completadasHoy;
+            
+            const tasa = ordenesFiltradas.length > 0 ? 
+                Math.round((ordenesFiltradas.filter(o => o.estado === 'completed').length / ordenesFiltradas.length) * 100) : 0;
+            document.getElementById('tasaCompletacion').textContent = `${tasa}%`;
+        }
+
+        // ==================== FUNCIONES DE ORDEN ====================
+        function verOrden(id) {
+            const orden = todasLasOrdenes.find(o => o.id === id);
+            if (orden) {
+                mostrarModal(`Orden ${orden.numero}`, `
+                    <div class="space-y-3">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><strong>Cliente:</strong> ${orden.cliente_nombre}</div>
+                            <div><strong>Total:</strong> $${orden.total.toFixed(2)}</div>
+                            <div><strong>Estado:</strong> ${orden.estado}</div>
+                            <div><strong>Prioridad:</strong> ${orden.prioridad}</div>
+                        </div>
+                        <button class="ubuntu-btn ubuntu-btn-primary w-full" onclick="cambiarEstadoOrden(${orden.id}, 'completed')">
+                            <i class="bi bi-check-circle"></i>
+                            Marcar como Completada
+                        </button>
+                    </div>
+                `);
+            }
+        }
+
+        function editarOrden(id) {
+            const orden = todasLasOrdenes.find(o => o.id === id);
+            if (orden) {
+                mostrarModal(`Editando ${orden.numero}`, `
+                    <div class="space-y-4">
+                        <p>Formulario de edición para la orden ${orden.numero}</p>
+                        <button class="ubuntu-btn ubuntu-btn-success w-full" onclick="guardarCambiosOrden(${orden.id})">
+                            <i class="bi bi-check-lg"></i>
+                            Guardar Cambios
+                        </button>
+                    </div>
+                `);
+            }
+        }
+
+        function duplicarOrden(id) {
+            const orden = todasLasOrdenes.find(o => o.id === id);
+            if (orden) {
+                const nuevaOrden = {
+                    ...orden,
+                    id: Math.max(...todasLasOrdenes.map(o => o.id)) + 1,
+                    numero: `ORD-${String(todasLasOrdenes.length + 1).padStart(4, '0')}`,
+                    fecha: new Date().toISOString()
+                };
+                todasLasOrdenes.push(nuevaOrden);
+                filtrarOrdenes();
+                mostrarNotificacion('✅ Orden duplicada correctamente', 'success');
+            }
+        }
+
+        function cambiarEstadoOrden(id, nuevoEstado) {
+            const orden = todasLasOrdenes.find(o => o.id === id);
+            if (orden) {
+                orden.estado = nuevoEstado;
+                filtrarOrdenes();
+                mostrarNotificacion(`✅ Orden ${orden.numero} actualizada`, 'success');
+                hideNewOrderModal();
+            }
+        }
+
+        function crearOrdenRapida() {
+            const nuevaOrden = {
+                id: Math.max(...todasLasOrdenes.map(o => o.id)) + 1,
+                numero: `ORD-${String(todasLasOrdenes.length + 1).padStart(4, '0')}`,
+                cliente_nombre: 'Cliente Rápido',
+                total: 100,
+                estado: 'pending',
+                prioridad: 'media',
+                fecha: new Date().toISOString(),
+                vendedor: 'Sistema',
+                items: 1
+            };
+            todasLasOrdenes.push(nuevaOrden);
+            filtrarOrdenes();
+            mostrarNotificacion('✅ Orden rápida creada', 'success');
+            hideNewOrderModal();
+        }
+
+        // ==================== EXPORTACIÓN ====================
+        function exportarOrdenesExcel() {
+            const datos = ordenesFiltradas.map(orden => ({
+                'N° Orden': orden.numero,
+                'Cliente': orden.cliente_nombre,
+                'Total': orden.total,
+                'Estado': orden.estado,
+                'Prioridad': orden.prioridad,
+                'Fecha': new Date(orden.fecha).toLocaleDateString(),
+                'Vendedor': orden.vendedor
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(datos);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Órdenes');
+            XLSX.writeFile(wb, `ordenes_${new Date().toISOString().split('T')[0]}.xlsx`);
+            mostrarNotificacion('✅ Excel exportado correctamente', 'success');
+        }
+
+        function exportarOrdenesPDF() {
+            const docDefinition = {
+                content: [
+                    { text: 'Reporte de Órdenes - BS Dash', style: 'header' },
+                    {
+                        table: {
+                            headerRows: 1,
+                            widths: ['*', '*', '*', '*', '*', '*'],
+                            body: [
+                                ['N° Orden', 'Cliente', 'Total', 'Estado', 'Prioridad', 'Fecha'],
+                                ...ordenesFiltradas.map(orden => [
+                                    orden.numero,
+                                    orden.cliente_nombre,
+                                    `$${orden.total.toFixed(2)}`,
+                                    orden.estado,
+                                    orden.prioridad,
+                                    new Date(orden.fecha).toLocaleDateString()
+                                ])
+                            ]
+                        }
+                    }
+                ],
+                styles: {
+                    header: {
+                        fontSize: 18,
+                        bold: true,
+                        margin: [0, 0, 0, 10]
+                    }
+                }
+            };
+
+            pdfMake.createPdf(docDefinition).download(`ordenes_${new Date().toISOString().split('T')[0]}.pdf`);
+            mostrarNotificacion('✅ PDF exportado correctamente', 'success');
+        }
+
+        function sincronizarOrdenes() {
+            mostrarNotificacion('🔄 Sincronizando órdenes...', 'info');
+            setTimeout(() => {
+                mostrarNotificacion('✅ Órdenes sincronizadas correctamente', 'success');
+            }, 2000);
+        }
+
+        // ==================== NOTIFICACIONES ====================
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 p-4 rounded-lg shadow-lg z-50 backdrop-blur-lg ${
+                tipo === 'success' ? 'bg-green-500/90 text-white' :
+                tipo === 'error' ? 'bg-red-500/90 text-white' :
+                tipo === 'warning' ? 'bg-yellow-500/90 text-white' :
+                'bg-blue-500/90 text-white'
+            }`;
+            notification.textContent = mensaje;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.5s ease-out';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        // Animación fadeOut
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(100px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

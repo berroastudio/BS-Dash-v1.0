@@ -1,0 +1,928 @@
+/* ====== BS DASH - ESTILOS LINUX UBUNTU GLASS MEJORADO ====== */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css');
+
+:root {
+  /* Colores Ubuntu Dark Mejorados */
+  --bg-primary: #2D0922;
+  --bg-secondary: #1a0a15;
+  --bg-card: rgba(45, 20, 44, 0.75);
+  --bg-hover: rgba(85, 40, 80, 0.8);
+  --border-light: rgba(255, 255, 255, 0.15);
+  --border-hover: rgba(233, 84, 32, 0.6);
+  --text-primary: #FFFFFF;
+  --text-secondary: #E8E8E8;
+  --text-muted: #AAAAAA;
+  --text-accent: #FF9D7C;
+  
+  /* Colores de acento Ubuntu Mejorados */
+  --accent-blue: #0D8BFD;
+  --accent-green: #20C997;
+  --accent-purple: #8B5CF6;
+  --accent-orange: #E95420;
+  --accent-red: #FF6B6B;
+  --accent-yellow: #FFD43B;
+  
+  /* Gradientes Ubuntu Mejorados */
+  --gradient-primary: linear-gradient(135deg, #E95420 0%, #77216F 50%, #2C001E 100%);
+  --gradient-secondary: linear-gradient(135deg, #5E2750 0%, #2C001E 100%);
+  --gradient-card: linear-gradient(135deg, rgba(65, 25, 60, 0.9) 0%, rgba(40, 15, 35, 0.9) 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  --gradient-hover: linear-gradient(135deg, rgba(233, 84, 32, 0.2) 0%, rgba(119, 33, 111, 0.2) 100%);
+  
+  /* Sombras Mejoradas */
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.15);
+  --shadow-medium: 0 8px 32px rgba(0, 0, 0, 0.25);
+  --shadow-large: 0 16px 48px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 30px rgba(233, 84, 32, 0.3);
+  
+  /* Bordes Mejorados */
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+  --border-radius-xl: 20px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== BASE MEJORADA ===== */
+body {
+  font-family: 'Outfit', sans-serif;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(225, 225, 225, 0.15) 0%, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0), rgba(207, 207, 207, 0.411)), 
+    url('https://images.unsplash.com/photo-1744645967045-d1ff951da6e7?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1032');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* ===== GLASS EFFECT MEJORADO ===== */
+.glass-effect {
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  background: var(--gradient-glass);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-soft);
+}
+
+.glass-effect:hover {
+  background: var(--gradient-hover);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-medium);
+}
+
+/* ===== TOP BAR MEJORADO ===== */
+.ubuntu-top-bar {
+  background: linear-gradient(135deg, 
+    rgba(45, 9, 34, 0.95) 0%, 
+    rgba(65, 25, 60, 0.95) 50%, 
+    rgba(45, 9, 34, 0.95) 100%);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border-bottom: 1px solid var(--border-light);
+  padding: 10px 25px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-medium);
+  transition: all 0.3s ease;
+}
+
+.ubuntu-top-bar:hover {
+  background: linear-gradient(135deg, 
+    rgba(45, 9, 34, 0.98) 0%, 
+    rgba(75, 35, 70, 0.98) 50%, 
+    rgba(45, 9, 34, 0.98) 100%);
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.ubuntu-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text-primary);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.ubuntu-logo i {
+  color: var(--accent-orange);
+  filter: drop-shadow(0 2px 4px rgba(209, 209, 209, 0.4));
+}
+
+.ubuntu-menu {
+  display: flex;
+  gap: 8px;
+}
+
+.menu-item {
+  padding: 10px 18px;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-hover);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.menu-item:hover::before {
+  left: 0;
+}
+
+.menu-item:hover {
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.menu-item i {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.menu-item:hover i {
+  transform: scale(1.1);
+}
+
+.top-bar-center {
+  flex: 1;
+  max-width: 500px;
+  margin: 0 40px;
+}
+
+.ubuntu-search {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 25px;
+  padding: 12px 24px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 400;
+  backdrop-filter: blur(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Outfit', sans-serif;
+}
+
+.ubuntu-search::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+}
+
+.ubuntu-search:focus {
+  outline: none;
+  border-color: var(--accent-orange);
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 3px rgba(82, 82, 82, 0.2);
+  transform: scale(1.02);
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.system-tray {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tray-item {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(20px);
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.tray-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--border-light);
+  transform: translateY(-1px);
+}
+
+.tray-item i {
+  font-size: 14px;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 8px 16px;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-primary);
+  border: 1px solid transparent;
+  font-weight: 500;
+}
+
+.user-menu:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--border-light);
+  transform: translateY(-1px);
+}
+
+.user-avatar i {
+  font-size: 20px;
+  color: var(--accent-orange);
+}
+
+/* ===== DOCK MEJORADO ===== */
+.ubuntu-dock {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gradient-card);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-xl);
+  padding: 12px 24px;
+  display: flex;
+  gap: 14px;
+  z-index: 999;
+  box-shadow: var(--shadow-large);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ubuntu-dock:hover {
+  box-shadow: var(--shadow-large), var(--shadow-glow);
+  transform: translateX(-50%) scale(1.02);
+}
+
+.dock-app {
+  width: 64px;
+  height: 64px;
+  background: var(--gradient-card);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  color: var(--text-primary);
+  position: relative;
+  backdrop-filter: blur(20px);
+  font-weight: 500;
+}
+
+.dock-app:hover {
+  background: var(--gradient-hover);
+  border-color: var(--accent-orange);
+  transform: translateY(-12px) scale(1.15);
+  box-shadow: var(--shadow-medium);
+}
+
+.dock-app.active {
+  background: var(--gradient-primary);
+  color: white;
+  border-color: var(--accent-orange);
+  transform: translateY(-8px) scale(1.1);
+}
+
+.dock-app i {
+  font-size: 22px;
+  margin-bottom: 6px;
+  transition: transform 0.3s ease;
+}
+
+.dock-app:hover i {
+  transform: scale(1.2);
+}
+
+.dock-app span {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.dock-app::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  width: 5px;
+  height: 5px;
+  background: var(--accent-orange);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  box-shadow: 0 0 8px var(--accent-orange);
+}
+
+.dock-app.active::after {
+  opacity: 1;
+}
+
+/* ===== WORKSPACE MEJORADO ===== */
+.ubuntu-workspace {
+  margin-top: 80px;
+  margin-bottom: 140px;
+  padding: 35px;
+  min-height: calc(100vh - 220px);
+}
+
+/* ===== WINDOW CARDS MEJORADAS ===== */
+.ubuntu-window {
+  background: var(--gradient-card);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-lg);
+  margin-bottom: 30px;
+  overflow: hidden;
+  box-shadow: var(--shadow-medium);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.ubuntu-window::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-orange), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ubuntu-window:hover::before {
+  opacity: 1;
+}
+
+.ubuntu-window.hidden {
+  display: none;
+}
+
+.window-header {
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid var(--border-light);
+  padding: 18px 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(10px);
+}
+
+.window-title {
+  font-weight: 600;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-primary);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.window-title i {
+  color: var(--accent-orange);
+  font-size: 18px;
+}
+
+.window-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.window-control {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.window-control::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.window-control:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.window-control.close { background: #FF5F57; }
+.window-control.minimize { background: #FFBD2E; }
+.window-control.maximize { background: #28CA42; }
+
+.window-control:hover {
+  transform: scale(1.15);
+}
+
+.window-content {
+  padding: 30px;
+}
+
+/* ===== STAT CARDS MEJORADAS ===== */
+.ubuntu-stat-card {
+  background: var(--gradient-card);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-lg);
+  padding: 28px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.ubuntu-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-hover);
+  transition: left 0.6s ease;
+  z-index: 0;
+}
+
+.ubuntu-stat-card:hover::before {
+  left: 0;
+}
+
+.ubuntu-stat-card:hover {
+  border-color: var(--accent-orange);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-large);
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.stat-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.3s ease;
+}
+
+.ubuntu-stat-card:hover .stat-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  background: linear-gradient(135deg, #FFFFFF, var(--text-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+}
+
+.stat-trend {
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+}
+
+.trend-up { color: var(--accent-green) !important; }
+.trend-down { color: var(--accent-red) !important; }
+
+/* ===== APP GRID MEJORADO ===== */
+.ubuntu-app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 22px;
+  margin-top: 28px;
+}
+
+.ubuntu-app-shortcut {
+  background: var(--gradient-card);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-lg);
+  padding: 22px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  color: var(--text-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.ubuntu-app-shortcut::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-hover);
+  transition: left 0.4s ease;
+  z-index: 0;
+}
+
+.ubuntu-app-shortcut:hover::before {
+  left: 0;
+}
+
+.ubuntu-app-shortcut:hover {
+  border-color: var(--accent-orange);
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: var(--shadow-medium);
+}
+
+.app-icon-container {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px;
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  background: var(--gradient-primary);
+  box-shadow: var(--shadow-soft);
+  color: white;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease;
+}
+
+.ubuntu-app-shortcut:hover .app-icon-container {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.app-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: var(--text-primary);
+  position: relative;
+  z-index: 1;
+}
+
+.app-description {
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0.9;
+  position: relative;
+  z-index: 1;
+  font-weight: 400;
+}
+
+/* ===== DESKTOP GRID MEJORADO ===== */
+.desktop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 28px;
+  margin-bottom: 28px;
+}
+
+/* ===== NOTIFICACIONES MEJORADAS ===== */
+.ubuntu-notification {
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  background: var(--gradient-card);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-lg);
+  padding: 18px 24px;
+  color: var(--text-primary);
+  z-index: 10000;
+  box-shadow: var(--shadow-large);
+  animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Outfit', sans-serif;
+  max-width: 350px;
+  border-left: 4px solid var(--accent-orange);
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* ===== RESPONSIVE MEJORADO ===== */
+@media (max-width: 1200px) {
+  .desktop-grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ubuntu-top-bar {
+    padding: 8px 15px;
+  }
+  
+  .top-bar-left {
+    gap: 15px;
+  }
+  
+  .menu-item span {
+    display: none;
+  }
+  
+  .menu-item {
+    padding: 8px 12px;
+  }
+  
+  .ubuntu-dock {
+    bottom: 15px;
+    padding: 10px 18px;
+    gap: 10px;
+  }
+  
+  .dock-app {
+    width: 54px;
+    height: 54px;
+  }
+  
+  .dock-app i {
+    font-size: 20px;
+  }
+  
+  .ubuntu-workspace {
+    padding: 20px 15px;
+    margin-top: 60px;
+    margin-bottom: 120px;
+  }
+  
+  .desktop-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .ubuntu-app-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 16px;
+  }
+  
+  .window-content {
+    padding: 20px;
+  }
+  
+  .ubuntu-stat-card {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ubuntu-dock {
+    gap: 6px;
+    padding: 8px 12px;
+  }
+  
+  .dock-app {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .dock-app span {
+    font-size: 10px;
+  }
+  
+  .ubuntu-app-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===== ANIMACIONES MEJORADAS ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) rotate(-5deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: var(--shadow-medium);
+  }
+  50% {
+    box-shadow: var(--shadow-medium), var(--shadow-glow);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.glow-animation {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* ===== SCROLLBAR MEJORADO ===== */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gradient-primary);
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-orange);
+  box-shadow: 0 0 10px rgba(233, 84, 32, 0.6);
+}
+
+/* ===== UTILIDADES MEJORADAS ===== */
+.text-gradient {
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.border-gradient {
+  border: 2px solid;
+  border-image: var(--gradient-primary) 1;
+}
+
+.shadow-glow {
+  box-shadow: var(--shadow-medium), var(--shadow-glow);
+}
+
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Clases de utilidad mejoradas */
+.grid { display: grid; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.gap-6 { gap: 1.5rem; }
+.gap-3 { gap: 0.75rem; }
+.text-center { text-align: center; }
+.p-4 { padding: 1rem; }
+.rounded-xl { border-radius: var(--border-radius-lg); }
+.border { border-width: 1px; }
+.border-white { border-color: white; }
+.border-opacity-10 { border-opacity: 0.1; }
+.border-opacity-20 { border-opacity: 0.2; }
+.text-2xl { font-size: 1.5rem; }
+.font-bold { font-weight: 700; }
+.text-sm { font-size: 0.875rem; }
+.text-gray-300 { color: var(--text-secondary); }
+.mt-1 { margin-top: 0.25rem; }
+.mt-6 { margin-top: 1.5rem; }
+.flex { display: flex; }
+.flex-1 { flex: 1 1 0%; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.border-none { border: none; }
+.cursor-pointer { cursor: pointer; }
+.transition-all { transition: all 0.3s ease; }
+.duration-300 { transition-duration: 300ms; }
+.hover\:scale-105:hover { transform: scale(1.05); }
+.hover\:bg-opacity-80:hover { opacity: 0.8; }
+.mr-2 { margin-right: 0.5rem; }
+.hidden { display: none; }
+
+/* Estados de focus mejorados */
+*:focus {
+  outline: 2px solid var(--accent-orange);
+  outline-offset: 2px;
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BS Dash - Configuración</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="bg-[#fbfbfb] min-h-screen">
+    <header class="bs-card mx-4 mt-4 mb-6">
+        <div class="flex items-center justify-between p-4">
+            <div class="flex items-center gap-4">
+                <a href="../dashboard.html" class="bs-btn">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center border border-purple-200">
+                        <i class="bi bi-gear text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800">Configuración del Sistema</h1>
+                        <p class="text-sm text-gray-600">Ajustes generales y administración</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <span class="text-gray-700" id="userName">Cargando...</span>
+                <button onclick="logout()" class="bs-btn bg-red-50 text-red-600 border-red-200">
+                    <i class="bi bi-box-arrow-right"></i> Salir
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4">
+        <!-- Información de la Empresa -->
+        <div class="bs-card p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <i class="bi bi-building text-blue-600"></i>
+                Información de la Empresa
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de la Empresa *</label>
+                    <input type="text" id="empresaNombre" class="bs-input w-full" placeholder="Berroa Studio S.R.L.">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">RNC *</label>
+                    <input type="text" id="empresaRNC" class="bs-input w-full" placeholder="123456789">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                    <input type="text" id="empresaTelefono" class="bs-input w-full" placeholder="(809) 123-4567">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="empresaEmail" class="bs-input w-full" placeholder="info@berroastudio.com">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+                    <textarea id="empresaDireccion" class="bs-input w-full" rows="2" placeholder="Av. Principal #123, Santo Domingo"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Sitio Web</label>
+                    <input type="url" id="empresaWebsite" class="bs-input w-full" placeholder="https://berroastudio.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Eslogan</label>
+                    <input type="text" id="empresaEslogan" class="bs-input w-full" placeholder="Soluciones digitales innovadoras">
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Configuración Punto de Venta -->
+            <div class="bs-card p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="bi bi-cash-coin text-green-600"></i>
+                    Punto de Venta
+                </h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="font-medium text-gray-800 mb-3">Métodos de Pago</h3>
+                        <div class="space-y-2" id="metodosPagoContainer"></div>
+                        <button onclick="agregarMetodoPago()" class="bs-btn mt-3 w-full">
+                            <i class="bi bi-plus"></i> Agregar Método de Pago
+                        </button>
+                    </div>
+
+                    <div>
+                        <h3 class="font-medium text-gray-800 mb-3">Configuración General</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-700 font-medium">Habilitar descuentos</label>
+                                    <p class="text-xs text-gray-500">Permitir aplicar descuentos en ventas</p>
+                                </div>
+                                <input type="checkbox" id="habilitarDescuentos" class="w-5 h-5">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-700 font-medium">Solicitar cliente obligatorio</label>
+                                    <p class="text-xs text-gray-500">Requerir selección de cliente en ventas</p>
+                                </div>
+                                <input type="checkbox" id="solicitarCliente" class="w-5 h-5">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-700 font-medium">Imprimir automáticamente</label>
+                                    <p class="text-xs text-gray-500">Imprimir ticket al finalizar venta</p>
+                                </div>
+                                <input type="checkbox" id="imprimirAutomatico" class="w-5 h-5">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">IVA por defecto (%)</label>
+                                <input type="number" id="ivaPorDefecto" class="bs-input w-full" value="18" min="0" max="100" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secuencias y Numeración -->
+            <div class="bs-card p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="bi bi-123 text-purple-600"></i>
+                    Secuencias y Numeración
+                </h2>
+                
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 gap-3">
+                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                            <div>
+                                <span class="font-medium text-gray-800">Facturas</span>
+                                <p class="text-sm text-gray-500">Próximo número: <span id="secuenciaFacturas">FACT-001</span></p>
+                            </div>
+                            <button onclick="editarSecuencia('facturas')" class="bs-btn text-sm">
+                                <i class="bi bi-pencil"></i> Editar
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                            <div>
+                                <span class="font-medium text-gray-800">Cotizaciones</span>
+                                <p class="text-sm text-gray-500">Próximo número: <span id="secuenciaCotizaciones">COT-001</span></p>
+                            </div>
+                            <button onclick="editarSecuencia('cotizaciones')" class="bs-btn text-sm">
+                                <i class="bi bi-pencil"></i> Editar
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                            <div>
+                                <span class="font-medium text-gray-800">Órdenes</span>
+                                <p class="text-sm text-gray-500">Próximo número: <span id="secuenciaOrdenes">ORD-001</span></p>
+                            </div>
+                            <button onclick="editarSecuencia('ordenes')" class="bs-btn text-sm">
+                                <i class="bi bi-pencil"></i> Editar
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                            <div>
+                                <span class="font-medium text-gray-800">Reportes</span>
+                                <p class="text-sm text-gray-500">Próximo número: <span id="secuenciaReportes">REP-001</span></p>
+                            </div>
+                            <button onclick="editarSecuencia('reportes')" class="bs-btn text-sm">
+                                <i class="bi bi-pencil"></i> Editar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <!-- Gestión de Usuarios y Permisos -->
+            <div class="bs-card p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="bi bi-shield-check text-orange-600"></i>
+                    Usuarios y Permisos
+                </h2>
+                
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-medium text-gray-800">Usuarios del Sistema</h3>
+                        <button onclick="abrirModalUsuario()" class="bs-btn bs-btn-primary text-sm">
+                            <i class="bi bi-person-plus"></i> Nuevo Usuario
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4">Usuario</th>
+                                    <th class="text-left py-3 px-4">Rol</th>
+                                    <th class="text-left py-3 px-4">Estado</th>
+                                    <th class="text-left py-3 px-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaUsuarios"></tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="border-t pt-4">
+                        <h3 class="font-medium text-gray-800 mb-3">Perfiles de Permisos</h3>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                                <span class="text-gray-700">Administrador</span>
+                                <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Acceso total</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                                <span class="text-gray-700">Vendedor</span>
+                                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Solo ventas</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
+                                <span class="text-gray-700">Inventario</span>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Solo inventario</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestión de Clientes -->
+            <div class="bs-card p-6">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                    <i class="bi bi-people text-cyan-600"></i>
+                    Gestión de Clientes
+                </h2>
+                
+                <div class="space-y-4">
+                    <button onclick="abrirModalCliente()" class="bs-btn bs-btn-primary w-full">
+                        <i class="bi bi-person-plus"></i> Agregar Cliente
+                    </button>
+                    
+                    <div class="overflow-x-auto max-h-80">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4">Código</th>
+                                    <th class="text-left py-3 px-4">Nombre</th>
+                                    <th class="text-left py-3 px-4">Identificación</th>
+                                    <th class="text-left py-3 px-4">Teléfono</th>
+                                    <th class="text-left py-3 px-4">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaClientes"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plantillas y Personalización -->
+        <div class="bs-card p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <i class="bi bi-palette text-pink-600"></i>
+                Plantillas y Personalización
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3 border border-blue-200">
+                        <i class="bi bi-file-earmark-text text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-800 mb-2">Facturas</h3>
+                    <p class="text-sm text-gray-500 mb-3">Personalizar plantilla de facturas</p>
+                    <button onclick="personalizarPlantilla('facturas')" class="bs-btn bs-btn-primary w-full text-sm">
+                        <i class="bi bi-pencil"></i> Personalizar
+                    </button>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3 border border-green-200">
+                        <i class="bi bi-receipt text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-800 mb-2">Cotizaciones</h3>
+                    <p class="text-sm text-gray-500 mb-3">Personalizar plantilla de cotizaciones</p>
+                    <button onclick="personalizarPlantilla('cotizaciones')" class="bs-btn bs-btn-primary w-full text-sm">
+                        <i class="bi bi-pencil"></i> Personalizar
+                    </button>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-3 border border-purple-200">
+                        <i class="bi bi-printer text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-800 mb-2">Tickets</h3>
+                    <p class="text-sm text-gray-500 mb-3">Personalizar plantilla de tickets</p>
+                    <button onclick="personalizarPlantilla('tickets')" class="bs-btn bs-btn-primary w-full text-sm">
+                        <i class="bi bi-pencil"></i> Personalizar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="flex gap-4 justify-end">
+            <button onclick="restablecerConfiguracion()" class="bs-btn bg-gray-100 text-gray-700 border-gray-300">
+                <i class="bi bi-arrow-clockwise"></i> Restablecer
+            </button>
+            <button onclick="guardarTodaConfiguracion()" class="bs-btn bs-btn-primary">
+                <i class="bi bi-check-lg"></i> Guardar Todo
+            </button>
+        </div>
+    </main>
+
+    <!-- Modal Cliente -->
+    <div id="modalCliente" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bs-card p-6 w-full max-w-md mx-4">
+            <h3 class="text-xl font-bold mb-4" id="tituloModalCliente">Nuevo Cliente</h3>
+            
+            <form id="formCliente" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Código *</label>
+                    <input type="text" id="clienteCodigo" class="bs-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre *</label>
+                    <input type="text" id="clienteNombre" class="bs-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">RUC/Cédula *</label>
+                    <input type="text" id="clienteIdentificacion" class="bs-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                    <input type="text" id="clienteTelefono" class="bs-input w-full">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="clienteEmail" class="bs-input w-full">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+                    <textarea id="clienteDireccion" class="bs-input w-full" rows="2"></textarea>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="cerrarModalCliente()" class="bs-btn">Cancelar</button>
+                    <button type="submit" class="bs-btn bs-btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Usuario -->
+    <div id="modalUsuario" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bs-card p-6 w-full max-w-md mx-4">
+            <h3 class="text-xl font-bold mb-4" id="tituloModalUsuario">Nuevo Usuario</h3>
+            
+            <form id="formUsuario" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
+                    <input type="text" id="usuarioNombre" class="bs-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                    <input type="email" id="usuarioEmail" class="bs-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuario *</label>
+                    <input type="text" id="usuarioUsername" class="bs-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña *</label>
+                    <input type="password" id="usuarioPassword" class="bs-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Rol *</label>
+                    <select id="usuarioRol" class="bs-input w-full" required>
+                        <option value="admin">Administrador</option>
+                        <option value="vendedor">Vendedor</option>
+                        <option value="inventario">Inventario</option>
+                        <option value="reportes">Solo Reportes</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="cerrarModalUsuario()" class="bs-btn">Cancelar</button>
+                    <button type="submit" class="bs-btn bs-btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Secuencia -->
+    <div id="modalSecuencia" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bs-card p-6 w-full max-w-md mx-4">
+            <h3 class="text-xl font-bold mb-4" id="tituloModalSecuencia">Editar Secuencia</h3>
+            
+            <form id="formSecuencia" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Prefijo *</label>
+                    <input type="text" id="secuenciaPrefijo" class="bs-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Próximo Número *</label>
+                    <input type="number" id="secuenciaNumero" class="bs-input w-full" required min="1">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Longitud de ceros</label>
+                    <input type="number" id="secuenciaCeros" class="bs-input w-full" value="3" min="1" max="6">
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="cerrarModalSecuencia()" class="bs-btn">Cancelar</button>
+                    <button type="submit" class="bs-btn bs-btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts en ORDEN CORRECTO -->
+    <script src="../js/config-loader.js"></script>
+    <script src="../js/secure-database.js"></script>
+    <script src="../js/auth-system.js"></script>
+    <script src="../js/database-manager.js"></script>
+    <script src="../js/empresa-context.js"></script>
+    <script src="../js/configuracion.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("⚙️ Módulo de configuración cargando...");
+            
+            // Verificar autenticación con el sistema correcto
+            if (!window.auth || !window.auth.getCurrentUser()) {
+                console.log('❌ No autenticado, redirigiendo a login...');
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Cargar información del usuario
+            const user = window.auth.getCurrentUser();
+            if (user) {
+                document.getElementById('userName').textContent = user.name || user.email;
+                console.log('👤 Usuario cargado:', user.email);
+            }
+
+            // Inicializar configuración
+            if (window.configuracionManager) {
+                window.configuracionManager.cargarTodaConfiguracion();
+            } else {
+                console.error('❌ ConfiguraciónManager no disponible');
+                // Cargar configuración directamente
+                cargarTodaConfiguracion();
+            }
+            
+            console.log("✅ Configuración cargada correctamente");
+        });
+
+        function logout() {
+            if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+                console.log('👋 Cerrando sesión...');
+                window.auth.logout();
+                window.location.href = '../login.html';
+            }
+        }
+    </script>
+</body>
+</html>

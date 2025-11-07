@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BS Dash - Configuración</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ====== ESTILOS UBUNTU GLASS MEJORADOS ====== */
+        :root {
+            --bg-primary: #2D0922;
+            --bg-secondary: #1a0a15;
+            --bg-card: rgba(45, 20, 44, 0.75);
+            --bg-hover: rgba(85, 40, 80, 0.8);
+            --border-light: rgba(255, 255, 255, 0.15);
+            --border-hover: rgba(233, 84, 32, 0.6);
+            --text-primary: #FFFFFF;
+            --text-secondary: #E8E8E8;
+            --text-muted: #AAAAAA;
+            --accent-orange: #E95420;
+            --accent-purple: #77216F;
+            --gradient-primary: linear-gradient(135deg, #E95420, #77216F);
+            --gradient-card: linear-gradient(135deg, rgba(65, 25, 60, 0.9), rgba(40, 15, 35, 0.9));
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(rgba(14, 2, 64, 0.034), rgba(20, 9, 45, 0.477)), 
+                        url('');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .ubuntu-glass {
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: var(--gradient-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .ubuntu-window {
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: var(--gradient-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .window-header {
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--border-light);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: move;
+        }
+
+        .window-title {
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .window-control {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .window-control.close { background: #FF5F57; }
+        .window-control.minimize { background: #FFBD2E; }
+        .window-control.maximize { background: #28CA42; }
+
+        .window-control:hover {
+            transform: scale(1.1);
+        }
+
+        .window-content {
+            padding: 25px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .ubuntu-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .ubuntu-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(233, 84, 32, 0.2);
+        }
+
+        .ubuntu-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .ubuntu-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 20px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .ubuntu-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .ubuntu-btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+        }
+
+        .ubuntu-btn-primary:hover {
+            background: linear-gradient(135deg, #77216F, #E95420);
+            transform: translateY(-2px);
+        }
+
+        .ubuntu-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 2px solid var(--border-light);
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ubuntu-checkbox:checked {
+            background: var(--accent-orange);
+            border-color: var(--accent-orange);
+        }
+
+        .ubuntu-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .ubuntu-table th {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .ubuntu-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ubuntu-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Dock Interno */
+        .internal-dock {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(45, 20, 44, 0.5);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .dock-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .dock-item.active {
+            background: var(--gradient-primary);
+            transform: translateY(-3px);
+        }
+
+        .dock-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .dock-item span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Contenedor de Ventanas */
+        .windows-container {
+            min-height: 600px;
+            position: relative;
+        }
+
+        .window {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        .window.hidden {
+            display: none;
+        }
+
+        .window.minimized {
+            display: none;
+        }
+
+        /* Búsqueda */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 25px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* Estados */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(32, 201, 151, 0.2);
+            color: #20C997;
+        }
+
+        .status-inactive {
+            background: rgba(255, 107, 107, 0.2);
+            color: #FF6B6B;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes windowOpen {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-window-open {
+            animation: windowOpen 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="ubuntu-glass mx-4 mt-4 mb-6">
+        <div class="flex items-center justify-between p-6">
+            <div class="flex items-center gap-4">
+                <a href="../dashboard.html" class="ubuntu-btn">
+                    <i class="bi bi-arrow-left"></i> Volver al Dashboard
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#E95420] to-[#77216F]">
+                        <i class="bi bi-gear text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">Configuración del Sistema</h1>
+                        <p class="text-sm text-gray-300">Administra todas las configuraciones</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- Selector de Empresa -->
+                <div class="flex items-center gap-2 bg-gray-800 bg-opacity-50 px-3 py-2 rounded-lg border border-gray-700">
+                    <label class="text-sm font-medium">Empresa:</label>
+                    <select id="empresaSwitcher" class="bg-transparent border-none outline-none text-sm text-white">
+                        <option value="1">Berroa Studio S.R.L.</option>
+                        <option value="2">Empresa Secundaria</option>
+                        <option value="3">Otra Empresa</option>
+                    </select>
+                </div>
+
+                <span class="text-gray-300" id="userName">Cargando...</span>
+                <button onclick="logout()" class="ubuntu-btn bg-red-500 bg-opacity-20 text-red-400 border-red-500 border-opacity-30">
+                    <i class="bi bi-box-arrow-right"></i> Salir
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 pb-8">
+        <!-- Barra de Búsqueda Global -->
+        <div class="search-container">
+            <input type="text" id="globalSearch" class="search-input" placeholder="Buscar en configuración...">
+            <i class="bi bi-search search-icon"></i>
+        </div>
+
+        <!-- Dock Interno de Módulos -->
+        <div class="internal-dock">
+            <div class="dock-item active" onclick="abrirVentana('empresa')">
+                <i class="bi bi-building"></i>
+                <span>Empresa</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('pos')">
+                <i class="bi bi-cash-coin"></i>
+                <span>Punto de Venta</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('secuencias')">
+                <i class="bi bi-123"></i>
+                <span>Secuencias</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('usuarios')">
+                <i class="bi bi-shield-check"></i>
+                <span>Usuarios</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('clientes')">
+                <i class="bi bi-people"></i>
+                <span>Clientes</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('plantillas')">
+                <i class="bi bi-palette"></i>
+                <span>Plantillas</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('azure')">
+                <i class="bi bi-cloud-arrow-up"></i>
+                <span>Azure Cloud</span>
+            </div>
+        </div>
+
+        <!-- Contenedor de Ventanas -->
+        <div class="windows-container">
+            <!-- Ventana: Información de Empresa -->
+            <div id="ventana-empresa" class="ubuntu-window window animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-building"></i>
+                        <span>Información de la Empresa</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('empresa')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('empresa')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('empresa')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Nombre de la Empresa *</label>
+                            <input type="text" id="empresaNombre" class="ubuntu-input" placeholder="Berroa Studio S.R.L.">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">RNC *</label>
+                            <input type="text" id="empresaRNC" class="ubuntu-input" placeholder="123456789">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Teléfono</label>
+                            <input type="text" id="empresaTelefono" class="ubuntu-input" placeholder="(809) 123-4567">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                            <input type="email" id="empresaEmail" class="ubuntu-input" placeholder="info@berroastudio.com">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Dirección</label>
+                            <textarea id="empresaDireccion" class="ubuntu-input" rows="2" placeholder="Av. Principal #123, Santo Domingo"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Sitio Web</label>
+                            <input type="url" id="empresaWebsite" class="ubuntu-input" placeholder="https://berroastudio.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Eslogan</label>
+                            <input type="text" id="empresaEslogan" class="ubuntu-input" placeholder="Soluciones digitales innovadoras">
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button onclick="guardarConfiguracionEmpresa()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar Empresa
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Punto de Venta -->
+            <div id="ventana-pos" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-cash-coin"></i>
+                        <span>Configuración Punto de Venta</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('pos')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('pos')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('pos')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-medium text-gray-300 mb-3">Métodos de Pago</h3>
+                            <div class="space-y-2" id="metodosPagoContainer">
+                                <div class="flex items-center justify-between p-3 ubuntu-glass">
+                                    <span>Efectivo</span>
+                                    <div class="flex gap-2">
+                                        <button class="ubuntu-btn text-sm"><i class="bi bi-pencil"></i></button>
+                                        <button class="ubuntu-btn text-sm bg-red-500 bg-opacity-20 text-red-400"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 ubuntu-glass">
+                                    <span>Tarjeta de Crédito</span>
+                                    <div class="flex gap-2">
+                                        <button class="ubuntu-btn text-sm"><i class="bi bi-pencil"></i></button>
+                                        <button class="ubuntu-btn text-sm bg-red-500 bg-opacity-20 text-red-400"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="agregarMetodoPago()" class="ubuntu-btn mt-3 w-full">
+                                <i class="bi bi-plus"></i> Agregar Método de Pago
+                            </button>
+                        </div>
+
+                        <div>
+                            <h3 class="font-medium text-gray-300 mb-3">Configuración General</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="text-gray-300 font-medium">Habilitar descuentos</label>
+                                        <p class="text-xs text-gray-400">Permitir aplicar descuentos en ventas</p>
+                                    </div>
+                                    <input type="checkbox" id="habilitarDescuentos" class="ubuntu-checkbox" checked>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="text-gray-300 font-medium">Solicitar cliente obligatorio</label>
+                                        <p class="text-xs text-gray-400">Requerir selección de cliente en ventas</p>
+                                    </div>
+                                    <input type="checkbox" id="solicitarCliente" class="ubuntu-checkbox">
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="text-gray-300 font-medium">Imprimir automáticamente</label>
+                                        <p class="text-xs text-gray-400">Imprimir ticket al finalizar venta</p>
+                                    </div>
+                                    <input type="checkbox" id="imprimirAutomatico" class="ubuntu-checkbox" checked>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">IVA por defecto (%)</label>
+                                    <input type="number" id="ivaPorDefecto" class="ubuntu-input" value="18" min="0" max="100" step="0.1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button onclick="guardarConfiguracionPOS()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar POS
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Secuencias -->
+            <div id="ventana-secuencias" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-123"></i>
+                        <span>Secuencias y Numeración</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('secuencias')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('secuencias')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('secuencias')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 gap-3">
+                            <div class="flex items-center justify-between p-4 ubuntu-glass">
+                                <div>
+                                    <span class="font-medium text-gray-300">Facturas</span>
+                                    <p class="text-sm text-gray-400">Próximo número: <span id="secuenciaFacturas">FACT-001</span></p>
+                                </div>
+                                <button onclick="editarSecuencia('facturas')" class="ubuntu-btn text-sm">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-4 ubuntu-glass">
+                                <div>
+                                    <span class="font-medium text-gray-300">Cotizaciones</span>
+                                    <p class="text-sm text-gray-400">Próximo número: <span id="secuenciaCotizaciones">COT-001</span></p>
+                                </div>
+                                <button onclick="editarSecuencia('cotizaciones')" class="ubuntu-btn text-sm">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-4 ubuntu-glass">
+                                <div>
+                                    <span class="font-medium text-gray-300">Órdenes</span>
+                                    <p class="text-sm text-gray-400">Próximo número: <span id="secuenciaOrdenes">ORD-001</span></p>
+                                </div>
+                                <button onclick="editarSecuencia('ordenes')" class="ubuntu-btn text-sm">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-4 ubuntu-glass">
+                                <div>
+                                    <span class="font-medium text-gray-300">Reportes</span>
+                                    <p class="text-sm text-gray-400">Próximo número: <span id="secuenciaReportes">REP-001</span></p>
+                                </div>
+                                <button onclick="editarSecuencia('reportes')" class="ubuntu-btn text-sm">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Usuarios -->
+            <div id="ventana-usuarios" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-shield-check"></i>
+                        <span>Usuarios y Permisos</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('usuarios')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('usuarios')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('usuarios')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-medium text-gray-300">Usuarios del Sistema</h3>
+                            <button onclick="abrirModalUsuario()" class="ubuntu-btn ubuntu-btn-primary text-sm">
+                                <i class="bi bi-person-plus"></i> Nuevo Usuario
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="ubuntu-table">
+                                <thead>
+                                    <tr>
+                                        <th>Usuario</th>
+                                        <th>Rol</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaUsuarios">
+                                    <tr>
+                                        <td>admin@berroastudio.com</td>
+                                        <td>Administrador</td>
+                                        <td><span class="status-badge status-active">Activo</span></td>
+                                        <td>
+                                            <div class="flex gap-2">
+                                                <button class="ubuntu-btn text-sm"><i class="bi bi-pencil"></i></button>
+                                                <button class="ubuntu-btn text-sm bg-red-500 bg-opacity-20 text-red-400"><i class="bi bi-trash"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Clientes -->
+            <div id="ventana-clientes" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-people"></i>
+                        <span>Gestión de Clientes</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('clientes')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('clientes')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('clientes')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="space-y-4">
+                        <button onclick="abrirModalCliente()" class="ubuntu-btn ubuntu-btn-primary w-full">
+                            <i class="bi bi-person-plus"></i> Agregar Cliente
+                        </button>
+                        
+                        <div class="overflow-x-auto max-h-80">
+                            <table class="ubuntu-table">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Identificación</th>
+                                        <th>Teléfono</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaClientes">
+                                    <tr>
+                                        <td>CF</td>
+                                        <td>CONSUMIDOR FINAL</td>
+                                        <td>000-000000-0</td>
+                                        <td>-</td>
+                                        <td>
+                                            <div class="flex gap-2">
+                                                <button class="ubuntu-btn text-sm"><i class="bi bi-pencil"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Plantillas -->
+            <div id="ventana-plantillas" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-palette"></i>
+                        <span>Plantillas y Personalización</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('plantillas')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('plantillas')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('plantillas')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center ubuntu-glass p-6">
+                            <div class="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 bg-gradient-to-br from-blue-500 to-blue-600">
+                                <i class="bi bi-file-earmark-text text-white text-2xl"></i>
+                            </div>
+                            <h3 class="font-medium text-gray-300 mb-2">Facturas</h3>
+                            <p class="text-sm text-gray-400 mb-4">Personalizar plantilla de facturas</p>
+                            <button onclick="personalizarPlantilla('facturas')" class="ubuntu-btn ubuntu-btn-primary w-full text-sm">
+                                <i class="bi bi-pencil"></i> Personalizar
+                            </button>
+                        </div>
+                        
+                        <div class="text-center ubuntu-glass p-6">
+                            <div class="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 bg-gradient-to-br from-green-500 to-green-600">
+                                <i class="bi bi-receipt text-white text-2xl"></i>
+                            </div>
+                            <h3 class="font-medium text-gray-300 mb-2">Cotizaciones</h3>
+                            <p class="text-sm text-gray-400 mb-4">Personalizar plantilla de cotizaciones</p>
+                            <button onclick="personalizarPlantilla('cotizaciones')" class="ubuntu-btn ubuntu-btn-primary w-full text-sm">
+                                <i class="bi bi-pencil"></i> Personalizar
+                            </button>
+                        </div>
+                        
+                        <div class="text-center ubuntu-glass p-6">
+                            <div class="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 bg-gradient-to-br from-purple-500 to-purple-600">
+                                <i class="bi bi-printer text-white text-2xl"></i>
+                            </div>
+                            <h3 class="font-medium text-gray-300 mb-2">Tickets</h3>
+                            <p class="text-sm text-gray-400 mb-4">Personalizar plantilla de tickets</p>
+                            <button onclick="personalizarPlantilla('tickets')" class="ubuntu-btn ubuntu-btn-primary w-full text-sm">
+                                <i class="bi bi-pencil"></i> Personalizar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Azure Cloud -->
+            <div id="ventana-azure" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                        <span>Configuración Azure Cloud</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('azure')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('azure')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('azure')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Cosmos DB Endpoint *</label>
+                            <input type="text" id="azureCosmosEndpoint" class="ubuntu-input" 
+                                   placeholder="https://tu-cuenta.documents.azure.com:443/">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Cosmos DB Key *</label>
+                            <input type="password" id="azureCosmosKey" class="ubuntu-input" 
+                                   placeholder="Tu primary key">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Azure Client ID *</label>
+                            <input type="text" id="azureClientId" class="ubuntu-input" 
+                                   placeholder="Application ID">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Azure Client Secret *</label>
+                            <input type="password" id="azureClientSecret" class="ubuntu-input" 
+                                   placeholder="Client secret">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Azure Tenant ID *</label>
+                            <input type="text" id="azureTenantId" class="ubuntu-input" 
+                                   placeholder="Tenant ID">
+                        </div>
+                    </div>
+                    
+                    <!-- Estado de Conexión -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h4 class="font-medium text-gray-300 mb-3">Estado de Conexión:</h4>
+                        <div id="azureStatus" class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-orange-500 animate-pulse"></div>
+                            <span class="text-orange-400">⏳ No configurado</span>
+                        </div>
+                        <div id="azureDetails" class="mt-2 text-sm text-gray-400 hidden">
+                            <div>Cosmos DB: <span id="cosmosStatus">❌ No conectado</span></div>
+                            <div>OneDrive: <span id="onedriveStatus">❌ No conectado</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Acciones Azure -->
+                    <div class="flex gap-3 flex-wrap">
+                        <button onclick="testAzureConnection()" class="ubuntu-btn bg-blue-500 bg-opacity-20 text-blue-400 border-blue-500 border-opacity-30">
+                            <i class="bi bi-plug"></i> Probar Conexión
+                        </button>
+                        <button onclick="saveAzureConfig()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-cloud-check"></i> Guardar Azure
+                        </button>
+                        <button onclick="crearBackupAzure()" class="ubuntu-btn bg-green-500 bg-opacity-20 text-green-400 border-green-500 border-opacity-30">
+                            <i class="bi bi-cloud-arrow-up"></i> Backup
+                        </button>
+                        <button onclick="sincronizarDesdeAzure()" class="ubuntu-btn bg-purple-500 bg-opacity-20 text-purple-400 border-purple-500 border-opacity-30">
+                            <i class="bi bi-cloud-arrow-down"></i> Sincronizar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción Globales -->
+        <div class="flex gap-4 justify-end mt-6">
+            <button onclick="restablecerConfiguracion()" class="ubuntu-btn bg-gray-700 bg-opacity-50 text-gray-300 border-gray-600">
+                <i class="bi bi-arrow-clockwise"></i> Restablecer
+            </button>
+            <button onclick="guardarTodaConfiguracion()" class="ubuntu-btn ubuntu-btn-primary">
+                <i class="bi bi-check-lg"></i> Guardar Todo
+            </button>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../js/config-loader.js"></script>
+    <script src="../js/secure-database.js"></script>
+    <script src="../js/auth-system.js"></script>
+    <script src="../js/database-manager.js"></script>
+    <script src="../js/empresa-context.js"></script>
+    <script src="../js/configuracion.js"></script>
+
+    <!-- Scripts Azure -->
+    <script src="../services/azure-config.js"></script>
+    <script src="../services/cosmos-service.js"></script>
+    <script src="../services/onedrive-service.js"></script>
+
+    <script>
+        // Variables globales
+        let ventanaActual = 'empresa';
+        let ventanasMinimizadas = new Set();
+
+        document.addEventListener("DOMContentLoaded", function() {
+            console.log("⚙️ Módulo de configuración cargando...");
+            
+            // Verificar autenticación
+            if (!window.auth || !window.auth.getCurrentUser()) {
+                console.log('❌ No autenticado, redirigiendo a login...');
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Cargar información del usuario
+            const user = window.auth.getCurrentUser();
+            if (user) {
+                document.getElementById('userName').textContent = user.name || user.email;
+                console.log('👤 Usuario cargado:', user.email);
+            }
+
+            // Inicializar búsqueda global
+            inicializarBusquedaGlobal();
+
+            // Inicializar configuración
+            if (window.configuracionManager) {
+                window.configuracionManager.cargarTodaConfiguracion();
+            } else {
+                console.error('❌ ConfiguraciónManager no disponible');
+                cargarTodaConfiguracion();
+            }
+            
+            console.log("✅ Configuración cargada correctamente");
+        });
+
+        // ==================== SISTEMA DE VENTANAS ====================
+        function abrirVentana(ventanaId) {
+            // Ocultar ventana actual
+            document.getElementById(`ventana-${ventanaActual}`).classList.add('hidden');
+            document.querySelector(`.dock-item[onclick="abrirVentana('${ventanaActual}')"]`).classList.remove('active');
+            
+            // Mostrar nueva ventana
+            const ventana = document.getElementById(`ventana-${ventanaId}`);
+            ventana.classList.remove('hidden');
+            ventana.classList.remove('minimized');
+            ventana.style.animation = 'windowOpen 0.3s ease-out';
+            
+            // Actualizar dock
+            document.querySelector(`.dock-item[onclick="abrirVentana('${ventanaId}')"]`).classList.add('active');
+            
+            ventanaActual = ventanaId;
+            ventanasMinimizadas.delete(ventanaId);
+
+            // Cargar configuración Azure si se abre esa ventana
+            if (ventanaId === 'azure') {
+                setTimeout(() => {
+                    loadAzureConfig();
+                }, 100);
+            }
+        }
+
+        function minimizarVentana(ventanaId) {
+            const ventana = document.getElementById(`ventana-${ventanaId}`);
+            ventana.classList.add('minimized');
+            ventanasMinimizadas.add(ventanaId);
+        }
+
+        function maximizarVentana(ventanaId) {
+            const ventana = document.getElementById(`ventana-${ventanaId}`);
+            // Alternar entre maximizado y normal
+            if (ventana.style.width === '90vw') {
+                ventana.style.width = '';
+                ventana.style.height = '';
+                ventana.style.position = '';
+            } else {
+                ventana.style.width = '90vw';
+                ventana.style.height = '80vh';
+                ventana.style.position = 'fixed';
+                ventana.style.top = '10%';
+                ventana.style.left = '5%';
+                ventana.style.zIndex = '1000';
+            }
+        }
+
+        function cerrarVentana(ventanaId) {
+            // No permitir cerrar la única ventana abierta
+            if (document.querySelectorAll('.window:not(.hidden):not(.minimized)').length <= 1) {
+                alert('Debe haber al menos una ventana abierta');
+                return;
+            }
+            
+            const ventana = document.getElementById(`ventana-${ventanaId}`);
+            ventana.classList.add('hidden');
+            document.querySelector(`.dock-item[onclick="abrirVentana('${ventanaId}')"]`).classList.remove('active');
+            
+            // Abrir la primera ventana disponible
+            const ventanasDisponibles = Array.from(document.querySelectorAll('.dock-item:not(.active)'));
+            if (ventanasDisponibles.length > 0) {
+                const primeraVentana = ventanasDisponibles[0];
+                const nuevaVentanaId = primeraVentana.getAttribute('onclick').match(/'([^']+)'/)[1];
+                abrirVentana(nuevaVentanaId);
+            }
+        }
+
+        // ==================== BÚSQUEDA GLOBAL ====================
+        function inicializarBusquedaGlobal() {
+            const searchInput = document.getElementById('globalSearch');
+            
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const ventanas = document.querySelectorAll('.window');
+                
+                ventanas.forEach(ventana => {
+                    const text = ventana.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        ventana.style.display = 'block';
+                    } else {
+                        ventana.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // ==================== FUNCIONES DE CONFIGURACIÓN ====================
+        function guardarConfiguracionEmpresa() {
+            const nombre = document.getElementById('empresaNombre').value;
+            const rnc = document.getElementById('empresaRNC').value;
+            
+            if (!nombre || !rnc) {
+                alert('Por favor complete los campos obligatorios');
+                return;
+            }
+            
+            // Guardar en localStorage
+            const configEmpresa = {
+                nombre: nombre,
+                rnc: rnc,
+                telefono: document.getElementById('empresaTelefono').value,
+                email: document.getElementById('empresaEmail').value,
+                direccion: document.getElementById('empresaDireccion').value,
+                website: document.getElementById('empresaWebsite').value,
+                eslogan: document.getElementById('empresaEslogan').value
+            };
+            
+            localStorage.setItem('bs_config_empresa', JSON.stringify(configEmpresa));
+            alert('✅ Configuración de empresa guardada correctamente');
+        }
+
+        function guardarConfiguracionPOS() {
+            const iva = document.getElementById('ivaPorDefecto').value;
+            const descuentos = document.getElementById('habilitarDescuentos').checked;
+            
+            const configPOS = {
+                iva: parseFloat(iva),
+                habilitarDescuentos: descuentos,
+                solicitarCliente: document.getElementById('solicitarCliente').checked,
+                imprimirAutomatico: document.getElementById('imprimirAutomatico').checked
+            };
+            
+            localStorage.setItem('bs_config_pos', JSON.stringify(configPOS));
+            alert('✅ Configuración POS guardada correctamente');
+        }
+
+        function agregarMetodoPago() {
+            const nombre = prompt('Nombre del método de pago:');
+            if (nombre) {
+                alert(`Método de pago "${nombre}" agregado`);
+                // Aquí se agregaría a la lista
+            }
+        }
+
+        function editarSecuencia(tipo) {
+            const nuevoNumero = prompt(`Nuevo número para ${tipo}:`, '001');
+            if (nuevoNumero) {
+                document.getElementById(`secuencia${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`).textContent = 
+                    `${tipo.toUpperCase().substring(0,4)}-${nuevoNumero}`;
+                alert(`Secuencia de ${tipo} actualizada`);
+            }
+        }
+
+        function abrirModalUsuario() {
+            alert('Abrir modal de usuario - Funcionalidad en desarrollo');
+        }
+
+        function abrirModalCliente() {
+            alert('Abrir modal de cliente - Funcionalidad en desarrollo');
+        }
+
+        function personalizarPlantilla(tipo) {
+            alert(`Personalizando plantilla de ${tipo} - Funcionalidad en desarrollo`);
+        }
+
+        function restablecerConfiguracion() {
+            if (confirm('¿Restablecer toda la configuración a valores por defecto?')) {
+                localStorage.removeItem('bs_config_empresa');
+                localStorage.removeItem('bs_config_pos');
+                alert('✅ Configuración restablecida');
+                location.reload();
+            }
+        }
+
+        function guardarTodaConfiguracion() {
+            guardarConfiguracionEmpresa();
+            guardarConfiguracionPOS();
+            alert('✅ Toda la configuración ha sido guardada');
+        }
+
+        function logout() {
+            if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+                console.log('👋 Cerrando sesión...');
+                window.auth.logout();
+                window.location.href = '../login.html';
+            }
+        }
+
+        // Cargar configuración existente al iniciar
+        function cargarTodaConfiguracion() {
+            const configEmpresa = JSON.parse(localStorage.getItem('bs_config_empresa') || '{}');
+            const configPOS = JSON.parse(localStorage.getItem('bs_config_pos') || '{}');
+            
+            // Cargar datos de empresa
+            if (configEmpresa.nombre) {
+                document.getElementById('empresaNombre').value = configEmpresa.nombre;
+                document.getElementById('empresaRNC').value = configEmpresa.rnc;
+                document.getElementById('empresaTelefono').value = configEmpresa.telefono || '';
+                document.getElementById('empresaEmail').value = configEmpresa.email || '';
+                document.getElementById('empresaDireccion').value = configEmpresa.direccion || '';
+                document.getElementById('empresaWebsite').value = configEmpresa.website || '';
+                document.getElementById('empresaEslogan').value = configEmpresa.eslogan || '';
+            }
+            
+            // Cargar datos POS
+            if (configPOS.iva) {
+                document.getElementById('ivaPorDefecto').value = configPOS.iva;
+                document.getElementById('habilitarDescuentos').checked = configPOS.habilitarDescuentos || false;
+                document.getElementById('solicitarCliente').checked = configPOS.solicitarCliente || false;
+                document.getElementById('imprimirAutomatico').checked = configPOS.imprimirAutomatico || false;
+            }
+        }
+
+        // ==================== CONFIGURACIÓN AZURE ====================
+        function loadAzureConfig() {
+            if (!window.azureConfig) {
+                console.warn('⚠️ Azure Config no disponible');
+                return;
+            }
+            
+            const config = window.azureConfig;
+            document.getElementById('azureCosmosEndpoint').value = config.cosmosEndpoint || '';
+            document.getElementById('azureCosmosKey').value = config.cosmosKey || '';
+            document.getElementById('azureClientId').value = config.clientId || '';
+            document.getElementById('azureClientSecret').value = config.clientSecret || '';
+            document.getElementById('azureTenantId').value = config.tenantId || '';
+            updateAzureStatus();
+        }
+
+        function saveAzureConfig() {
+            if (!window.azureConfig) {
+                mostrarNotificacionAzure('❌ Servicios Azure no disponibles', 'error');
+                return;
+            }
+
+            const config = {
+                endpoint: document.getElementById('azureCosmosEndpoint').value.trim(),
+                key: document.getElementById('azureCosmosKey').value.trim(),
+                clientId: document.getElementById('azureClientId').value.trim(),
+                clientSecret: document.getElementById('azureClientSecret').value.trim(),
+                tenantId: document.getElementById('azureTenantId').value.trim()
+            };
+
+            if (!config.endpoint || !config.key || !config.clientId || !config.clientSecret || !config.tenantId) {
+                mostrarNotificacionAzure('❌ Todos los campos de Azure son requeridos', 'error');
+                return;
+            }
+
+            window.azureConfig.saveToLocalStorage(config);
+            updateAzureStatus();
+            mostrarNotificacionAzure('✅ Configuración Azure guardada correctamente', 'success');
+        }
+
+        async function testAzureConnection() {
+            if (!window.cosmosService || !window.oneDriveService) {
+                mostrarNotificacionAzure('❌ Servicios Azure no disponibles', 'error');
+                return;
+            }
+
+            const statusElement = document.getElementById('azureStatus');
+            const detailsElement = document.getElementById('azureDetails');
+            
+            statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></div><span class="text-blue-400">🔄 Probando conexión...</span>';
+            detailsElement.classList.remove('hidden');
+            
+            try {
+                const cosmosConnected = await window.cosmosService.connect();
+                const graphConnected = await window.oneDriveService.authenticate();
+                
+                document.getElementById('cosmosStatus').textContent = cosmosConnected ? '✅ Conectado' : '❌ Error';
+                document.getElementById('onedriveStatus').textContent = graphConnected ? '✅ Conectado' : '❌ Error';
+                
+                if (cosmosConnected && graphConnected) {
+                    statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-green-500"></div><span class="text-green-400">✅ Conectado a Azure</span>';
+                    mostrarNotificacionAzure('✅ Conexión Azure exitosa', 'success');
+                } else if (cosmosConnected) {
+                    statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-yellow-500"></div><span class="text-yellow-400">⚠️ Solo Cosmos DB</span>';
+                    mostrarNotificacionAzure('⚠️ Solo Cosmos DB conectado', 'warning');
+                } else if (graphConnected) {
+                    statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-yellow-500"></div><span class="text-yellow-400">⚠️ Solo OneDrive</span>';
+                    mostrarNotificacionAzure('⚠️ Solo OneDrive conectado', 'warning');
+                } else {
+                    statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-red-500"></div><span class="text-red-400">❌ Error de conexión</span>';
+                    mostrarNotificacionAzure('❌ Error conectando a Azure', 'error');
+                }
+            } catch (error) {
+                statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-red-500"></div><span class="text-red-400">❌ Error de conexión</span>';
+                detailsElement.innerHTML += `<div class="text-red-400 text-xs mt-2">Error: ${error.message}</div>`;
+                mostrarNotificacionAzure('❌ Error en conexión Azure', 'error');
+            }
+        }
+
+        function updateAzureStatus() {
+            const statusElement = document.getElementById('azureStatus');
+            if (!window.azureConfig) {
+                statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-red-500"></div><span class="text-red-400">❌ No disponible</span>';
+                return;
+            }
+            
+            const isConfigured = window.azureConfig.isAzureConfigured();
+            
+            if (isConfigured) {
+                statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-green-500"></div><span class="text-green-400">✅ Configurado</span>';
+            } else {
+                statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-orange-500 animate-pulse"></div><span class="text-orange-400">⏳ No configurado</span>';
+            }
+        }
+
+        async function crearBackupAzure() {
+            if (!window.cosmosService) {
+                mostrarNotificacionAzure('❌ Servicio Cosmos no disponible', 'error');
+                return;
+            }
+            
+            try {
+                mostrarNotificacionAzure('🔄 Creando backup en Azure...', 'info');
+                await window.cosmosService.backupToCloud();
+                mostrarNotificacionAzure('✅ Backup creado exitosamente en Azure', 'success');
+            } catch (error) {
+                console.error('Error en backup:', error);
+                mostrarNotificacionAzure('❌ Error creando backup: ' + error.message, 'error');
+            }
+        }
+
+        async function sincronizarDesdeAzure() {
+            if (!window.cosmosService) {
+                mostrarNotificacionAzure('❌ Servicio Cosmos no disponible', 'error');
+                return;
+            }
+            
+            try {
+                mostrarNotificacionAzure('🔄 Sincronizando desde Azure...', 'info');
+                const success = await window.cosmosService.syncFromCloud();
+                if (success) {
+                    mostrarNotificacionAzure('✅ Sincronización completada', 'success');
+                    // Recargar datos si es necesario
+                    if (window.configuracionManager) {
+                        window.configuracionManager.cargarClientes();
+                        window.configuracionManager.cargarUsuarios();
+                    }
+                } else {
+                    mostrarNotificacionAzure('ℹ️ No hay datos para sincronizar', 'info');
+                }
+            } catch (error) {
+                console.error('Error en sincronización:', error);
+                mostrarNotificacionAzure('❌ Error sincronizando: ' + error.message, 'error');
+            }
+        }
+
+        function mostrarNotificacionAzure(mensaje, tipo = 'info') {
+            const notificacion = document.createElement('div');
+            
+            const colors = {
+                success: '#28CA42',
+                error: '#FF5F57', 
+                warning: '#FFBD2E',
+                info: '#0D6EFD'
+            };
+            
+            const icons = {
+                success: 'bi-check-circle',
+                error: 'bi-exclamation-triangle',
+                warning: 'bi-exclamation-circle',
+                info: 'bi-info-circle'
+            };
+            
+            notificacion.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="bi ${icons[tipo]}" style="color: ${colors[tipo]}; font-size: 18px;"></i>
+                    <span>${mensaje}</span>
+                </div>
+            `;
+            
+            // Aplicar estilos Ubuntu
+            Object.assign(notificacion.style, {
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                background: 'rgba(51, 51, 51, 0.9)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                borderRadius: '12px',
+                padding: '15px 20px',
+                color: 'white',
+                zIndex: '10000',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                animation: 'slideInRight 0.3s ease',
+                fontFamily: 'Outfit, sans-serif'
+            });
+            
+            document.body.appendChild(notificacion);
+            
+            setTimeout(() => {
+                notificacion.style.opacity = '0';
+                notificacion.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => notificacion.remove(), 500);
+            }, 4000);
+        }
+
+        // Agregar keyframes para la animación de notificación
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

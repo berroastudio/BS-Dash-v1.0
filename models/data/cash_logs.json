@@ -1,0 +1,52 @@
+[
+    {
+        "id": "CIERRE-0002",
+        "type": "apertura",
+        "user_id": "user_001",
+        "timestamp": "2025-10-31T15:43:21.814183",
+        "amount": 1000.5,
+        "expected_amount": 1000.5,
+        "actual_amount": 1000.5,
+        "discrepancy": false,
+        "discrepancy_amount": 0.0,
+        "notes": "Apertura de caja inicial"
+    },
+    {
+        "timestamp": "2025-10-31T15:43:21.816201",
+        "user_id": "user_001",
+        "type": "movimiento",
+        "movement_type": "ingreso",
+        "amount": 500.0,
+        "description": "Ingreso: Venta #001",
+        "new_balance": 1500.5
+    },
+    {
+        "timestamp": "2025-10-31T15:43:21.822337",
+        "user_id": "user_001",
+        "type": "movimiento",
+        "movement_type": "ingreso",
+        "amount": 150.75,
+        "description": "Ingreso: Venta #002",
+        "new_balance": 1651.25
+    },
+    {
+        "timestamp": "2025-10-31T15:43:21.824370",
+        "user_id": "user_001",
+        "type": "movimiento",
+        "movement_type": "egreso",
+        "amount": 200.0,
+        "description": "Egreso: Compra suministros",
+        "new_balance": 1451.25
+    },
+    {
+        "id": "CIERRE-0003",
+        "type": "cierre",
+        "user_id": "user_001",
+        "timestamp": "2025-10-31T15:43:21.830601",
+        "expected_amount": 1451.25,
+        "actual_amount": 1451.25,
+        "discrepancy": false,
+        "discrepancy_amount": 0.0,
+        "notes": "Cierre normal"
+    }
+]

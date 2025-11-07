@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Caja - BS Dash</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="bg-[#fbfbfb] min-h-screen">
+    <header class="bs-card mx-4 mt-4 mb-6">
+        <div class="flex items-center justify-between p-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center border border-amber-200">
+                    <i class="bi bi-cash-stack text-amber-600"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-800">Gestión de Caja</h1>
+                    <p class="text-sm text-gray-600">Control de efectivo y movimientos</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <a href="../dashboard.html" class="bs-btn bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200">
+                    <i class="bi bi-arrow-left"></i>
+                    Volver
+                </a>
+                <button onclick="aperturaCaja()" class="bs-btn bg-green-500 text-white hover:bg-green-600" id="btnApertura">
+                    <i class="bi bi-unlock"></i>
+                    Apertura de Caja
+                </button>
+                <button onclick="cierreCaja()" class="bs-btn bg-red-500 text-white hover:bg-red-600 hidden" id="btnCierre">
+                    <i class="bi bi-lock"></i>
+                    Cierre de Caja
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4">
+        <!-- Estado de Caja -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bs-stat-card p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Efectivo Inicial</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1" id="efectivoInicial">$0.00</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center border border-green-200">
+                        <i class="bi bi-cash text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bs-stat-card p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Ventas del Día</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1" id="ventasDia">$0.00</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center border border-blue-200">
+                        <i class="bi bi-currency-dollar text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bs-stat-card p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Efectivo en Caja</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1" id="efectivoCaja">$0.00</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center border border-purple-200">
+                        <i class="bi bi-wallet text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bs-stat-card p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Diferencia</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1" id="diferenciaCaja">$0.00</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center border border-yellow-200">
+                        <i class="bi bi-graph-up-arrow text-yellow-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desglose de Efectivo -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Desglose de Denominaciones -->
+            <div class="lg:col-span-2">
+                <div class="bs-card p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Desglose de Efectivo</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="desgloseDenominaciones">
+                        <!-- Denominaciones se cargarán aquí -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen de Métodos de Pago -->
+            <div class="bs-card p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Métodos de Pago</h3>
+                <div class="space-y-3" id="resumenMetodosPago">
+                    <!-- Métodos de pago se cargarán aquí -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Movimientos de Caja -->
+        <div class="bs-card p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-gray-800">Movimientos de Caja</h3>
+                <div class="flex gap-2">
+                    <button onclick="agregarMovimiento()" class="bs-btn bs-btn-primary">
+                        <i class="bi bi-plus"></i> Nuevo Movimiento
+                    </button>
+                    <button onclick="generarReporteCaja()" class="bs-btn bg-green-500 text-white">
+                        <i class="bi bi-file-earmark-text"></i> Reporte
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Hora</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Tipo</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Descripción</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Monto</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Usuario</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaMovimientos">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Apertura de Caja -->
+    <div id="modalApertura" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bs-card p-6 w-full max-w-md mx-4">
+            <h3 class="text-xl font-bold mb-4">Apertura de Caja</h3>
+            
+            <form id="formApertura" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Efectivo Inicial *</label>
+                    <input type="number" step="0.01" id="montoApertura" class="bs-input w-full" required placeholder="0.00">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones</label>
+                    <textarea id="observacionesApertura" class="bs-input w-full" rows="3" placeholder="Observaciones de apertura..."></textarea>
+                </div>
+
+                <div class="flex gap-3 justify-end pt-4">
+                    <button type="button" onclick="cerrarModalApertura()" class="bs-btn">Cancelar</button>
+                    <button type="submit" class="bs-btn bs-btn-primary">
+                        <i class="bi bi-unlock"></i> Abrir Caja
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Cierre de Caja -->
+    <div id="modalCierre" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bs-card p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold mb-4">Cierre de Caja</h3>
+            
+            <div class="space-y-6">
+                <!-- Resumen de Cierre -->
+                <div class="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                    <div>
+                        <p class="text-sm text-gray-600">Efectivo Inicial</p>
+                        <p class="text-lg font-bold" id="cierreEfectivoInicial">$0.00</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Ventas Totales</p>
+                        <p class="text-lg font-bold" id="cierreVentasTotales">$0.00</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Efectivo Esperado</p>
+                        <p class="text-lg font-bold" id="cierreEfectivoEsperado">$0.00</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Efectivo Contado</p>
+                        <p class="text-lg font-bold" id="cierreEfectivoContado">$0.00</p>
+                    </div>
+                </div>
+
+                <!-- Desglose de Cierre -->
+                <div>
+                    <h4 class="font-medium text-gray-800 mb-3">Desglose de Efectivo</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="desgloseCierre">
+                        <!-- Desglose para cierre -->
+                    </div>
+                </div>
+
+                <!-- Diferencia -->
+                <div class="p-4 rounded-lg" id="diferenciaContainer">
+                    <p class="text-sm font-medium">Diferencia: <span id="diferenciaCierre">$0.00</span></p>
+                </div>
+
+                <form id="formCierre">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones de Cierre</label>
+                        <textarea id="observacionesCierre" class="bs-input w-full" rows="3" placeholder="Observaciones del cierre..."></textarea>
+                    </div>
+
+                    <div class="flex gap-3 justify-end pt-4">
+                        <button type="button" onclick="cerrarModalCierre()" class="bs-btn">Cancelar</button>
+                        <button type="submit" class="bs-btn bg-red-500 text-white hover:bg-red-600">
+                            <i class="bi bi-lock"></i> Cerrar Caja
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/config-loader.js"></script>
+    <script src="../js/secure-database.js"></script>
+    <script src="../js/auth-system.js"></script>
+    <script src="../js/database-manager.js"></script>
+    <script src="../js/empresa-context.js"></script>
+    
+    <script>
+        let cajaAbierta = false;
+        let movimientosCaja = [];
+
+        document.addEventListener("DOMContentLoaded", function() {
+            if (!window.auth || !window.auth.getCurrentUser()) {
+                window.location.href = "../login.html";
+                return;
+            }
+            console.log("🏦 Módulo de caja cargado");
+            verificarEstadoCaja();
+            cargarMovimientos();
+        });
+
+        function verificarEstadoCaja() {
+            // Simular verificación de estado de caja
+            const estado = Math.random() > 0.5; // Simulación
+            cajaAbierta = estado;
+            
+            if (cajaAbierta) {
+                document.getElementById('btnApertura').classList.add('hidden');
+                document.getElementById('btnCierre').classList.remove('hidden');
+                cargarEstadoCaja();
+            } else {
+                document.getElementById('btnApertura').classList.remove('hidden');
+                document.getElementById('btnCierre').classList.add('hidden');
+            }
+        }
+
+        function aperturaCaja() {
+            document.getElementById('modalApertura').classList.remove('hidden');
+            document.getElementById('modalApertura').classList.add('flex');
+        }
+
+        function cierreCaja() {
+            calcularCierre();
+            document.getElementById('modalCierre').classList.remove('hidden');
+            document.getElementById('modalCierre').classList.add('flex');
+        }
+
+        function cerrarModalApertura() {
+            document.getElementById('modalApertura').classList.add('hidden');
+            document.getElementById('modalApertura').classList.remove('flex');
+        }
+
+        function cerrarModalCierre() {
+            document.getElementById('modalCierre').classList.add('hidden');
+            document.getElementById('modalCierre').classList.remove('flex');
+        }
+
+        function cargarEstadoCaja() {
+            // Datos simulados
+            document.getElementById('efectivoInicial').textContent = '$500.00';
+            document.getElementById('ventasDia').textContent = '$1,250.75';
+            document.getElementById('efectivoCaja').textContent = '$1,750.75';
+            document.getElementById('diferenciaCaja').textContent = '$0.00';
+
+            cargarDesgloseDenominaciones();
+            cargarMetodosPago();
+        }
+
+        function cargarDesgloseDenominaciones() {
+            const denominaciones = [
+                { valor: 2000, cantidad: 2, total: 4000 },
+                { valor: 1000, cantidad: 5, total: 5000 },
+                { valor: 500, cantidad: 8, total: 4000 },
+                { valor: 200, cantidad: 10, total: 2000 },
+                { valor: 100, cantidad: 15, total: 1500 },
+                { valor: 50, cantidad: 20, total: 1000 },
+                { valor: 25, cantidad: 30, total: 750 },
+                { valor: 10, cantidad: 50, total: 500 },
+                { valor: 5, cantidad: 40, total: 200 },
+                { valor: 1, cantidad: 100, total: 100 }
+            ];
+
+            const container = document.getElementById('desgloseDenominaciones');
+            container.innerHTML = '';
+
+            denominaciones.forEach(denom => {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-50 p-3 rounded-lg text-center';
+                div.innerHTML = `
+                    <div class="text-lg font-bold text-gray-800">$${denom.valor}</div>
+                    <div class="text-sm text-gray-600">${denom.cantidad} x</div>
+                    <div class="text-md font-semibold text-green-600">$${denom.total}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function cargarMetodosPago() {
+            const metodos = [
+                { metodo: 'Efectivo', monto: 1750.75, porcentaje: 70 },
+                { metodo: 'Tarjeta', monto: 500.00, porcentaje: 20 },
+                { metodo: 'Transferencia', monto: 250.00, porcentaje: 10 }
+            ];
+
+            const container = document.getElementById('resumenMetodosPago');
+            container.innerHTML = '';
+
+            metodos.forEach(metodo => {
+                const div = document.createElement('div');
+                div.className = 'flex justify-between items-center p-2 border-b border-gray-200';
+                div.innerHTML = `
+                    <span class="font-medium">${metodo.metodo}</span>
+                    <div class="text-right">
+                        <div class="font-semibold">$${metodo.monto.toFixed(2)}</div>
+                        <div class="text-xs text-gray-500">${metodo.porcentaje}%</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function cargarMovimientos() {
+            movimientosCaja = [
+                { id: 1, hora: '08:00 AM', tipo: 'Apertura', descripcion: 'Apertura de caja', monto: 500.00, usuario: 'admin' },
+                { id: 2, hora: '09:15 AM', tipo: 'Venta', descripcion: 'Venta #001', monto: 150.75, usuario: 'cajero1' },
+                { id: 3, hora: '10:30 AM', tipo: 'Venta', descripcion: 'Venta #002', monto: 89.50, usuario: 'cajero1' },
+                { id: 4, hora: '11:45 AM', tipo: 'Retiro', descripcion: 'Retiro para proveedor', monto: -200.00, usuario: 'admin' },
+                { id: 5, hora: '02:20 PM', tipo: 'Venta', descripcion: 'Venta #003', monto: 450.25, usuario: 'cajero2' }
+            ];
+
+            const tbody = document.getElementById('tablaMovimientos');
+            tbody.innerHTML = '';
+
+            movimientosCaja.forEach(mov => {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-gray-100 hover:bg-gray-50';
+                
+                const montoColor = mov.monto >= 0 ? 'text-green-600' : 'text-red-600';
+                const tipoColor = mov.tipo === 'Venta' ? 'bg-green-100 text-green-800' : 
+                                mov.tipo === 'Apertura' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800';
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-sm">${mov.hora}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 text-xs rounded-full ${tipoColor}">${mov.tipo}</span>
+                    </td>
+                    <td class="py-3 px-4">${mov.descripcion}</td>
+                    <td class="py-3 px-4 font-semibold ${montoColor}">$${Math.abs(mov.monto).toFixed(2)}</td>
+                    <td class="py-3 px-4 text-sm">${mov.usuario}</td>
+                    <td class="py-3 px-4">
+                        <button onclick="verMovimiento(${mov.id})" class="bs-btn bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 text-sm">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function calcularCierre() {
+            const efectivoInicial = 500.00;
+            const ventasEfectivo = 1250.75;
+            const efectivoEsperado = efectivoInicial + ventasEfectivo;
+            const efectivoContado = 1750.75;
+            const diferencia = efectivoContado - efectivoEsperado;
+
+            document.getElementById('cierreEfectivoInicial').textContent = `$${efectivoInicial.toFixed(2)}`;
+            document.getElementById('cierreVentasTotales').textContent = `$${ventasEfectivo.toFixed(2)}`;
+            document.getElementById('cierreEfectivoEsperado').textContent = `$${efectivoEsperado.toFixed(2)}`;
+            document.getElementById('cierreEfectivoContado').textContent = `$${efectivoContado.toFixed(2)}`;
+            document.getElementById('diferenciaCierre').textContent = `$${diferencia.toFixed(2)}`;
+
+            const diferenciaContainer = document.getElementById('diferenciaContainer');
+            if (diferencia === 0) {
+                diferenciaContainer.className = 'p-4 bg-green-100 text-green-800 rounded-lg';
+            } else if (diferencia > 0) {
+                diferenciaContainer.className = 'p-4 bg-blue-100 text-blue-800 rounded-lg';
+            } else {
+                diferenciaContainer.className = 'p-4 bg-red-100 text-red-800 rounded-lg';
+            }
+        }
+
+        function agregarMovimiento() {
+            alert('Funcionalidad para agregar movimiento');
+        }
+
+        function generarReporteCaja() {
+            alert('Generando reporte de caja...');
+        }
+
+        function verMovimiento(id) {
+            console.log('Ver movimiento:', id);
+        }
+
+        // Manejar formularios
+        document.getElementById('formApertura').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const monto = document.getElementById('montoApertura').value;
+            console.log('Apertura de caja con:', monto);
+            cajaAbierta = true;
+            verificarEstadoCaja();
+            cerrarModalApertura();
+        });
+
+        document.getElementById('formCierre').addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Cierre de caja');
+            cajaAbierta = false;
+            verificarEstadoCaja();
+            cerrarModalCierre();
+        });
+    </script>
+</body>
+</html>

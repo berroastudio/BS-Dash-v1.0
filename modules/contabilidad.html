@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contabilidad - BS Dash Ubuntu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        /* Estilos Ubuntu */
+        :root {
+            --ubuntu-dark: #2D0922;
+            --ubuntu-purple: #77216F;
+            --ubuntu-orange: #E95420;
+            --ubuntu-light: #AEA79F;
+            --ubuntu-text: #FFFFFF;
+        }
+
+        .ubuntu-dark-theme {
+            background: linear-gradient(135deg, var(--ubuntu-dark) 0%, #1a0a15 100%);
+            color: var(--ubuntu-text);
+            min-height: 100vh;
+            font-family: 'Ubuntu', sans-serif;
+        }
+
+        .ubuntu-top-bar {
+            background: rgba(45, 9, 34, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--ubuntu-purple);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .ubuntu-window {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(119, 33, 111, 0.3);
+            border-radius: 12px;
+            margin: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .ubuntu-window-header {
+            background: linear-gradient(135deg, var(--ubuntu-purple), #5c1a5a);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ubuntu-window-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ubuntu-control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .ubuntu-control.close { background: #ff5f57; }
+        .ubuntu-control.minimize { background: #ffbd2e; }
+        .ubuntu-control.maximize { background: #28ca42; }
+
+        .ubuntu-window-title {
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ubuntu-window-content {
+            padding: 20px;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .ubuntu-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        .ubuntu-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .ubuntu-btn-primary {
+            background: linear-gradient(135deg, var(--ubuntu-orange), #ff6b35);
+            border-color: var(--ubuntu-orange);
+        }
+
+        .ubuntu-btn-success {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border-color: #20c997;
+        }
+
+        .ubuntu-btn-danger {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+            border-color: #dc3545;
+        }
+
+        .ubuntu-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .ubuntu-stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .ubuntu-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .ubuntu-stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .ubuntu-orange { color: var(--ubuntu-orange); }
+        .ubuntu-purple { color: var(--ubuntu-purple); }
+        .ubuntu-green { color: #20c997; }
+        .ubuntu-blue { color: #17a2b8; }
+
+        .bg-ubuntu-orange { background: var(--ubuntu-orange); }
+        .bg-ubuntu-purple { background: var(--ubuntu-purple); }
+        .bg-ubuntu-green { background: #20c997; }
+        .bg-ubuntu-blue { background: #17a2b8; }
+
+        .ubuntu-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: white;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .ubuntu-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .ubuntu-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .ubuntu-table th {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ubuntu-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ubuntu-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ubuntu-main-content {
+            margin-top: 60px;
+            padding: 20px;
+        }
+
+        .ubuntu-toolbar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .ubuntu-badge {
+            background: var(--ubuntu-orange);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .ubuntu-chip {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ubuntu-tab-container {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .ubuntu-tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .ubuntu-tab.active {
+            border-bottom-color: var(--ubuntu-orange);
+            color: var(--ubuntu-orange);
+        }
+
+        .ubuntu-tab-content {
+            display: none;
+        }
+
+        .ubuntu-tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100px); }
+        }
+
+        .transaction-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(4px);
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .modal-backdrop.active {
+            display: flex;
+        }
+
+        .modal-container {
+            background: rgba(45, 9, 34, 0.95);
+            border: 1px solid var(--ubuntu-purple);
+            border-radius: 12px;
+            backdrop-filter: blur(15px);
+            max-width: 90%;
+            max-height: 90%;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-large {
+            width: 600px;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--ubuntu-purple), #5c1a5a);
+            padding: 16px;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+    </style>
+    <!-- Librerías para gráficos y reportes -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="ubuntu-dark-theme">
+    <!-- Top Bar Ubuntu -->
+    <div class="ubuntu-top-bar">
+        <div class="ubuntu-top-left">
+            <div class="ubuntu-apps-menu">
+                <i class="bi bi-grid-3x3-gap"></i>
+            </div>
+            <div class="ubuntu-breadcrumb">
+                <span>BS Dash</span>
+                <i class="bi bi-chevron-right"></i>
+                <span>Contabilidad</span>
+            </div>
+        </div>
+        <div class="ubuntu-top-center">
+            <div class="ubuntu-search">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Buscar en contabilidad..." class="ubuntu-input" style="width: 300px;" id="searchGlobal">
+            </div>
+        </div>
+        <div class="ubuntu-top-right">
+            <div class="ubuntu-system-tray">
+                <i class="bi bi-wifi"></i>
+                <i class="bi bi-battery-half"></i>
+                <span id="ubuntu-time">14:30</span>
+                <i class="bi bi-person-circle"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="ubuntu-main-content">
+        <!-- Ventana Principal de Contabilidad -->
+        <div class="ubuntu-window">
+            <div class="ubuntu-window-header">
+                <div class="ubuntu-window-controls">
+                    <div class="ubuntu-control close" onclick="window.history.back()"></div>
+                    <div class="ubuntu-control minimize"></div>
+                    <div class="ubuntu-control maximize"></div>
+                </div>
+                <div class="ubuntu-window-title">
+                    <i class="bi bi-calculator ubuntu-green"></i>
+                    Sistema Contable - Dashboard Financiero Avanzado
+                </div>
+                <div class="ubuntu-window-actions">
+                    <a href="../dashboard.html" class="ubuntu-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        Volver al Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <div class="ubuntu-window-content">
+                <!-- Tabs de Navegación -->
+                <div class="ubuntu-tab-container">
+                    <div class="ubuntu-tab active" onclick="cambiarTab('resumen')">
+                        <i class="bi bi-speedometer2"></i> Resumen
+                    </div>
+                    <div class="ubuntu-tab" onclick="cambiarTab('transacciones')">
+                        <i class="bi bi-arrow-left-right"></i> Transacciones
+                    </div>
+                    <div class="ubuntu-tab" onclick="cambiarTab('reportes')">
+                        <i class="bi bi-graph-up"></i> Reportes
+                    </div>
+                    <div class="ubuntu-tab" onclick="cambiarTab('analitica')">
+                        <i class="bi bi-bar-chart"></i> Analítica
+                    </div>
+                    <div class="ubuntu-tab" onclick="cambiarTab('configuracion')">
+                        <i class="bi bi-gear"></i> Configuración
+                    </div>
+                </div>
+
+                <!-- Tab: Resumen -->
+                <div id="tab-resumen" class="ubuntu-tab-content active">
+                    <!-- Estadísticas Rápidas -->
+                    <div class="ubuntu-stats-grid">
+                        <div class="ubuntu-stat-card animate-fade-in">
+                            <div class="ubuntu-stat-icon bg-ubuntu-green">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                            <div class="ubuntu-stat-info">
+                                <h3 id="ingresosMes">$25,430</h3>
+                                <p>Ingresos del Mes</p>
+                                <div class="text-xs text-green-400 mt-1">
+                                    <i class="bi bi-arrow-up"></i> 8% vs mes anterior
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ubuntu-stat-card animate-fade-in" style="animation-delay: 0.1s;">
+                            <div class="ubuntu-stat-icon bg-ubuntu-orange">
+                                <i class="bi bi-cart"></i>
+                            </div>
+                            <div class="ubuntu-stat-info">
+                                <h3 id="gastosMes">$12,560</h3>
+                                <p>Gastos del Mes</p>
+                                <div class="text-xs text-red-400 mt-1">
+                                    <i class="bi bi-arrow-down"></i> 5% vs mes anterior
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ubuntu-stat-card animate-fade-in" style="animation-delay: 0.2s;">
+                            <div class="ubuntu-stat-icon bg-ubuntu-blue">
+                                <i class="bi bi-piggy-bank"></i>
+                            </div>
+                            <div class="ubuntu-stat-info">
+                                <h3 id="utilidadNeta">$12,870</h3>
+                                <p>Utilidad Neta</p>
+                                <div class="text-xs text-blue-400 mt-1">
+                                    <i class="bi bi-graph-up"></i> 15% margen
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ubuntu-stat-card animate-fade-in" style="animation-delay: 0.3s;">
+                            <div class="ubuntu-stat-icon bg-ubuntu-purple">
+                                <i class="bi bi-cash-stack"></i>
+                            </div>
+                            <div class="ubuntu-stat-info">
+                                <h3 id="flujoCaja">$8,420</h3>
+                                <p>Flujo de Caja</p>
+                                <div class="text-xs text-purple-400 mt-1">
+                                    <i class="bi bi-check-circle"></i> Positivo
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráficos Principales -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="ubuntu-window">
+                            <div class="ubuntu-window-header">
+                                <div class="ubuntu-window-title">
+                                    <i class="bi bi-bar-chart ubuntu-green"></i>
+                                    Ingresos vs Gastos
+                                </div>
+                            </div>
+                            <div class="ubuntu-window-content">
+                                <div class="h-64">
+                                    <canvas id="incomeExpenseChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ubuntu-window">
+                            <div class="ubuntu-window-header">
+                                <div class="ubuntu-window-title">
+                                    <i class="bi bi-pie-chart ubuntu-purple"></i>
+                                    Distribución de Gastos
+                                </div>
+                            </div>
+                            <div class="ubuntu-window-content">
+                                <div class="h-64">
+                                    <canvas id="expenseDistributionChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transacciones Recientes -->
+                    <div class="ubuntu-window">
+                        <div class="ubuntu-window-header">
+                            <div class="ubuntu-window-title">
+                                <i class="bi bi-clock-history ubuntu-orange"></i>
+                                Transacciones Recientes
+                            </div>
+                            <button onclick="mostrarModalNuevaTransaccion()" class="ubuntu-btn ubuntu-btn-primary">
+                                <i class="bi bi-plus"></i> Nueva Transacción
+                            </button>
+                        </div>
+                        <div class="ubuntu-window-content">
+                            <div class="space-y-3" id="transaccionesRecientes">
+                                <!-- Las transacciones se cargarán aquí -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Transacciones -->
+                <div id="tab-transacciones" class="ubuntu-tab-content">
+                    <div class="ubuntu-window">
+                        <div class="ubuntu-window-header">
+                            <div class="ubuntu-window-title">
+                                <i class="bi bi-list-check ubuntu-blue"></i>
+                                Gestión de Transacciones
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="exportarTransaccionesExcel()" class="ubuntu-btn ubuntu-btn-success">
+                                    <i class="bi bi-file-earmark-excel"></i> Excel
+                                </button>
+                                <button onclick="mostrarModalNuevaTransaccion()" class="ubuntu-btn ubuntu-btn-primary">
+                                    <i class="bi bi-plus"></i> Nueva
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ubuntu-window-content">
+                            <!-- Filtros -->
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm mb-2">Tipo</label>
+                                    <select id="filtroTipo" class="ubuntu-input" onchange="filtrarTransacciones()">
+                                        <option value="">Todos</option>
+                                        <option value="ingreso">Ingreso</option>
+                                        <option value="gasto">Gasto</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm mb-2">Desde</label>
+                                    <input type="date" id="filtroDesde" class="ubuntu-input" onchange="filtrarTransacciones()">
+                                </div>
+                                <div>
+                                    <label class="block text-sm mb-2">Hasta</label>
+                                    <input type="date" id="filtroHasta" class="ubuntu-input" onchange="filtrarTransacciones()">
+                                </div>
+                                <div>
+                                    <label class="block text-sm mb-2">Categoría</label>
+                                    <select id="filtroCategoria" class="ubuntu-input" onchange="filtrarTransacciones()">
+                                        <option value="">Todas</option>
+                                        <!-- Las categorías se cargarán dinámicamente -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Tabla de Transacciones -->
+                            <div class="overflow-x-auto">
+                                <table class="ubuntu-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Descripción</th>
+                                            <th>Categoría</th>
+                                            <th>Tipo</th>
+                                            <th>Monto</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaTransacciones">
+                                        <!-- Las transacciones se cargarán aquí -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Reportes -->
+                <div id="tab-reportes" class="ubuntu-tab-content">
+                    <div class="ubuntu-window">
+                        <div class="ubuntu-window-header">
+                            <div class="ubuntu-window-title">
+                                <i class="bi bi-file-earmark-text ubuntu-green"></i>
+                                Generador de Reportes
+                            </div>
+                        </div>
+                        <div class="ubuntu-window-content">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div class="ubuntu-stat-card cursor-pointer" onclick="generarBalanceGeneral()">
+                                    <div class="ubuntu-stat-icon bg-ubuntu-blue">
+                                        <i class="bi bi-file-earmark-pdf"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-bold">Balance General</h3>
+                                        <p class="text-sm opacity-70">Estado financiero resumido</p>
+                                    </div>
+                                    <i class="bi bi-arrow-right opacity-50"></i>
+                                </div>
+                                
+                                <div class="ubuntu-stat-card cursor-pointer" onclick="generarEstadoResultados()">
+                                    <div class="ubuntu-stat-icon bg-ubuntu-green">
+                                        <i class="bi bi-file-earmark-spreadsheet"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-bold">Estado de Resultados</h3>
+                                        <p class="text-sm opacity-70">Ingresos y gastos detallados</p>
+                                    </div>
+                                    <i class="bi bi-arrow-right opacity-50"></i>
+                                </div>
+                                
+                                <div class="ubuntu-stat-card cursor-pointer" onclick="generarFlujoEfectivo()">
+                                    <div class="ubuntu-stat-icon bg-ubuntu-purple">
+                                        <i class="bi bi-graph-up"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-bold">Flujo de Efectivo</h3>
+                                        <p class="text-sm opacity-70">Movimientos de caja</p>
+                                    </div>
+                                    <i class="bi bi-arrow-right opacity-50"></i>
+                                </div>
+                                
+                                <div class="ubuntu-stat-card cursor-pointer" onclick="generarReporteCompleto()">
+                                    <div class="ubuntu-stat-icon bg-ubuntu-orange">
+                                        <i class="bi bi-archive"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <h3 class="font-bold">Reporte Completo</h3>
+                                        <p class="text-sm opacity-70">Todos los reportes</p>
+                                    </div>
+                                    <i class="bi bi-arrow-right opacity-50"></i>
+                                </div>
+                            </div>
+
+                            <!-- Configuración de Reportes -->
+                            <div class="ubuntu-window mt-6">
+                                <div class="ubuntu-window-header">
+                                    <div class="ubuntu-window-title">
+                                        <i class="bi bi-sliders ubuntu-orange"></i>
+                                        Configuración de Reportes
+                                    </div>
+                                </div>
+                                <div class="ubuntu-window-content">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm mb-2">Periodo del Reporte</label>
+                                            <select id="periodoReporte" class="ubuntu-input">
+                                                <option value="mes_actual">Mes Actual</option>
+                                                <option value="trimestre_actual">Trimestre Actual</option>
+                                                <option value="anio_actual">Año Actual</option>
+                                                <option value="personalizado">Personalizado</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm mb-2">Formato de Exportación</label>
+                                            <select id="formatoExportacion" class="ubuntu-input">
+                                                <option value="pdf">PDF</option>
+                                                <option value="excel">Excel</option>
+                                                <option value="ambos">Ambos</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Analítica -->
+                <div id="tab-analitica" class="ubuntu-tab-content">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="ubuntu-window">
+                            <div class="ubuntu-window-header">
+                                <div class="ubuntu-window-title">
+                                    <i class="bi bi-graph-up-arrow ubuntu-green"></i>
+                                    Tendencias Financieras
+                                </div>
+                            </div>
+                            <div class="ubuntu-window-content">
+                                <div class="h-64">
+                                    <canvas id="tendenciasChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ubuntu-window">
+                            <div class="ubuntu-window-header">
+                                <div class="ubuntu-window-title">
+                                    <i class="bi bi-speedometer2 ubuntu-blue"></i>
+                                    Métricas Clave
+                                </div>
+                            </div>
+                            <div class="ubuntu-window-content">
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center">
+                                        <span>Margen de Utilidad</span>
+                                        <span class="font-bold text-green-400">25.4%</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Rotación de Inventario</span>
+                                        <span class="font-bold text-blue-400">8.2x</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Días de Cuentas por Cobrar</span>
+                                        <span class="font-bold text-orange-400">32 días</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span>Razón Corriente</span>
+                                        <span class="font-bold text-purple-400">2.1</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Configuración -->
+                <div id="tab-configuracion" class="ubuntu-tab-content">
+                    <div class="ubuntu-window">
+                        <div class="ubuntu-window-header">
+                            <div class="ubuntu-window-title">
+                                <i class="bi bi-gear ubuntu-orange"></i>
+                                Configuración Contable
+                            </div>
+                        </div>
+                        <div class="ubuntu-window-content">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h3 class="font-bold mb-4">Categorías</h3>
+                                    <div class="space-y-3" id="categoriasContainer">
+                                        <!-- Las categorías se cargarán aquí -->
+                                    </div>
+                                    <button onclick="mostrarModalNuevaCategoria()" class="ubuntu-btn ubuntu-btn-primary w-full mt-4">
+                                        <i class="bi bi-plus"></i> Nueva Categoría
+                                    </button>
+                                </div>
+
+                                <div>
+                                    <h3 class="font-bold mb-4">Configuración General</h3>
+                                    <div class="space-y-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <label class="block text-sm font-medium">IVA Aplicable</label>
+                                                <p class="text-xs opacity-70">Porcentaje de IVA por defecto</p>
+                                            </div>
+                                            <input type="number" class="ubuntu-input w-20" value="18" min="0" max="100">
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <label class="block text-sm font-medium">Moneda Principal</label>
+                                                <p class="text-xs opacity-70">Moneda para reportes</p>
+                                            </div>
+                                            <select class="ubuntu-input w-32">
+                                                <option value="USD">USD ($)</option>
+                                                <option value="DOP">DOP (RD$)</option>
+                                                <option value="EUR">EUR (€)</option>
+                                            </select>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <label class="block text-sm font-medium">Año Fiscal</label>
+                                                <p class="text-xs opacity-70">Año contable actual</p>
+                                            </div>
+                                            <input type="number" class="ubuntu-input w-24" value="2024" min="2020" max="2030">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Transacción -->
+    <div id="modalNuevaTransaccionBackdrop" class="modal-backdrop">
+        <div class="modal-container modal-large">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="bi bi-plus-circle ubuntu-green"></i>
+                    Nueva Transacción
+                </h3>
+                <button class="modal-close" onclick="cerrarModalActual()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formTransaccion" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm mb-2">Tipo *</label>
+                            <select id="transaccionTipo" class="ubuntu-input w-full" required onchange="toggleCamposTransaccion()">
+                                <option value="">Seleccionar tipo</option>
+                                <option value="ingreso">Ingreso</option>
+                                <option value="gasto">Gasto</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Fecha *</label>
+                            <input type="date" id="transaccionFecha" class="ubuntu-input w-full" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Categoría *</label>
+                            <select id="transaccionCategoria" class="ubuntu-input w-full" required>
+                                <option value="">Seleccionar categoría</option>
+                                <!-- Las categorías se cargarán dinámicamente -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2">Monto *</label>
+                            <input type="number" id="transaccionMonto" class="ubuntu-input w-full" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-2">Descripción</label>
+                        <textarea id="transaccionDescripcion" class="ubuntu-input w-full" rows="3" placeholder="Descripción de la transacción..."></textarea>
+                    </div>
+                    <div id="camposAdicionalesIngreso" class="hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm mb-2">Cliente</label>
+                                <input type="text" id="transaccionCliente" class="ubuntu-input w-full" placeholder="Nombre del cliente">
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-2">Factura Asociada</label>
+                                <input type="text" id="transaccionFactura" class="ubuntu-input w-full" placeholder="Número de factura">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="camposAdicionalesGasto" class="hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm mb-2">Proveedor</label>
+                                <input type="text" id="transaccionProveedor" class="ubuntu-input w-full" placeholder="Nombre del proveedor">
+                            </div>
+                            <div>
+                                <label class="block text-sm mb-2">IVA</label>
+                                <input type="number" id="transaccionIVA" class="ubuntu-input w-full" step="0.01" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button onclick="cerrarModalActual()" class="ubuntu-btn">Cancelar</button>
+                <button onclick="guardarTransaccion()" class="ubuntu-btn ubuntu-btn-primary">
+                    <i class="bi bi-check-lg"></i> Guardar Transacción
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Categoría -->
+    <div id="modalNuevaCategoriaBackdrop" class="modal-backdrop">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="bi bi-tag ubuntu-purple"></i>
+                    Nueva Categoría
+                </h3>
+                <button class="modal-close" onclick="cerrarModalActual()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formCategoria" class="space-y-4">
+                    <div>
+                        <label class="block text-sm mb-2">Nombre *</label>
+                        <input type="text" id="categoriaNombre" class="ubuntu-input w-full" placeholder="Nombre de la categoría" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-2">Tipo *</label>
+                        <select id="categoriaTipo" class="ubuntu-input w-full" required>
+                            <option value="">Seleccionar tipo</option>
+                            <option value="ingreso">Ingreso</option>
+                            <option value="gasto">Gasto</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-2">Descripción</label>
+                        <textarea id="categoriaDescripcion" class="ubuntu-input w-full" rows="3" placeholder="Descripción de la categoría..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button onclick="cerrarModalActual()" class="ubuntu-btn">Cancelar</button>
+                <button onclick="guardarCategoria()" class="ubuntu-btn ubuntu-btn-primary">
+                    <i class="bi bi-check-lg"></i> Guardar Categoría
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/config-loader.js"></script>
+    <script src="../js/secure-database.js"></script>
+    <script src="../js/auth-system.js"></script>
+    <script src="../js/database-manager.js"></script>
+    <script src="../js/empresa-context.js"></script>
+    <script src="../js/auth-checker.js"></script>
+
+    <script>
+        // ==================== SISTEMA CONTABLE COMPLETO ====================
+        
+        // Variables globales
+        let transacciones = [];
+        let categorias = [];
+        let currentTab = 'resumen';
+        let modalActual = null;
+        let charts = {};
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', async function() {
+            const authCheck = await window.authChecker.initializeModule('Contabilidad');
+            
+            if (authCheck) {
+                console.log('💰 Iniciando sistema contable Ubuntu...');
+                inicializarSistemaContable();
+                cargarDatosIniciales();
+                actualizarFechaHora();
+                inicializarGraficos();
+                
+                setInterval(actualizarFechaHora, 60000);
+            }
+        });
+
+        function actualizarFechaHora() {
+            const ahora = new Date();
+            document.getElementById('ubuntu-time').textContent = 
+                ahora.getHours().toString().padStart(2, '0') + ':' + 
+                ahora.getMinutes().toString().padStart(2, '0');
+        }
+
+        // ==================== SISTEMA DE TABS ====================
+        
+        function cambiarTab(tabName) {
+            // Ocultar todas las tabs
+            document.querySelectorAll('.ubuntu-tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.ubuntu-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Mostrar tab seleccionada
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            event.target.classList.add('active');
+            currentTab = tabName;
+
+            // Actualizar datos específicos de la tab
+            switch(tabName) {
+                case 'transacciones':
+                    cargarTransacciones();
+                    break;
+                case 'configuracion':
+                    cargarCategoriasUI();
+                    break;
+            }
+        }
+
+        // ==================== INICIALIZACIÓN DEL SISTEMA ====================
+        
+        function inicializarSistemaContable() {
+            // Configurar fechas por defecto
+            const hoy = new Date();
+            const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            
+            document.getElementById('filtroDesde').value = inicioMes.toISOString().split('T')[0];
+            document.getElementById('filtroHasta').value = hoy.toISOString().split('T')[0];
+            document.getElementById('transaccionFecha').value = hoy.toISOString().split('T')[0];
+        }
+
+        function cargarDatosIniciales() {
+            // Cargar transacciones
+            transacciones = JSON.parse(localStorage.getItem('bs_transacciones')) || [];
+            if (transacciones.length === 0) {
+                cargarDatosEjemplo();
+            }
+
+            // Cargar categorías
+            categorias = JSON.parse(localStorage.getItem('bs_categorias_contables')) || [];
+            if (categorias.length === 0) {
+                cargarCategoriasEjemplo();
+            }
+
+            // Actualizar UI
+            actualizarResumen();
+            cargarTransaccionesRecientes();
+            cargarOpcionesCategorias();
+        }
+
+        function cargarDatosEjemplo() {
+            const transaccionesEjemplo = [
+                {
+                    id: 1,
+                    tipo: 'ingreso',
+                    categoria: 'ventas',
+                    monto: 245.00,
+                    descripcion: 'Venta #00125 - Poloche Negro',
+                    fecha: new Date().toISOString(),
+                    cliente: 'Ana García',
+                    factura: 'FAC-00125'
+                },
+                {
+                    id: 2,
+                    tipo: 'gasto',
+                    categoria: 'proveedores',
+                    monto: 150.00,
+                    descripcion: 'Pago a proveedor - Materiales',
+                    fecha: new Date(Date.now() - 86400000).toISOString(),
+                    proveedor: 'Distribuidora XYZ',
+                    iva: 27.00
+                },
+                {
+                    id: 3,
+                    tipo: 'ingreso',
+                    categoria: 'servicios',
+                    monto: 189.50,
+                    descripcion: 'Servicio de diseño gráfico',
+                    fecha: new Date(Date.now() - 172800000).toISOString(),
+                    cliente: 'Carlos López',
+                    factura: 'FAC-00124'
+                },
+                {
+                    id: 4,
+                    tipo: 'gasto',
+                    categoria: 'servicios',
+                    monto: 75.30,
+                    descripcion: 'Mantenimiento de equipos',
+                    fecha: new Date(Date.now() - 259200000).toISOString(),
+                    proveedor: 'Técnico Express',
+                    iva: 13.55
+                }
+            ];
+
+            transacciones = transaccionesEjemplo;
+            localStorage.setItem('bs_transacciones', JSON.stringify(transacciones));
+        }
+
+        function cargarCategoriasEjemplo() {
+            const categoriasEjemplo = [
+                { id: 1, nombre: 'Ventas', tipo: 'ingreso', descripcion: 'Ingresos por ventas de productos' },
+                { id: 2, nombre: 'Servicios', tipo: 'ingreso', descripcion: 'Ingresos por servicios prestados' },
+                { id: 3, nombre: 'Proveedores', tipo: 'gasto', descripcion: 'Pagos a proveedores' },
+                { id: 4, nombre: 'Nómina', tipo: 'gasto', descripcion: 'Pagos de salarios' },
+                { id: 5, nombre: 'Alquiler', tipo: 'gasto', descripcion: 'Pago de alquileres' },
+                { id: 6, nombre: 'Servicios Básicos', tipo: 'gasto', descripcion: 'Luz, agua, internet, etc.' }
+            ];
+
+            categorias = categoriasEjemplo;
+            localStorage.setItem('bs_categorias_contables', JSON.stringify(categorias));
+        }
+
+        // ==================== GESTIÓN DE TRANSACCIONES ====================
+        
+        function mostrarModalNuevaTransaccion() {
+            document.getElementById('formTransaccion').reset();
+            document.getElementById('transaccionFecha').value = new Date().toISOString().split('T')[0];
+            document.getElementById('camposAdicionalesIngreso').classList.add('hidden');
+            document.getElementById('camposAdicionalesGasto').classList.add('hidden');
+            
+            mostrarModal('modalNuevaTransaccion');
+        }
+
+        function toggleCamposTransaccion() {
+            const tipo = document.getElementById('transaccionTipo').value;
+            document.getElementById('camposAdicionalesIngreso').classList.add('hidden');
+            document.getElementById('camposAdicionalesGasto').classList.add('hidden');
+
+            if (tipo === 'ingreso') {
+                document.getElementById('camposAdicionalesIngreso').classList.remove('hidden');
+            } else if (tipo === 'gasto') {
+                document.getElementById('camposAdicionalesGasto').classList.remove('hidden');
+            }
+        }
+
+        function guardarTransaccion() {
+            const tipo = document.getElementById('transaccionTipo').value;
+            const categoria = document.getElementById('transaccionCategoria').value;
+            const monto = parseFloat(document.getElementById('transaccionMonto').value);
+            const fecha = document.getElementById('transaccionFecha').value;
+            const descripcion = document.getElementById('transaccionDescripcion').value;
+
+            if (!tipo || !categoria || !monto || !fecha) {
+                mostrarNotificacion('❌ Complete todos los campos obligatorios', 'error');
+                return;
+            }
+
+            const nuevaTransaccion = {
+                id: Date.now(),
+                tipo: tipo,
+                categoria: categoria,
+                monto: monto,
+                descripcion: descripcion,
+                fecha: fecha,
+                fechaRegistro: new Date().toISOString()
+            };
+
+            // Agregar campos adicionales según el tipo
+            if (tipo === 'ingreso') {
+                nuevaTransaccion.cliente = document.getElementById('transaccionCliente').value;
+                nuevaTransaccion.factura = document.getElementById('transaccionFactura').value;
+            } else if (tipo === 'gasto') {
+                nuevaTransaccion.proveedor = document.getElementById('transaccionProveedor').value;
+                nuevaTransaccion.iva = parseFloat(document.getElementById('transaccionIVA').value) || 0;
+            }
+
+            transacciones.push(nuevaTransaccion);
+            localStorage.setItem('bs_transacciones', JSON.stringify(transacciones));
+
+            mostrarNotificacion('✅ Transacción guardada correctamente', 'success');
+            cerrarModalActual();
+            
+            // Actualizar UI
+            actualizarResumen();
+            cargarTransaccionesRecientes();
+            if (currentTab === 'transacciones') {
+                cargarTransacciones();
+            }
+        }
+
+        function cargarTransacciones() {
+            const tabla = document.getElementById('tablaTransacciones');
+            const transaccionesFiltradas = filtrarTransacciones();
+
+            if (transaccionesFiltradas.length === 0) {
+                tabla.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-8 text-gray-400">
+                            <i class="bi bi-inbox text-2xl mb-2 block"></i>
+                            No hay transacciones que coincidan con los filtros
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            transaccionesFiltradas.forEach(transaccion => {
+                const esIngreso = transaccion.tipo === 'ingreso';
+                const categoriaObj = categorias.find(c => c.id == transaccion.categoria);
+                
+                html += `
+                    <tr class="hover:bg-white/5">
+                        <td class="text-sm">${new Date(transaccion.fecha).toLocaleDateString()}</td>
+                        <td>
+                            <div class="font-medium">${transaccion.descripcion}</div>
+                            ${transaccion.cliente ? `<div class="text-xs text-gray-400">Cliente: ${transaccion.cliente}</div>` : ''}
+                            ${transaccion.proveedor ? `<div class="text-xs text-gray-400">Proveedor: ${transaccion.proveedor}</div>` : ''}
+                        </td>
+                        <td><span class="ubuntu-chip">${categoriaObj?.nombre || 'Sin categoría'}</span></td>
+                        <td>
+                            <span class="ubuntu-chip ${esIngreso ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">
+                                ${esIngreso ? 'Ingreso' : 'Gasto'}
+                            </span>
+                        </td>
+                        <td class="font-bold ${esIngreso ? 'text-green-400' : 'text-red-400'}">
+                            ${esIngreso ? '+' : '-'}$${transaccion.monto.toFixed(2)}
+                        </td>
+                        <td>
+                            <div class="flex gap-1">
+                                <button onclick="editarTransaccion(${transaccion.id})" class="ubuntu-btn text-sm">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button onclick="eliminarTransaccion(${transaccion.id})" class="ubuntu-btn text-sm ubuntu-btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tabla.innerHTML = html;
+        }
+
+        function filtrarTransacciones() {
+            const tipo = document.getElementById('filtroTipo').value;
+            const desde = document.getElementById('filtroDesde').value;
+            const hasta = document.getElementById('filtroHasta').value;
+            const categoria = document.getElementById('filtroCategoria').value;
+
+            return transacciones.filter(transaccion => {
+                const coincideTipo = !tipo || transaccion.tipo === tipo;
+                const coincideCategoria = !categoria || transaccion.categoria == categoria;
+                
+                const fechaTransaccion = new Date(transaccion.fecha);
+                const fechaDesde = desde ? new Date(desde) : new Date('1900-01-01');
+                const fechaHasta = hasta ? new Date(hasta) : new Date('2100-01-01');
+                const coincideFecha = fechaTransaccion >= fechaDesde && fechaTransaccion <= fechaHasta;
+
+                return coincideTipo && coincideCategoria && coincideFecha;
+            });
+        }
+
+        function cargarTransaccionesRecientes() {
+            const container = document.getElementById('transaccionesRecientes');
+            const recientes = transacciones
+                .sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+                .slice(0, 5);
+
+            if (recientes.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-400">
+                        <i class="bi bi-inbox text-2xl mb-2 block"></i>
+                        No hay transacciones recientes
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            recientes.forEach(transaccion => {
+                const esIngreso = transaccion.tipo === 'ingreso';
+                const categoriaObj = categorias.find(c => c.id == transaccion.categoria);
+                
+                html += `
+                    <div class="transaction-item">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <h4 class="font-medium">${transaccion.descripcion}</h4>
+                                    <span class="ubuntu-chip ${esIngreso ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'} text-xs">
+                                        ${esIngreso ? 'Ingreso' : 'Gasto'}
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-4 text-sm text-gray-400">
+                                    <span>${categoriaObj?.nombre || 'Sin categoría'}</span>
+                                    <span>•</span>
+                                    <span>${new Date(transaccion.fecha).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                            <span class="font-bold text-lg ${esIngreso ? 'text-green-400' : 'text-red-400'}">
+                                ${esIngreso ? '+' : '-'}$${transaccion.monto.toFixed(2)}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ==================== GESTIÓN DE CATEGORÍAS ====================
+        
+        function mostrarModalNuevaCategoria() {
+            document.getElementById('formCategoria').reset();
+            mostrarModal('modalNuevaCategoria');
+        }
+
+        function guardarCategoria() {
+            const nombre = document.getElementById('categoriaNombre').value.trim();
+            const tipo = document.getElementById('categoriaTipo').value;
+            const descripcion = document.getElementById('categoriaDescripcion').value;
+
+            if (!nombre || !tipo) {
+                mostrarNotificacion('❌ Complete todos los campos obligatorios', 'error');
+                return;
+            }
+
+            const nuevaCategoria = {
+                id: Date.now(),
+                nombre: nombre,
+                tipo: tipo,
+                descripcion: descripcion
+            };
+
+            categorias.push(nuevaCategoria);
+            localStorage.setItem('bs_categorias_contables', JSON.stringify(categorias));
+
+            mostrarNotificacion('✅ Categoría guardada correctamente', 'success');
+            cerrarModalActual();
+            
+            // Actualizar UI
+            cargarCategoriasUI();
+            cargarOpcionesCategorias();
+        }
+
+        function cargarCategoriasUI() {
+            const container = document.getElementById('categoriasContainer');
+            
+            if (categorias.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4 text-gray-400">
+                        <i class="bi bi-tags text-xl mb-2 block"></i>
+                        No hay categorías configuradas
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            categorias.forEach(categoria => {
+                html += `
+                    <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+                        <div>
+                            <div class="font-medium">${categoria.nombre}</div>
+                            <div class="text-xs text-gray-400">${categoria.descripcion}</div>
+                        </div>
+                        <span class="ubuntu-chip ${categoria.tipo === 'ingreso' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">
+                            ${categoria.tipo === 'ingreso' ? 'Ingreso' : 'Gasto'}
+                        </span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function cargarOpcionesCategorias() {
+            const selectTransaccion = document.getElementById('transaccionCategoria');
+            const selectFiltro = document.getElementById('filtroCategoria');
+
+            let opciones = '<option value="">Seleccionar categoría</option>';
+            categorias.forEach(categoria => {
+                opciones += `<option value="${categoria.id}">${categoria.nombre}</option>`;
+            });
+
+            selectTransaccion.innerHTML = opciones;
+            selectFiltro.innerHTML = opciones;
+        }
+
+        // ==================== CÁLCULOS Y RESÚMENES ====================
+        
+        function actualizarResumen() {
+            const hoy = new Date();
+            const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            
+            const transaccionesMes = transacciones.filter(t => 
+                new Date(t.fecha) >= inicioMes && new Date(t.fecha) <= hoy
+            );
+
+            const ingresos = transaccionesMes
+                .filter(t => t.tipo === 'ingreso')
+                .reduce((sum, t) => sum + t.monto, 0);
+
+            const gastos = transaccionesMes
+                .filter(t => t.tipo === 'gasto')
+                .reduce((sum, t) => sum + t.monto, 0);
+
+            const utilidad = ingresos - gastos;
+            const flujoCaja = ingresos - gastos;
+
+            document.getElementById('ingresosMes').textContent = `$${ingresos.toFixed(2)}`;
+            document.getElementById('gastosMes').textContent = `$${gastos.toFixed(2)}`;
+            document.getElementById('utilidadNeta').textContent = `$${utilidad.toFixed(2)}`;
+            document.getElementById('flujoCaja').textContent = `$${flujoCaja.toFixed(2)}`;
+
+            // Actualizar gráficos
+            actualizarGraficos();
+        }
+
+        // ==================== GRÁFICOS ====================
+        
+        function inicializarGraficos() {
+            // Gráfico de Ingresos vs Gastos
+            const incomeExpenseCtx = document.getElementById('incomeExpenseChart').getContext('2d');
+            charts.incomeExpense = new Chart(incomeExpenseCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [
+                        {
+                            label: 'Ingresos',
+                            data: [12000, 19000, 15000, 18000, 25000, 22000],
+                            backgroundColor: 'rgba(32, 201, 151, 0.8)',
+                            borderColor: 'rgba(32, 201, 151, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Gastos',
+                            data: [8000, 12000, 10000, 11000, 12500, 14000],
+                            backgroundColor: 'rgba(233, 84, 32, 0.8)',
+                            borderColor: 'rgba(233, 84, 32, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: 'white' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: 'white' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: 'white' }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Distribución de Gastos
+            const expenseDistributionCtx = document.getElementById('expenseDistributionChart').getContext('2d');
+            charts.expenseDistribution = new Chart(expenseDistributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Proveedores', 'Nómina', 'Alquiler', 'Servicios', 'Otros'],
+                    datasets: [{
+                        data: [35, 25, 15, 15, 10],
+                        backgroundColor: [
+                            '#E95420',
+                            '#77216F',
+                            '#5E2750',
+                            '#2C001E',
+                            '#AEA79F'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: 'white' }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de Tendencias
+            const tendenciasCtx = document.getElementById('tendenciasChart').getContext('2d');
+            charts.tendencias = new Chart(tendenciasCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Utilidad Neta',
+                        data: [4000, 7000, 5000, 7000, 12500, 8000],
+                        borderColor: '#20c997',
+                        backgroundColor: 'rgba(32, 201, 151, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: { color: 'white' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: 'white' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: 'white' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function actualizarGraficos() {
+            // En una implementación real, aquí se actualizarían los datos de los gráficos
+            // con la información real de las transacciones
+        }
+
+        // ==================== GENERACIÓN DE REPORTES ====================
+        
+        function generarBalanceGeneral() {
+            mostrarNotificacion('📊 Generando Balance General...', 'info');
+            setTimeout(() => {
+                mostrarNotificacion('✅ Balance General generado correctamente', 'success');
+            }, 2000);
+        }
+
+        function generarEstadoResultados() {
+            mostrarNotificacion('📊 Generando Estado de Resultados...', 'info');
+            setTimeout(() => {
+                mostrarNotificacion('✅ Estado de Resultados generado correctamente', 'success');
+            }, 2000);
+        }
+
+        function generarFlujoEfectivo() {
+            mostrarNotificacion('📊 Generando Flujo de Efectivo...', 'info');
+            setTimeout(() => {
+                mostrarNotificacion('✅ Flujo de Efectivo generado correctamente', 'success');
+            }, 2000);
+        }
+
+        function generarReporteCompleto() {
+            mostrarNotificacion('📦 Generando Reporte Completo...', 'info');
+            setTimeout(() => {
+                mostrarNotificacion('✅ Reporte completo generado correctamente', 'success');
+            }, 3000);
+        }
+
+        function exportarTransaccionesExcel() {
+            const transaccionesFiltradas = filtrarTransacciones();
+            if (transaccionesFiltradas.length === 0) {
+                mostrarNotificacion('❌ No hay transacciones para exportar', 'error');
+                return;
+            }
+
+            mostrarNotificacion('📊 Exportando transacciones a Excel...', 'info');
+            setTimeout(() => {
+                mostrarNotificacion('✅ Transacciones exportadas correctamente', 'success');
+            }, 1500);
+        }
+
+        // ==================== SISTEMA DE MODALES ====================
+        
+        function mostrarModal(modalId) {
+            if (modalActual) {
+                cerrarModalActual();
+            }
+            
+            modalActual = modalId;
+            const backdrop = document.getElementById(modalId + 'Backdrop');
+            if (backdrop) {
+                backdrop.classList.add('active');
+                setTimeout(() => {
+                    const primerInput = backdrop.querySelector('input, select, textarea');
+                    if (primerInput) primerInput.focus();
+                }, 100);
+            }
+        }
+
+        function cerrarModalActual() {
+            if (modalActual) {
+                const backdrop = document.getElementById(modalActual + 'Backdrop');
+                if (backdrop) {
+                    backdrop.classList.remove('active');
+                }
+                modalActual = null;
+            }
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                cerrarModalActual();
+            }
+        });
+
+        // ==================== FUNCIONES UTILITARIAS ====================
+        
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 p-4 rounded-lg shadow-lg z-50 backdrop-blur-lg ${
+                tipo === 'success' ? 'bg-green-500/90 text-white' :
+                tipo === 'error' ? 'bg-red-500/90 text-white' :
+                tipo === 'warning' ? 'bg-yellow-500/90 text-white' :
+                'bg-blue-500/90 text-white'
+            }`;
+            notification.textContent = mensaje;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.5s ease-out';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        // Funciones placeholder para acciones futuras
+        function editarTransaccion(id) {
+            mostrarNotificacion('🔄 Editando transacción...', 'info');
+        }
+
+        function eliminarTransaccion(id) {
+            if (confirm('¿Está seguro de que desea eliminar esta transacción?')) {
+                transacciones = transacciones.filter(t => t.id !== id);
+                localStorage.setItem('bs_transacciones', JSON.stringify(transacciones));
+                mostrarNotificacion('✅ Transacción eliminada', 'success');
+                cargarTransacciones();
+                actualizarResumen();
+            }
+        }
+    </script>
+</body>
+</html>

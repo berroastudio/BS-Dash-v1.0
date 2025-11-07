@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Cheques - BS Dash</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+</head>
+<body class="bg-[#fbfbfb] min-h-screen">
+    <header class="bs-card mx-4 mt-4 mb-6">
+        <div class="flex items-center justify-between p-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center border border-yellow-200">
+                    <i class="bi bi-wallet2 text-yellow-600"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-800">Gestión de Cheques</h1>
+                    <p class="text-sm text-gray-600">Control bancario y administración de cheques</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <a href="../dashboard.html" class="bs-btn bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200">
+                    <i class="bi bi-arrow-left"></i>
+                    Volver al Dashboard
+                </a>
+                <button onclick="showNuevoChequeModal()" class="bs-btn bs-btn-primary">
+                    <i class="bi bi-plus"></i>
+                    Nuevo Cheque
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4">
+        <!-- Filtros Avanzados -->
+        <div class="bs-card p-6 mb-6">
+            <div class="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center mb-4">
+                <h2 class="text-lg font-bold text-gray-800">Filtros Avanzados</h2>
+                <div class="flex gap-2">
+                    <button onclick="resetFilters()" class="bs-btn bg-gray-100 text-gray-700">
+                        <i class="bi bi-arrow-clockwise"></i> Reiniciar
+                    </button>
+                    <button onclick="toggleAdvancedFilters()" class="bs-btn bg-blue-50 text-blue-600">
+                        <i class="bi bi-funnel"></i> Filtros Avanzados
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filtros Básicos -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                <!-- Live Search -->
+                <div class="relative">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
+                    <div class="relative">
+                        <input type="text" id="searchCheques" placeholder="Buscar cheques..." 
+                               class="bs-input w-full pl-10" onkeyup="liveSearchCheques()">
+                        <i class="bi bi-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <div id="searchResults" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-y-auto"></div>
+                </div>
+
+                <!-- Rango de Fechas -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Desde</label>
+                    <input type="date" id="fechaDesde" class="bs-input w-full" onchange="filtrarCheques()">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Hasta</label>
+                    <input type="date" id="fechaHasta" class="bs-input w-full" onchange="filtrarCheques()">
+                </div>
+
+                <!-- Estado -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+                    <select id="estadoFilter" class="bs-input w-full" onchange="filtrarCheques()">
+                        <option value="">Todos los estados</option>
+                        <option value="pendiente">Pendientes</option>
+                        <option value="cobrado">Cobrados</option>
+                        <option value="rechazado">Rechazados</option>
+                        <option value="anulado">Anulados</option>
+                        <option value="devuelto">Devueltos</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filtros Avanzados (Ocultos por defecto) -->
+            <div id="advancedFilters" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Banco</label>
+                    <select id="bancoFilter" class="bs-input w-full" onchange="filtrarCheques()">
+                        <option value="">Todos los bancos</option>
+                        <option value="BHD">Banco BHD León</option>
+                        <option value="POPULAR">Banco Popular</option>
+                        <option value="SCOTIABANK">Scotiabank</option>
+                        <option value="BANRESERVAS">Banreservas</option>
+                        <option value="APAP">APAP</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+                    <select id="tipoFilter" class="bs-input w-full" onchange="filtrarCheques()">
+                        <option value="">Todos</option>
+                        <option value="propio">Propio</option>
+                        <option value="terceros">Terceros</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Monto Mínimo</label>
+                    <input type="number" id="montoMinimo" class="bs-input w-full" placeholder="0.00" onchange="filtrarCheques()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Alertas de Cheques Próximos a Vencer -->
+        <div id="alertasVencimiento" class="bs-card p-4 mb-6 bg-yellow-50 border-yellow-200 hidden">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="bi bi-exclamation-triangle text-yellow-600 text-xl"></i>
+                    <div>
+                        <h4 class="font-bold text-yellow-800">Cheques Próximos a Vencer</h4>
+                        <p class="text-sm text-yellow-600"><span id="contadorAlertas">0</span> cheques vencen en los próximos 7 días</p>
+                    </div>
+                </div>
+                <button onclick="verChequesProximosVencer()" class="bs-btn bg-yellow-500 text-white hover:bg-yellow-600">
+                    <i class="bi bi-eye"></i> Ver Detalles
+                </button>
+            </div>
+        </div>
+
+        <!-- Controles Principales -->
+        <div class="bs-card p-6 mb-6">
+            <div class="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+                <div class="flex flex-wrap gap-2">
+                    <button class="bs-btn bs-btn-primary" onclick="showNuevoChequeModal()">
+                        <i class="bi bi-plus"></i>
+                        Nuevo Cheque
+                    </button>
+                    <button class="bs-btn bg-green-50 text-green-600 border-green-200" onclick="exportarChequesExcel()">
+                        <i class="bi bi-file-earmark-excel"></i>
+                        Excel
+                    </button>
+                    <button class="bs-btn bg-red-50 text-red-600 border-red-200" onclick="exportarChequesPDF()">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                        PDF
+                    </button>
+                    <button class="bs-btn bg-purple-50 text-purple-600 border-purple-200" onclick="showConciliacion()">
+                        <i class="bi bi-arrow-left-right"></i>
+                        Conciliación
+                    </button>
+                </div>
+                
+                <div class="text-sm text-gray-600">
+                    Mostrando <span id="totalChequesFiltrados">0</span> cheques de <span id="totalCheques">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas Rápidas -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bs-stat-card p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Total Pendiente</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1" id="montoTotalPendiente">$0.00</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center border border-yellow-200">
+                        <i class="bi bi-clock text-yellow-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bs-stat-card p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Cobrado Este Mes</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1" id="montoCobradoMes">$0.00</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center border border-green-200">
+                        <i class="bi bi-check-circle text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bs-stat-card p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Promedio por Cheque</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1" id="promedioCheque">$0.00</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center border border-blue-200">
+                        <i class="bi bi-graph-up text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bs-stat-card p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Tasa de Cobro</p>
+                        <h3 class="text-2xl font-bold text-gray-800 mt-1" id="tasaCobro">0%</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center border border-purple-200">
+                        <i class="bi bi-percent text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Cheques -->
+        <div class="bs-card p-6">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">
+                                <input type="checkbox" id="selectAllCheques" onchange="toggleSelectAllCheques()">
+                            </th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">N° Cheque</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Banco</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Beneficiario</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Monto</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Fecha Emisión</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Fecha Vencimiento</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Estado</th>
+                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chequesTableBody">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="loadingCheques" class="text-center py-8">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                <p class="text-gray-500 mt-2">Cargando cheques...</p>
+            </div>
+            
+            <div id="noCheques" class="text-center py-8 hidden">
+                <i class="bi bi-wallet2 text-4xl text-gray-300 mb-2"></i>
+                <p class="text-gray-500">No hay cheques registrados</p>
+                <button onclick="showNuevoChequeModal()" class="bs-btn bs-btn-primary mt-3">
+                    <i class="bi bi-plus"></i> Registrar Primer Cheque
+                </button>
+            </div>
+
+            <!-- Paginación -->
+            <div id="pagination" class="flex justify-between items-center mt-4 border-t border-gray-200 pt-4 hidden">
+                <div class="text-sm text-gray-600">
+                    Página <span id="currentPage">1</span> de <span id="totalPages">1</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="changePage(-1)" class="bs-btn bg-gray-100 text-gray-700" id="prevPage">
+                        <i class="bi bi-chevron-left"></i> Anterior
+                    </button>
+                    <button onclick="changePage(1)" class="bs-btn bg-gray-100 text-gray-700" id="nextPage">
+                        Siguiente <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Nuevo/Editar Cheque -->
+    <div id="modalNuevoCheque" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bs-card p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold mb-4" id="tituloModalCheque">Nuevo Cheque</h3>
+            
+            <form id="formCheque" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Número de Cheque *</label>
+                        <input type="text" id="numeroCheque" class="bs-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Banco *</label>
+                        <select id="bancoCheque" class="bs-input w-full" required>
+                            <option value="">Seleccionar banco...</option>
+                            <option value="BHD">Banco BHD León</option>
+                            <option value="POPULAR">Banco Popular</option>
+                            <option value="SCOTIABANK">Scotiabank</option>
+                            <option value="BANRESERVAS">Banreservas</option>
+                            <option value="APAP">APAP</option>
+                            <option value="SANTA_CRUZ">Banco Santa Cruz</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Cheque *</label>
+                        <select id="tipoCheque" class="bs-input w-full" required>
+                            <option value="propio">Propio</option>
+                            <option value="terceros">Terceros</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cuenta Bancaria</label>
+                        <input type="text" id="cuentaBancaria" class="bs-input w-full">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Beneficiario *</label>
+                        <input type="text" id="beneficiario" class="bs-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Monto *</label>
+                        <input type="number" id="montoCheque" class="bs-input w-full" step="0.01" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Emisión *</label>
+                        <input type="date" id="fechaEmision" class="bs-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Vencimiento *</label>
+                        <input type="date" id="fechaVencimiento" class="bs-input w-full" required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Concepto</label>
+                        <input type="text" id="concepto" class="bs-input w-full" placeholder="Motivo del cheque">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+                        <select id="estadoCheque" class="bs-input w-full">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="cobrado">Cobrado</option>
+                            <option value="rechazado">Rechazado</option>
+                            <option value="anulado">Anulado</option>
+                            <option value="devuelto">Devuelto</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observaciones</label>
+                    <textarea id="observaciones" class="bs-input w-full" rows="3" placeholder="Observaciones adicionales..."></textarea>
+                </div>
+
+                <!-- Información de Cobro (solo para cheques cobrados) -->
+                <div id="infoCobro" class="hidden">
+                    <h4 class="font-medium text-gray-800 mb-3">Información de Cobro</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Cobro</label>
+                            <input type="date" id="fechaCobro" class="bs-input w-full">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Referencia de Cobro</label>
+                            <input type="text" id="referenciaCobro" class="bs-input w-full">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 justify-end pt-4 border-t border-gray-200">
+                    <button type="button" onclick="hideNuevoChequeModal()" class="bs-btn bg-gray-100 text-gray-700">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="bs-btn bs-btn-primary">
+                        <i class="bi bi-check-lg"></i> Guardar Cheque
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/config-loader.js"></script>
+    <script src="../js/secure-database.js"></script>
+    <script src="../js/auth-system.js"></script>
+    <script src="../js/database-manager.js"></script>
+    <script src="../js/empresa-context.js"></script>
+
+    <script>
+        // Variables globales
+        let todosLosCheques = [];
+        let chequesFiltrados = [];
+        let chequeEditando = null;
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!window.auth || !window.auth.getCurrentUser()) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            inicializarModuloCheques();
+            cargarDatosIniciales();
+            configurarFechasPorDefecto();
+        });
+
+        function inicializarModuloCheques() {
+            console.log('🏦 Inicializando módulo de cheques...');
+            
+            // Configurar fecha por defecto (mes actual)
+            const hoy = new Date();
+            const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            
+            document.getElementById('fechaDesde').value = inicioMes.toISOString().split('T')[0];
+            document.getElementById('fechaHasta').value = hoy.toISOString().split('T')[0];
+        }
+
+        function cargarDatosIniciales() {
+            // Datos de ejemplo para demo
+            todosLosCheques = generarDatosChequesEjemplo();
+            chequesFiltrados = [...todosLosCheques];
+            
+            mostrarChequesPaginados();
+            actualizarEstadisticas();
+            verificarAlertasVencimiento();
+        }
+
+        function generarDatosChequesEjemplo() {
+            const bancos = ['BHD', 'POPULAR', 'SCOTIABANK', 'BANRESERVAS', 'APAP'];
+            const estados = ['pendiente', 'cobrado', 'rechazado', 'anulado', 'devuelto'];
+            const beneficiarios = [
+                'Juan Pérez García', 'María Rodríguez López', 'Carlos Martínez', 
+                'Ana García Hernández', 'Roberto Sánchez', 'Laura González'
+            ];
+
+            return Array.from({length: 45}, (_, i) => {
+                const fechaEmision = new Date();
+                fechaEmision.setDate(fechaEmision.getDate() - Math.floor(Math.random() * 60));
+                
+                const fechaVencimiento = new Date(fechaEmision);
+                fechaVencimiento.setDate(fechaVencimiento.getDate() + Math.floor(Math.random() * 30) + 15);
+                
+                const estado = estados[Math.floor(Math.random() * estados.length)];
+                let fechaCobro = null;
+                if (estado === 'cobrado') {
+                    fechaCobro = new Date(fechaVencimiento);
+                    fechaCobro.setDate(fechaCobro.getDate() - Math.floor(Math.random() * 10));
+                }
+
+                return {
+                    id: i + 1,
+                    numero: `CH-${String(i + 1).padStart(6, '0')}`,
+                    banco: bancos[Math.floor(Math.random() * bancos.length)],
+                    tipo: Math.random() > 0.5 ? 'propio' : 'terceros',
+                    cuentaBancaria: `CTA-${Math.floor(Math.random() * 9000) + 1000}`,
+                    beneficiario: beneficiarios[Math.floor(Math.random() * beneficiarios.length)],
+                    monto: Math.floor(Math.random() * 50000) + 1000,
+                    fechaEmision: fechaEmision.toISOString(),
+                    fechaVencimiento: fechaVencimiento.toISOString(),
+                    fechaCobro: fechaCobro ? fechaCobro.toISOString() : null,
+                    concepto: `Pago por servicios ${Math.floor(Math.random() * 100)}`,
+                    estado: estado,
+                    observaciones: Math.random() > 0.7 ? 'Observaciones importantes' : '',
+                    referenciaCobro: estado === 'cobrado' ? `REF-${Math.floor(Math.random() * 10000)}` : null,
+                    seleccionado: false
+                };
+            });
+        }
+
+        // ==================== FILTRADO AVANZADO ====================
+        function filtrarCheques() {
+            const filtroTexto = document.getElementById('searchCheques').value.toLowerCase();
+            const fechaDesde = document.getElementById('fechaDesde').value;
+            const fechaHasta = document.getElementById('fechaHasta').value;
+            const estado = document.getElementById('estadoFilter').value;
+            const banco = document.getElementById('bancoFilter').value;
+            const tipo = document.getElementById('tipoFilter').value;
+            const montoMinimo = parseFloat(document.getElementById('montoMinimo').value) || 0;
+
+            chequesFiltrados = todosLosCheques.filter(cheque => {
+                const coincideTexto = !filtroTexto || 
+                    cheque.numero.toLowerCase().includes(filtroTexto) ||
+                    cheque.beneficiario.toLowerCase().includes(filtroTexto) ||
+                    cheque.banco.toLowerCase().includes(filtroTexto);
+
+                const fechaEmision = new Date(cheque.fechaEmision);
+                const desde = fechaDesde ? new Date(fechaDesde) : new Date('1900-01-01');
+                const hasta = fechaHasta ? new Date(fechaHasta) : new Date('2100-01-01');
+                const coincideFecha = fechaEmision >= desde && fechaEmision <= hasta;
+
+                const coincideEstado = !estado || cheque.estado === estado;
+                const coincideBanco = !banco || cheque.banco === banco;
+                const coincideTipo = !tipo || cheque.tipo === tipo;
+                const coincideMonto = cheque.monto >= montoMinimo;
+
+                return coincideTexto && coincideFecha && coincideEstado && 
+                       coincideBanco && coincideTipo && coincideMonto;
+            });
+
+            currentPage = 1;
+            mostrarChequesPaginados();
+            actualizarEstadisticas();
+            verificarAlertasVencimiento();
+        }
+
+        function liveSearchCheques() {
+            const termino = document.getElementById('searchCheques').value.toLowerCase();
+            const resultados = document.getElementById('searchResults');
+            
+            if (termino.length < 2) {
+                resultados.classList.add('hidden');
+                filtrarCheques();
+                return;
+            }
+
+            const sugerencias = todosLosCheques.filter(cheque => 
+                cheque.numero.toLowerCase().includes(termino) ||
+                cheque.beneficiario.toLowerCase().includes(termino) ||
+                cheque.banco.toLowerCase().includes(termino)
+            ).slice(0, 5);
+
+            let html = '';
+            if (sugerencias.length > 0) {
+                sugerencias.forEach(cheque => {
+                    html += `
+                        <div class="p-3 border-b border-gray-200 hover:bg-gray-50 cursor-pointer" 
+                             onclick="seleccionarChequeBusqueda('${cheque.numero}')">
+                            <div class="font-medium">${cheque.numero}</div>
+                            <div class="text-sm text-gray-500">${cheque.beneficiario} - $${cheque.monto} - ${cheque.banco}</div>
+                        </div>
+                    `;
+                });
+            } else {
+                html = '<div class="p-3 text-gray-500 text-center">No se encontraron cheques</div>';
+            }
+            
+            resultados.innerHTML = html;
+            resultados.classList.remove('hidden');
+            filtrarCheques();
+        }
+
+        function seleccionarChequeBusqueda(numeroCheque) {
+            document.getElementById('searchCheques').value = numeroCheque;
+            document.getElementById('searchResults').classList.add('hidden');
+            filtrarCheques();
+        }
+
+        function toggleAdvancedFilters() {
+            const advancedFilters = document.getElementById('advancedFilters');
+            advancedFilters.classList.toggle('hidden');
+        }
+
+        function resetFilters() {
+            document.getElementById('searchCheques').value = '';
+            document.getElementById('fechaDesde').value = '';
+            document.getElementById('fechaHasta').value = '';
+            document.getElementById('estadoFilter').value = '';
+            document.getElementById('bancoFilter').value = '';
+            document.getElementById('tipoFilter').value = '';
+            document.getElementById('montoMinimo').value = '';
+            
+            chequesFiltrados = [...todosLosCheques];
+            currentPage = 1;
+            mostrarChequesPaginados();
+            actualizarEstadisticas();
+        }
+
+        // ==================== PAGINACIÓN ====================
+        function mostrarChequesPaginados() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const chequesPagina = chequesFiltrados.slice(startIndex, endIndex);
+
+            mostrarChequesEnTabla(chequesPagina);
+            actualizarPaginacion();
+        }
+
+        function mostrarChequesEnTabla(cheques) {
+            const tbody = document.getElementById('chequesTableBody');
+            const loading = document.getElementById('loadingCheques');
+            const noCheques = document.getElementById('noCheques');
+
+            loading.classList.add('hidden');
+
+            if (cheques.length === 0) {
+                tbody.innerHTML = '';
+                noCheques.classList.remove('hidden');
+                return;
+            }
+
+            noCheques.classList.add('hidden');
+            let html = '';
+
+            cheques.forEach(cheque => {
+                const estadoColor = {
+                    'pendiente': 'bg-yellow-100 text-yellow-800',
+                    'cobrado': 'bg-green-100 text-green-800',
+                    'rechazado': 'bg-red-100 text-red-800',
+                    'anulado': 'bg-gray-100 text-gray-800',
+                    'devuelto': 'bg-orange-100 text-orange-800'
+                }[cheque.estado];
+
+                const estadoTexto = {
+                    'pendiente': 'Pendiente',
+                    'cobrado': 'Cobrado',
+                    'rechazado': 'Rechazado',
+                    'anulado': 'Anulado',
+                    'devuelto': 'Devuelto'
+                }[cheque.estado];
+
+                const fechaVencimiento = new Date(cheque.fechaVencimiento);
+                const hoy = new Date();
+                const diasHastaVencimiento = Math.ceil((fechaVencimiento - hoy) / (1000 * 60 * 60 * 24));
+                
+                let vencimientoClass = '';
+                let iconoVencimiento = '';
+                if (diasHastaVencimiento < 0) {
+                    vencimientoClass = 'text-red-600';
+                    iconoVencimiento = '<i class="bi bi-exclamation-triangle text-red-500 ml-1"></i>';
+                } else if (diasHastaVencimiento <= 7) {
+                    vencimientoClass = 'text-orange-600';
+                    iconoVencimiento = '<i class="bi bi-exclamation-circle text-orange-500 ml-1"></i>';
+                }
+
+                html += `
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="py-3 px-4">
+                            <input type="checkbox" ${cheque.seleccionado ? 'checked' : ''} 
+                                   onchange="toggleSeleccionCheque(${cheque.id})">
+                        </td>
+                        <td class="py-3 px-4 font-mono">${cheque.numero}</td>
+                        <td class="py-3 px-4">
+                            <div class="font-medium">${cheque.banco}</div>
+                            <div class="text-sm text-gray-500">${cheque.cuentaBancaria}</div>
+                        </td>
+                        <td class="py-3 px-4">${cheque.beneficiario}</td>
+                        <td class="py-3 px-4 font-semibold text-green-600">$${cheque.monto.toLocaleString()}</td>
+                        <td class="py-3 px-4 text-sm">${new Date(cheque.fechaEmision).toLocaleDateString()}</td>
+                        <td class="py-3 px-4 text-sm ${vencimientoClass}">
+                            ${new Date(cheque.fechaVencimiento).toLocaleDateString()} ${iconoVencimiento}
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 text-xs rounded-full ${estadoColor}">${estadoTexto}</span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="flex gap-2">
+                                <button onclick="verCheque(${cheque.id})" class="bs-btn bg-blue-50 text-blue-600 border-blue-200 text-sm">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button onclick="editarCheque(${cheque.id})" class="bs-btn bg-green-50 text-green-600 border-green-200 text-sm">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button onclick="cambiarEstadoCheque(${cheque.id})" class="bs-btn bg-purple-50 text-purple-600 border-purple-200 text-sm">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+            actualizarContadores();
+        }
+
+        function actualizarPaginacion() {
+            const totalPages = Math.ceil(chequesFiltrados.length / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+            const currentPageSpan = document.getElementById('currentPage');
+            const totalPagesSpan = document.getElementById('totalPages');
+            const prevPage = document.getElementById('prevPage');
+            const nextPage = document.getElementById('nextPage');
+
+            currentPageSpan.textContent = currentPage;
+            totalPagesSpan.textContent = totalPages;
+
+            prevPage.disabled = currentPage === 1;
+            nextPage.disabled = currentPage === totalPages;
+
+            if (totalPages > 1) {
+                pagination.classList.remove('hidden');
+            } else {
+                pagination.classList.add('hidden');
+            }
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(chequesFiltrados.length / itemsPerPage);
+            const newPage = currentPage + direction;
+
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                mostrarChequesPaginados();
+            }
+        }
+
+        function toggleSelectAllCheques() {
+            const selectAll = document.getElementById('selectAllCheques').checked;
+            chequesFiltrados.forEach(cheque => {
+                cheque.seleccionado = selectAll;
+            });
+            mostrarChequesPaginados();
+        }
+
+        function toggleSeleccionCheque(id) {
+            const cheque = chequesFiltrados.find(c => c.id === id);
+            if (cheque) {
+                cheque.seleccionado = !cheque.seleccionado;
+            }
+        }
+
+        // ==================== GESTIÓN DE CHEQUES ====================
+        function showNuevoChequeModal() {
+            chequeEditando = null;
+            document.getElementById('tituloModalCheque').textContent = 'Nuevo Cheque';
+            document.getElementById('formCheque').reset();
+            document.getElementById('infoCobro').classList.add('hidden');
+            document.getElementById('modalNuevoCheque').classList.remove('hidden');
+            document.getElementById('modalNuevoCheque').classList.add('flex');
+            
+            // Establecer fecha de hoy por defecto
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaEmision').value = hoy;
+            
+            // Establecer vencimiento a 30 días por defecto
+            const vencimiento = new Date();
+            vencimiento.setDate(vencimiento.getDate() + 30);
+            document.getElementById('fechaVencimiento').value = vencimiento.toISOString().split('T')[0];
+        }
+
+        function hideNuevoChequeModal() {
+            document.getElementById('modalNuevoCheque').classList.add('hidden');
+            document.getElementById('modalNuevoCheque').classList.remove('flex');
+        }
+
+        function editarCheque(id) {
+            chequeEditando = todosLosCheques.find(c => c.id === id);
+            if (chequeEditando) {
+                document.getElementById('tituloModalCheque').textContent = `Editar Cheque ${chequeEditando.numero}`;
+                
+                // Llenar formulario con datos del cheque
+                document.getElementById('numeroCheque').value = chequeEditando.numero;
+                document.getElementById('bancoCheque').value = chequeEditando.banco;
+                document.getElementById('tipoCheque').value = chequeEditando.tipo;
+                document.getElementById('cuentaBancaria').value = chequeEditando.cuentaBancaria;
+                document.getElementById('beneficiario').value = chequeEditando.beneficiario;
+                document.getElementById('montoCheque').value = chequeEditando.monto;
+                document.getElementById('fechaEmision').value = chequeEditando.fechaEmision.split('T')[0];
+                document.getElementById('fechaVencimiento').value = chequeEditando.fechaVencimiento.split('T')[0];
+                document.getElementById('concepto').value = chequeEditando.concepto;
+                document.getElementById('estadoCheque').value = chequeEditando.estado;
+                document.getElementById('observaciones').value = chequeEditando.observaciones;
+                
+                if (chequeEditando.estado === 'cobrado') {
+                    document.getElementById('infoCobro').classList.remove('hidden');
+                    document.getElementById('fechaCobro').value = chequeEditando.fechaCobro ? chequeEditando.fechaCobro.split('T')[0] : '';
+                    document.getElementById('referenciaCobro').value = chequeEditando.referenciaCobro || '';
+                } else {
+                    document.getElementById('infoCobro').classList.add('hidden');
+                }
+                
+                document.getElementById('modalNuevoCheque').classList.remove('hidden');
+                document.getElementById('modalNuevoCheque').classList.add('flex');
+            }
+        }
+
+        function verCheque(id) {
+            const cheque = todosLosCheques.find(c => c.id === id);
+            if (cheque) {
+                const contenido = `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><strong>Número:</strong> ${cheque.numero}</div>
+                            <div><strong>Banco:</strong> ${cheque.banco}</div>
+                            <div><strong>Beneficiario:</strong> ${cheque.beneficiario}</div>
+                            <div><strong>Monto:</strong> $${cheque.monto.toLocaleString()}</div>
+                            <div><strong>Fecha Emisión:</strong> ${new Date(cheque.fechaEmision).toLocaleDateString()}</div>
+                            <div><strong>Fecha Vencimiento:</strong> ${new Date(cheque.fechaVencimiento).toLocaleDateString()}</div>
+                            <div><strong>Estado:</strong> <span class="px-2 py-1 text-xs rounded-full ${estadoColor}">${cheque.estado}</span></div>
+                            <div><strong>Tipo:</strong> ${cheque.tipo}</div>
+                        </div>
+                        ${cheque.concepto ? `<div><strong>Concepto:</strong> ${cheque.concepto}</div>` : ''}
+                        ${cheque.observaciones ? `<div><strong>Observaciones:</strong> ${cheque.observaciones}</div>` : ''}
+                        ${cheque.fechaCobro ? `<div><strong>Fecha Cobro:</strong> ${new Date(cheque.fechaCobro).toLocaleDateString()}</div>` : ''}
+                        ${cheque.referenciaCobro ? `<div><strong>Referencia Cobro:</strong> ${cheque.referenciaCobro}</div>` : ''}
+                        
+                        <div class="flex gap-2 pt-4">
+                            <button onclick="editarCheque(${cheque.id})" class="bs-btn bs-btn-primary flex-1">
+                                <i class="bi bi-pencil"></i> Editar
+                            </button>
+                            <button onclick="cambiarEstadoCheque(${cheque.id})" class="bs-btn bg-purple-500 text-white flex-1">
+                                <i class="bi bi-arrow-repeat"></i> Cambiar Estado
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Mostrar modal con los detalles
+                alert(`Detalles del Cheque:\nNúmero: ${cheque.numero}\nBanco: ${cheque.banco}\nBeneficiario: ${cheque.beneficiario}\nMonto: $${cheque.monto}\nEstado: ${cheque.estado}`);
+            }
+        }
+
+        function cambiarEstadoCheque(id) {
+            const cheque = todosLosCheques.find(c => c.id === id);
+            if (cheque) {
+                const nuevoEstado = prompt(`Cambiar estado del cheque ${cheque.numero}:\n1. Pendiente\n2. Cobrado\n3. Rechazado\n4. Anulado\n5. Devuelto`, cheque.estado);
+                
+                if (nuevoEstado && ['pendiente', 'cobrado', 'rechazado', 'anulado', 'devuelto'].includes(nuevoEstado)) {
+                    cheque.estado = nuevoEstado;
+                    
+                    if (nuevoEstado === 'cobrado') {
+                        cheque.fechaCobro = new Date().toISOString();
+                        cheque.referenciaCobro = `REF-${Math.floor(Math.random() * 10000)}`;
+                    } else {
+                        cheque.fechaCobro = null;
+                        cheque.referenciaCobro = null;
+                    }
+                    
+                    filtrarCheques();
+                    mostrarNotificacion(`✅ Estado del cheque ${cheque.numero} actualizado a ${nuevoEstado}`, 'success');
+                }
+            }
+        }
+
+        // ==================== ESTADÍSTICAS ====================
+        function actualizarEstadisticas() {
+            const chequesPendientes = chequesFiltrados.filter(c => c.estado === 'pendiente');
+            const montoTotalPendiente = chequesPendientes.reduce((sum, c) => sum + c.monto, 0);
+            
+            const mesActual = new Date().getMonth();
+            const chequesCobradosMes = chequesFiltrados.filter(c => {
+                if (c.estado !== 'cobrado' || !c.fechaCobro) return false;
+                const fechaCobro = new Date(c.fechaCobro);
+                return fechaCobro.getMonth() === mesActual;
+            });
+            const montoCobradoMes = chequesCobradosMes.reduce((sum, c) => sum + c.monto, 0);
+            
+            const promedioCheque = chequesFiltrados.length > 0 ? 
+                chequesFiltrados.reduce((sum, c) => sum + c.monto, 0) / chequesFiltrados.length : 0;
+            
+            const tasaCobro = todosLosCheques.length > 0 ? 
+                Math.round((todosLosCheques.filter(c => c.estado === 'cobrado').length / todosLosCheques.length) * 100) : 0;
+
+            document.getElementById('montoTotalPendiente').textContent = `$${montoTotalPendiente.toLocaleString()}`;
+            document.getElementById('montoCobradoMes').textContent = `$${montoCobradoMes.toLocaleString()}`;
+            document.getElementById('promedioCheque').textContent = `$${promedioCheque.toFixed(2)}`;
+            document.getElementById('tasaCobro').textContent = `${tasaCobro}%`;
+        }
+
+        function verificarAlertasVencimiento() {
+            const hoy = new Date();
+            const chequesProximos = todosLosCheques.filter(c => {
+                if (c.estado !== 'pendiente') return false;
+                const vencimiento = new Date(c.fechaVencimiento);
+                const diferenciaDias = Math.ceil((vencimiento - hoy) / (1000 * 60 * 60 * 24));
+                return diferenciaDias <= 7 && diferenciaDias >= 0;
+            });
+
+            if (chequesProximos.length > 0) {
+                document.getElementById('alertasVencimiento').classList.remove('hidden');
+                document.getElementById('contadorAlertas').textContent = chequesProximos.length;
+            } else {
+                document.getElementById('alertasVencimiento').classList.add('hidden');
+            }
+        }
+
+        function verChequesProximosVencer() {
+            const hoy = new Date();
+            const chequesProximos = todosLosCheques.filter(c => {
+                if (c.estado !== 'pendiente') return false;
+                const vencimiento = new Date(c.fechaVencimiento);
+                const diferenciaDias = Math.ceil((vencimiento - hoy) / (1000 * 60 * 60 * 24));
+                return diferenciaDias <= 7;
+            });
+
+            let mensaje = 'Cheques próximos a vencer:\n\n';
+            chequesProximos.forEach(cheque => {
+                const vencimiento = new Date(cheque.fechaVencimiento);
+                const diferenciaDias = Math.ceil((vencimiento - hoy) / (1000 * 60 * 60 * 24));
+                const diasTexto = diferenciaDias === 0 ? 'Hoy' : `en ${diferenciaDias} días`;
+                mensaje += `${cheque.numero} - ${cheque.beneficiario} - $${cheque.monto} - Vence ${diasTexto}\n`;
+            });
+
+            alert(mensaje);
+        }
+
+        function actualizarContadores() {
+            document.getElementById('totalCheques').textContent = todosLosCheques.length;
+            document.getElementById('totalChequesFiltrados').textContent = chequesFiltrados.length;
+        }
+
+        function configurarFechasPorDefecto() {
+            const hoy = new Date();
+            const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            
+            document.getElementById('fechaDesde').value = inicioMes.toISOString().split('T')[0];
+            document.getElementById('fechaHasta').value = hoy.toISOString().split('T')[0];
+            
+            // Cargar cheques con filtro por defecto
+            setTimeout(() => filtrarCheques(), 500);
+        }
+
+        // ==================== EXPORTACIÓN ====================
+        function exportarChequesExcel() {
+            const datos = chequesFiltrados.map(cheque => ({
+                'N° Cheque': cheque.numero,
+                'Banco': cheque.banco,
+                'Beneficiario': cheque.beneficiario,
+                'Monto': cheque.monto,
+                'Fecha Emisión': new Date(cheque.fechaEmision).toLocaleDateString(),
+                'Fecha Vencimiento': new Date(cheque.fechaVencimiento).toLocaleDateString(),
+                'Estado': cheque.estado,
+                'Tipo': cheque.tipo,
+                'Concepto': cheque.concepto
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(datos);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Cheques');
+            XLSX.writeFile(wb, `cheques_${new Date().toISOString().split('T')[0]}.xlsx`);
+            mostrarNotificacion('✅ Excel exportado correctamente', 'success');
+        }
+
+        function exportarChequesPDF() {
+            const docDefinition = {
+                content: [
+                    { text: 'Reporte de Cheques - BS Dash', style: 'header' },
+                    {
+                        table: {
+                            headerRows: 1,
+                            widths: ['*', '*', '*', '*', '*', '*', '*'],
+                            body: [
+                                ['N° Cheque', 'Banco', 'Beneficiario', 'Monto', 'Emisión', 'Vencimiento', 'Estado'],
+                                ...chequesFiltrados.map(cheque => [
+                                    cheque.numero,
+                                    cheque.banco,
+                                    cheque.beneficiario,
+                                    `$${cheque.monto.toFixed(2)}`,
+                                    new Date(cheque.fechaEmision).toLocaleDateString(),
+                                    new Date(cheque.fechaVencimiento).toLocaleDateString(),
+                                    cheque.estado
+                                ])
+                            ]
+                        }
+                    }
+                ],
+                styles: {
+                    header: {
+                        fontSize: 18,
+                        bold: true,
+                        margin: [0, 0, 0, 10]
+                    }
+                }
+            };
+
+            pdfMake.createPdf(docDefinition).download(`cheques_${new Date().toISOString().split('T')[0]}.pdf`);
+            mostrarNotificacion('✅ PDF exportado correctamente', 'success');
+        }
+
+        function showConciliacion() {
+            alert('Funcionalidad de conciliación bancaria - Próximamente');
+        }
+
+        // ==================== UTILIDADES ====================
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                tipo === 'success' ? 'bg-green-500 text-white' :
+                tipo === 'error' ? 'bg-red-500 text-white' :
+                tipo === 'warning' ? 'bg-yellow-500 text-white' :
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = mensaje;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Manejar el formulario de cheque
+        document.getElementById('formCheque').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const chequeData = {
+                numero: document.getElementById('numeroCheque').value,
+                banco: document.getElementById('bancoCheque').value,
+                tipo: document.getElementById('tipoCheque').value,
+                cuentaBancaria: document.getElementById('cuentaBancaria').value,
+                beneficiario: document.getElementById('beneficiario').value,
+                monto: parseFloat(document.getElementById('montoCheque').value),
+                fechaEmision: document.getElementById('fechaEmision').value,
+                fechaVencimiento: document.getElementById('fechaVencimiento').value,
+                concepto: document.getElementById('concepto').value,
+                estado: document.getElementById('estadoCheque').value,
+                observaciones: document.getElementById('observaciones').value
+            };
+
+            if (chequeData.estado === 'cobrado') {
+                chequeData.fechaCobro = document.getElementById('fechaCobro').value;
+                chequeData.referenciaCobro = document.getElementById('referenciaCobro').value;
+            }
+
+            if (chequeEditando) {
+                // Actualizar cheque existente
+                Object.assign(chequeEditando, chequeData);
+                mostrarNotificacion(`✅ Cheque ${chequeData.numero} actualizado`, 'success');
+            } else {
+                // Nuevo cheque
+                chequeData.id = Math.max(...todosLosCheques.map(c => c.id)) + 1;
+                chequeData.fechaCobro = null;
+                chequeData.referenciaCobro = null;
+                chequeData.seleccionado = false;
+                todosLosCheques.push(chequeData);
+                mostrarNotificacion(`✅ Cheque ${chequeData.numero} creado`, 'success');
+            }
+
+            filtrarCheques();
+            hideNuevoChequeModal();
+        });
+
+        // Mostrar/ocultar información de cobro según estado
+        document.getElementById('estadoCheque').addEventListener('change', function() {
+            if (this.value === 'cobrado') {
+                document.getElementById('infoCobro').classList.remove('hidden');
+            } else {
+                document.getElementById('infoCobro').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
