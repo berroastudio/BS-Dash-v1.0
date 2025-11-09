@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BS Dash - Configuración</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ====== ESTILOS UBUNTU GLASS MEJORADOS ====== */
+        :root {
+            --bg-primary: #2D0922;
+            --bg-secondary: #1a0a15;
+            --bg-card: rgba(45, 20, 44, 0.75);
+            --bg-hover: rgba(85, 40, 80, 0.8);
+            --border-light: rgba(255, 255, 255, 0.15);
+            --border-hover: rgba(233, 84, 32, 0.6);
+            --text-primary: #FFFFFF;
+            --text-secondary: #E8E8E8;
+            --text-muted: #AAAAAA;
+            --accent-orange: #E95420;
+            --accent-purple: #77216F;
+            --gradient-primary: linear-gradient(135deg, #E95420, #77216F);
+            --gradient-card: linear-gradient(135deg, rgba(65, 25, 60, 0.9), rgba(40, 15, 35, 0.9));
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(rgba(38, 1, 83, 0.16), rgba(21, 0, 48, 0.046)), 
+                        url('https://plus.unsplash.com/premium_photo-1685793804465-b12bbd8b7281?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .ubuntu-glass {
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: var(--gradient-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .ubuntu-window {
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: var(--gradient-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .window-header {
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--border-light);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .window-title {
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .window-control {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .window-control.close { background: #FF5F57; }
+        .window-control.minimize { background: #FFBD2E; }
+        .window-control.maximize { background: #28CA42; }
+
+        .window-control:hover {
+            transform: scale(1.1);
+        }
+
+        .window-content {
+            padding: 25px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .ubuntu-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .ubuntu-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(233, 84, 32, 0.2);
+        }
+
+        .ubuntu-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .ubuntu-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 20px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .ubuntu-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .ubuntu-btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+        }
+
+        .ubuntu-btn-primary:hover {
+            background: linear-gradient(135deg, #77216F, #E95420);
+            transform: translateY(-2px);
+        }
+
+        /* Dock Interno */
+        .internal-dock {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(45, 20, 44, 0.5);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .dock-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .dock-item.active {
+            background: var(--gradient-primary);
+            transform: translateY(-3px);
+        }
+
+        .dock-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .dock-item span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Contenedor de Ventanas */
+        .windows-container {
+            min-height: 600px;
+            position: relative;
+        }
+
+        .window {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        .window.hidden {
+            display: none;
+        }
+
+        /* Búsqueda */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 25px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* Estados */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(32, 201, 151, 0.2);
+            color: #20C997;
+        }
+
+        .status-inactive {
+            background: rgba(255, 107, 107, 0.2);
+            color: #FF6B6B;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes windowOpen {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-window-open {
+            animation: windowOpen 0.3s ease-out;
+        }
+
+        /* Scrollbar personalizado */
+        .window-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .window-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .window-content::-webkit-scrollbar-thumb {
+            background: var(--accent-orange);
+            border-radius: 3px;
+        }
+
+        .window-content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-purple);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="ubuntu-glass mx-4 mt-4 mb-6">
+        <div class="flex items-center justify-between p-6">
+            <div class="flex items-center gap-4">
+                <a href="../dashboard.html" class="ubuntu-btn">
+                    <i class="bi bi-arrow-left"></i> Volver al Dashboard
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#E95420] to-[#77216F]">
+                        <i class="bi bi-gear text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">Configuración del Sistema</h1>
+                        <p class="text-sm text-gray-300">Administra todas las configuraciones</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- Selector de Empresa -->
+                <div class="flex items-center gap-2 bg-gray-800 bg-opacity-50 px-3 py-2 rounded-lg border border-gray-700">
+                    <label class="text-sm font-medium">Empresa:</label>
+                    <select id="empresaSwitcher" class="bg-transparent border-none outline-none text-sm text-white">
+                        <option value="1">Berroa Studio S.R.L.</option>
+                        <option value="2">Empresa Secundaria</option>
+                        <option value="3">Otra Empresa</option>
+                    </select>
+                </div>
+
+                <span class="text-gray-300" id="userName">Cargando...</span>
+                <button onclick="logout()" class="ubuntu-btn bg-red-500 bg-opacity-20 text-red-400 border-red-500 border-opacity-30">
+                    <i class="bi bi-box-arrow-right"></i> Salir
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 pb-8">
+        <!-- Barra de Búsqueda Global -->
+        <div class="search-container">
+            <input type="text" id="globalSearch" class="search-input" placeholder="Buscar en configuración...">
+            <i class="bi bi-search search-icon"></i>
+        </div>
+
+        <!-- Dock Interno de Módulos -->
+        <div class="internal-dock">
+            <div class="dock-item active" onclick="abrirVentana('empresa')">
+                <i class="bi bi-building"></i>
+                <span>Empresa</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('pos')">
+                <i class="bi bi-cash-coin"></i>
+                <span>Punto de Venta</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('secuencias')">
+                <i class="bi bi-123"></i>
+                <span>Secuencias</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('usuarios')">
+                <i class="bi bi-shield-check"></i>
+                <span>Usuarios</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('clientes')">
+                <i class="bi bi-people"></i>
+                <span>Clientes</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('plantillas')">
+                <i class="bi bi-palette"></i>
+                <span>Plantillas</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('onedrive')">
+                <i class="bi bi-microsoft"></i>
+                <span>OneDrive</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('backups')">
+                <i class="bi bi-cloud-arrow-up"></i>
+                <span>Backups</span>
+            </div>
+        </div>
+
+        <!-- Contenedor de Ventanas -->
+        <div class="windows-container">
+            <!-- Ventana: Información de Empresa -->
+            <div id="ventana-empresa" class="ubuntu-window window animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-building"></i>
+                        <span>Información de la Empresa</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('empresa')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('empresa')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('empresa')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Nombre de la Empresa *</label>
+                            <input type="text" id="empresaNombre" class="ubuntu-input" value="Berroa Studio S.R.L.">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">RNC *</label>
+                            <input type="text" id="empresaRNC" class="ubuntu-input" placeholder="RNC de la empresa">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Teléfono</label>
+                            <input type="text" id="empresaTelefono" class="ubuntu-input" placeholder="Teléfono">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                            <input type="email" id="empresaEmail" class="ubuntu-input" placeholder="Email corporativo">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Dirección</label>
+                            <textarea id="empresaDireccion" class="ubuntu-input" rows="3" placeholder="Dirección completa"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Sitio Web</label>
+                            <input type="url" id="empresaWebsite" class="ubuntu-input" placeholder="https://ejemplo.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Eslogan</label>
+                            <input type="text" id="empresaEslogan" class="ubuntu-input" placeholder="Eslogan de la empresa">
+                        </div>
+                    </div>
+                    <div class="flex justify-end mt-6 gap-3">
+                        <button onclick="restablecerEmpresa()" class="ubuntu-btn bg-gray-700 bg-opacity-50 text-gray-300 border-gray-600">
+                            <i class="bi bi-arrow-clockwise"></i> Restablecer
+                        </button>
+                        <button onclick="guardarConfigEmpresa()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: OneDrive -->
+            <div id="ventana-onedrive" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-microsoft"></i>
+                        <span>OneDrive Integration</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('onedrive')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('onedrive')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('onedrive')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <!-- Estado de Conexión -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h4 class="font-medium text-gray-300 mb-3">Estado de Conexión OneDrive:</h4>
+                        <div id="onedriveStatus" class="flex items-center gap-3 mb-3">
+                            <div class="w-3 h-3 rounded-full bg-orange-500 animate-pulse"></div>
+                            <span class="text-orange-400">⏳ No autenticado</span>
+                        </div>
+                        <div id="onedriveUserInfo" class="text-sm text-gray-400 space-y-1 hidden">
+                            <div><strong>Conectado como:</strong> <span id="onedriveUserName">-</span></div>
+                            <div><strong>Email:</strong> <span id="onedriveUserEmail">-</span></div>
+                            <div><strong>Última sincronización:</strong> <span id="onedriveLastSync">-</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración OneDrive -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                Client ID *
+                                <span class="text-xs text-gray-400">(De Azure App Registration)</span>
+                            </label>
+                            <input type="text" id="onedriveClientId" class="ubuntu-input" 
+                                   placeholder="12345678-1234-1234-1234-123456789abc">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                Tenant ID
+                                <span class="text-xs text-gray-400">(common para multi-tenant)</span>
+                            </label>
+                            <input type="text" id="onedriveTenantId" class="ubuntu-input" 
+                                   placeholder="common" value="common">
+                        </div>
+                    </div>
+
+                    <!-- Acciones OneDrive -->
+                    <div class="flex gap-3 flex-wrap mb-6">
+                        <button onclick="saveOneDriveConfig()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-cloud-check"></i> Guardar Configuración
+                        </button>
+                        <button onclick="connectOneDrive()" class="ubuntu-btn bg-blue-500 bg-opacity-20 text-blue-400 border-blue-500 border-opacity-30">
+                            <i class="bi bi-plug"></i> Conectar OneDrive
+                        </button>
+                        <button onclick="testOneDriveConnection()" class="ubuntu-btn bg-green-500 bg-opacity-20 text-green-400 border-green-500 border-opacity-30">
+                            <i class="bi bi-wifi"></i> Probar Conexión
+                        </button>
+                        <button onclick="disconnectOneDrive()" class="ubuntu-btn bg-red-500 bg-opacity-20 text-red-400 border-red-500 border-opacity-30">
+                            <i class="bi bi-plug"></i> Desconectar
+                        </button>
+                    </div>
+
+                    <!-- Configuración Automática -->
+                    <div class="ubuntu-glass p-4">
+                        <h5 class="font-medium text-gray-300 mb-3">Configuración Automática</h5>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Backup automático</label>
+                                    <p class="text-xs text-gray-400">Crear backup automáticamente cada 24h</p>
+                                </div>
+                                <input type="checkbox" id="autoBackup" class="ubuntu-checkbox">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Sincronizar en tiempo real</label>
+                                    <p class="text-xs text-gray-400">Sincronizar cambios automáticamente</p>
+                                </div>
+                                <input type="checkbox" id="syncRealTime" class="ubuntu-checkbox">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Backups -->
+            <div id="ventana-backups" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                        <span>Gestión de Backups</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('backups')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('backups')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('backups')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <!-- Acciones Rápidas -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <button onclick="createBackup()" class="ubuntu-btn bg-green-500 bg-opacity-20 text-green-400 border-green-500 border-opacity-30">
+                            <i class="bi bi-cloud-arrow-up"></i> Crear Backup
+                        </button>
+                        <button onclick="listBackups()" class="ubuntu-btn bg-blue-500 bg-opacity-20 text-blue-400 border-blue-500 border-opacity-30">
+                            <i class="bi bi-list-ul"></i> Ver Backups
+                        </button>
+                        <button onclick="restoreBackup()" class="ubuntu-btn bg-yellow-500 bg-opacity-20 text-yellow-400 border-yellow-500 border-opacity-30">
+                            <i class="bi bi-cloud-arrow-down"></i> Restaurar
+                        </button>
+                    </div>
+
+                    <!-- Lista de Backups -->
+                    <div class="ubuntu-glass p-4">
+                        <h4 class="font-medium text-gray-300 mb-3">Backups Disponibles</h4>
+                        <div id="backupsList" class="space-y-3 max-h-60 overflow-y-auto">
+                            <div class="text-center text-gray-400 py-4">
+                                <i class="bi bi-cloud-slash text-2xl mb-2"></i>
+                                <p>No hay backups disponibles</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estadísticas -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                        <div class="ubuntu-glass p-4 text-center">
+                            <div class="text-2xl font-bold text-green-400" id="totalBackups">0</div>
+                            <div class="text-sm text-gray-300">Total Backups</div>
+                        </div>
+                        <div class="ubuntu-glass p-4 text-center">
+                            <div class="text-2xl font-bold text-blue-400" id="lastBackupSize">0 MB</div>
+                            <div class="text-sm text-gray-300">Último Backup</div>
+                        </div>
+                        <div class="ubuntu-glass p-4 text-center">
+                            <div class="text-2xl font-bold text-purple-400" id="totalStorage">0 MB</div>
+                            <div class="text-sm text-gray-300">Almacenamiento</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Otras ventanas (placeholder) -->
+            <div id="ventana-pos" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-cash-coin"></i>
+                        <span>Configuración POS</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('pos')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('pos')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('pos')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <p class="text-gray-300">Configuración del punto de venta...</p>
+                </div>
+            </div>
+
+            <div id="ventana-secuencias" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-123"></i>
+                        <span>Secuencias</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('secuencias')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('secuencias')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('secuencias')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <p class="text-gray-300">Configuración de secuencias...</p>
+                </div>
+            </div>
+
+            <div id="ventana-usuarios" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-shield-check"></i>
+                        <span>Usuarios</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('usuarios')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('usuarios')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('usuarios')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <p class="text-gray-300">Gestión de usuarios...</p>
+                </div>
+            </div>
+
+            <div id="ventana-clientes" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-people"></i>
+                        <span>Clientes</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('clientes')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('clientes')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('clientes')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <p class="text-gray-300">Gestión de clientes...</p>
+                </div>
+            </div>
+
+            <div id="ventana-plantillas" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-palette"></i>
+                        <span>Plantillas</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('plantillas')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('plantillas')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('plantillas')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <p class="text-gray-300">Configuración de plantillas...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de Acción Globales -->
+        <div class="flex gap-4 justify-end mt-6">
+            <button onclick="restablecerConfiguracion()" class="ubuntu-btn bg-gray-700 bg-opacity-50 text-gray-300 border-gray-600">
+                <i class="bi bi-arrow-clockwise"></i> Restablecer Todo
+            </button>
+            <button onclick="guardarTodaConfiguracion()" class="ubuntu-btn ubuntu-btn-primary">
+                <i class="bi bi-check-lg"></i> Guardar Todo
+            </button>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        // ==================== CONFIGURACIÓN GLOBAL ====================
+        class ConfiguracionManager {
+            constructor() {
+                this.oneDriveManager = null;
+                this.ventanaActual = 'empresa';
+                this.init();
+            }
+
+            async init() {
+                console.log('🎯 Inicializando sistema de configuración...');
+                
+                // Verificar autenticación
+                if (!this.verificarAutenticacion()) {
+                    return;
+                }
+
+                // Cargar configuración
+                await this.cargarTodaConfiguracion();
+                
+                // Inicializar OneDrive si está configurado
+                await this.inicializarOneDrive();
+                
+                console.log('✅ Sistema de configuración listo');
+            }
+
+            verificarAutenticacion() {
+                const user = localStorage.getItem('bs_dash_user');
+                if (!user) {
+                    window.location.href = '../index.html';
+                    return false;
+                }
+                
+                try {
+                    const userData = JSON.parse(user);
+                    document.getElementById('userName').textContent = userData.name || userData.email || 'Usuario';
+                    return true;
+                } catch (error) {
+                    console.error('Error cargando usuario:', error);
+                    window.location.href = '../index.html';
+                    return false;
+                }
+            }
+
+            // ==================== SISTEMA DE VENTANAS ====================
+            abrirVentana(ventanaId) {
+                // Ocultar ventana actual
+                document.getElementById(`ventana-${this.ventanaActual}`).classList.add('hidden');
+                document.querySelector(`.dock-item[onclick="abrirVentana('${this.ventanaActual}')"]`).classList.remove('active');
+                
+                // Mostrar nueva ventana
+                const ventana = document.getElementById(`ventana-${ventanaId}`);
+                ventana.classList.remove('hidden');
+                ventana.style.animation = 'windowOpen 0.3s ease-out';
+                
+                // Actualizar dock
+                document.querySelector(`.dock-item[onclick="abrirVentana('${ventanaId}')"]`).classList.add('active');
+                
+                this.ventanaActual = ventanaId;
+
+                // Cargar configuración específica si es necesario
+                if (ventanaId === 'onedrive') {
+                    this.cargarConfigOneDrive();
+                } else if (ventanaId === 'backups') {
+                    this.actualizarEstadisticasBackups();
+                }
+            }
+
+            minimizarVentana(ventanaId) {
+                const ventana = document.getElementById(`ventana-${ventanaId}`);
+                ventana.classList.add('hidden');
+            }
+
+            maximizarVentana(ventanaId) {
+                const ventana = document.getElementById(`ventana-${ventanaId}`);
+                // Alternar entre maximizado y normal
+                if (ventana.style.width === '90vw') {
+                    ventana.style.width = '';
+                    ventana.style.height = '';
+                    ventana.style.position = '';
+                } else {
+                    ventana.style.width = '90vw';
+                    ventana.style.height = '80vh';
+                    ventana.style.position = 'fixed';
+                    ventana.style.top = '10%';
+                    ventana.style.left = '5%';
+                    ventana.style.zIndex = '1000';
+                }
+            }
+
+            cerrarVentana(ventanaId) {
+                // No permitir cerrar la única ventana abierta
+                if (document.querySelectorAll('.window:not(.hidden)').length <= 1) {
+                    this.mostrarNotificacion('Debe haber al menos una ventana abierta', 'warning');
+                    return;
+                }
+                
+                const ventana = document.getElementById(`ventana-${ventanaId}`);
+                ventana.classList.add('hidden');
+                document.querySelector(`.dock-item[onclick="abrirVentana('${ventanaId}')"]`).classList.remove('active');
+                
+                // Abrir la primera ventana disponible
+                const ventanasDisponibles = Array.from(document.querySelectorAll('.dock-item:not(.active)'));
+                if (ventanasDisponibles.length > 0) {
+                    const primeraVentana = ventanasDisponibles[0];
+                    const nuevaVentanaId = primeraVentana.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    this.abrirVentana(nuevaVentanaId);
+                }
+            }
+
+            // ==================== ONE DRIVE INTEGRATION ====================
+            async inicializarOneDrive() {
+                const config = JSON.parse(localStorage.getItem('bs_onedrive_config') || '{}');
+                
+                if (config.clientId) {
+                    this.oneDriveManager = new OneDriveManager(config.clientId, config.tenantId || 'common');
+                    
+                    // Cargar autenticación existente
+                    if (this.oneDriveManager.loadAuthData()) {
+                        console.log('✅ OneDrive Manager inicializado con autenticación existente');
+                        this.actualizarEstadoOneDrive(true, this.oneDriveManager.userName, this.oneDriveManager.userEmail);
+                    } else {
+                        console.log('✅ OneDrive Manager inicializado (sin autenticación)');
+                    }
+                }
+            }
+
+            cargarConfigOneDrive() {
+                const config = JSON.parse(localStorage.getItem('bs_onedrive_config') || '{}');
+                
+                document.getElementById('onedriveClientId').value = config.clientId || '';
+                document.getElementById('onedriveTenantId').value = config.tenantId || 'common';
+                document.getElementById('autoBackup').checked = config.autoBackup || false;
+                document.getElementById('syncRealTime').checked = config.syncRealTime || false;
+
+                // Actualizar estado
+                this.actualizarEstadoOneDrive(
+                    this.oneDriveManager ? this.oneDriveManager.isAuthenticated : false,
+                    this.oneDriveManager ? this.oneDriveManager.userName : '',
+                    this.oneDriveManager ? this.oneDriveManager.userEmail : ''
+                );
+            }
+
+            async saveOneDriveConfig() {
+                const config = {
+                    clientId: document.getElementById('onedriveClientId').value.trim(),
+                    tenantId: document.getElementById('onedriveTenantId').value.trim() || 'common',
+                    autoBackup: document.getElementById('autoBackup').checked,
+                    syncRealTime: document.getElementById('syncRealTime').checked
+                };
+
+                if (!config.clientId) {
+                    this.mostrarNotificacion('❌ Client ID es requerido', 'error');
+                    return;
+                }
+
+                localStorage.setItem('bs_onedrive_config', JSON.stringify(config));
+                
+                // Reinicializar el manager con la nueva configuración
+                this.oneDriveManager = new OneDriveManager(config.clientId, config.tenantId);
+                
+                this.mostrarNotificacion('✅ Configuración OneDrive guardada', 'success');
+            }
+
+            async connectOneDrive() {
+                if (!this.oneDriveManager) {
+                    this.mostrarNotificacion('❌ OneDrive no está configurado', 'error');
+                    return;
+                }
+
+                try {
+                    this.mostrarNotificacion('🔗 Conectando con OneDrive...', 'info');
+                    
+                    const result = await this.oneDriveManager.login();
+                    
+                    if (result.success) {
+                        this.mostrarNotificacion(`✅ Conectado a OneDrive como ${result.userName}`, 'success');
+                        this.actualizarEstadoOneDrive(true, result.userName, result.userEmail);
+                        
+                    } else {
+                        this.mostrarNotificacion('❌ Error conectando a OneDrive: ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error en conexión OneDrive:', error);
+                    this.mostrarNotificacion('❌ Error: ' + error.message, 'error');
+                }
+            }
+
+            async testOneDriveConnection() {
+                if (!this.oneDriveManager || !this.oneDriveManager.isAuthenticated) {
+                    this.mostrarNotificacion('❌ Primero debe conectarse a OneDrive', 'error');
+                    return;
+                }
+
+                try {
+                    this.mostrarNotificacion('🔍 Probando conexión...', 'info');
+                    
+                    const result = await this.oneDriveManager.testConnection();
+                    
+                    if (result.success) {
+                        this.mostrarNotificacion('✅ Conexión a OneDrive verificada correctamente', 'success');
+                    } else {
+                        this.mostrarNotificacion('❌ Error en conexión: ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    this.mostrarNotificacion('❌ Error: ' + error.message, 'error');
+                }
+            }
+
+            disconnectOneDrive() {
+                if (this.oneDriveManager) {
+                    this.oneDriveManager.logout();
+                }
+                
+                this.actualizarEstadoOneDrive(false);
+                this.mostrarNotificacion('🔌 Desconectado de OneDrive', 'info');
+            }
+
+            actualizarEstadoOneDrive(conectado, userName = '', userEmail = '') {
+                const statusElement = document.getElementById('onedriveStatus');
+                const userInfoElement = document.getElementById('onedriveUserInfo');
+                
+                if (conectado) {
+                    statusElement.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="text-green-400">✅ Conectado</span>
+                        </div>
+                    `;
+                    userInfoElement.classList.remove('hidden');
+                    document.getElementById('onedriveUserName').textContent = userName;
+                    document.getElementById('onedriveUserEmail').textContent = userEmail;
+                    document.getElementById('onedriveLastSync').textContent = new Date().toLocaleString();
+                } else {
+                    statusElement.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-3 h-3 rounded-full bg-orange-500 animate-pulse"></div>
+                            <span class="text-orange-400">⏳ No autenticado</span>
+                        </div>
+                    `;
+                    userInfoElement.classList.add('hidden');
+                }
+            }
+
+            // ==================== GESTIÓN DE BACKUPS ====================
+            async createBackup() {
+                if (!this.oneDriveManager || !this.oneDriveManager.isAuthenticated) {
+                    this.mostrarNotificacion('❌ Primero debe conectarse a OneDrive', 'error');
+                    return;
+                }
+
+                try {
+                    this.mostrarNotificacion('🔄 Creando backup...', 'info');
+                    
+                    // Recopilar datos del sistema
+                    const backupData = {
+                        timestamp: new Date().toISOString(),
+                        version: '1.0',
+                        sistema: 'BS-Dash',
+                        datos: this.recopilarDatosBackup()
+                    };
+
+                    const result = await this.oneDriveManager.uploadBackup(backupData);
+                    
+                    if (result.success) {
+                        this.mostrarNotificacion(`✅ Backup creado: ${result.fileName}`, 'success');
+                        this.actualizarEstadisticasBackups();
+                    } else {
+                        this.mostrarNotificacion('❌ Error creando backup: ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error creando backup:', error);
+                    this.mostrarNotificacion('❌ Error: ' + error.message, 'error');
+                }
+            }
+
+            recopilarDatosBackup() {
+                // Recopilar todos los datos importantes del sistema
+                const datos = {};
+                
+                // Buscar todas las claves en localStorage que empiecen con 'bs_'
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key.startsWith('bs_')) {
+                        try {
+                            datos[key] = JSON.parse(localStorage.getItem(key));
+                        } catch (error) {
+                            datos[key] = localStorage.getItem(key);
+                        }
+                    }
+                }
+                
+                return datos;
+            }
+
+            async listBackups() {
+                if (!this.oneDriveManager || !this.oneDriveManager.isAuthenticated) {
+                    this.mostrarNotificacion('❌ Primero debe conectarse a OneDrive', 'error');
+                    return;
+                }
+
+                try {
+                    this.mostrarNotificacion('📋 Obteniendo backups...', 'info');
+                    
+                    const result = await this.oneDriveManager.listBackups();
+                    
+                    if (result.success) {
+                        this.mostrarListaBackups(result.files);
+                        this.mostrarNotificacion(`✅ ${result.files.length} backups encontrados`, 'success');
+                    } else {
+                        this.mostrarNotificacion('❌ Error obteniendo backups: ' + result.error, 'error');
+                    }
+                } catch (error) {
+                    this.mostrarNotificacion('❌ Error: ' + error.message, 'error');
+                }
+            }
+
+            mostrarListaBackups(files) {
+                const backupsList = document.getElementById('backupsList');
+                
+                if (!files || files.length === 0) {
+                    backupsList.innerHTML = `
+                        <div class="text-center text-gray-400 py-4">
+                            <i class="bi bi-cloud-slash text-2xl mb-2"></i>
+                            <p>No hay backups disponibles</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                backupsList.innerHTML = files.map(file => `
+                    <div class="flex items-center justify-between p-3 border border-gray-600 rounded-lg bg-gray-800 bg-opacity-50">
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-200">${file.name}</div>
+                            <div class="text-xs text-gray-400">
+                                Creado: ${new Date(file.createdDateTime).toLocaleString()} | 
+                                Tamaño: ${(file.size / 1024).toFixed(2)} KB
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="configManager.downloadBackup('${file.id}')" class="ubuntu-btn text-sm">
+                                <i class="bi bi-download"></i>
+                            </button>
+                            <button onclick="configManager.restoreBackup('${file.id}')" class="ubuntu-btn text-sm bg-green-500 bg-opacity-20 text-green-400">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            actualizarEstadisticasBackups() {
+                // Implementar lógica para actualizar estadísticas
+                document.getElementById('totalBackups').textContent = '0';
+                document.getElementById('lastBackupSize').textContent = '0 MB';
+                document.getElementById('totalStorage').textContent = '0 MB';
+            }
+
+            // ==================== CONFIGURACIÓN EMPRESA ====================
+            cargarConfigEmpresa() {
+                const empresa = JSON.parse(localStorage.getItem('bs_config_empresa') || '{}');
+                
+                document.getElementById('empresaNombre').value = empresa.nombre || 'Berroa Studio S.R.L.';
+                document.getElementById('empresaRNC').value = empresa.rnc || '';
+                document.getElementById('empresaTelefono').value = empresa.telefono || '';
+                document.getElementById('empresaEmail').value = empresa.email || '';
+                document.getElementById('empresaDireccion').value = empresa.direccion || '';
+                document.getElementById('empresaWebsite').value = empresa.website || '';
+                document.getElementById('empresaEslogan').value = empresa.eslogan || '';
+            }
+
+            guardarConfigEmpresa() {
+                const empresaData = {
+                    nombre: document.getElementById('empresaNombre').value,
+                    rnc: document.getElementById('empresaRNC').value,
+                    telefono: document.getElementById('empresaTelefono').value,
+                    email: document.getElementById('empresaEmail').value,
+                    direccion: document.getElementById('empresaDireccion').value,
+                    website: document.getElementById('empresaWebsite').value,
+                    eslogan: document.getElementById('empresaEslogan').value,
+                    lastUpdate: new Date().toISOString()
+                };
+                
+                if (!empresaData.nombre || !empresaData.rnc) {
+                    this.mostrarNotificacion('❌ Nombre y RNC son requeridos', 'error');
+                    return;
+                }
+                
+                localStorage.setItem('bs_config_empresa', JSON.stringify(empresaData));
+                this.mostrarNotificacion('✅ Información de empresa guardada', 'success');
+            }
+
+            restablecerEmpresa() {
+                if (confirm('¿Restablecer información de la empresa a valores por defecto?')) {
+                    localStorage.removeItem('bs_config_empresa');
+                    this.cargarConfigEmpresa();
+                    this.mostrarNotificacion('✅ Información de empresa restablecida', 'success');
+                }
+            }
+
+            // ==================== FUNCIONES GENERALES ====================
+            async cargarTodaConfiguracion() {
+                this.cargarConfigEmpresa();
+                this.cargarConfigOneDrive();
+                // Aquí cargarías otras configuraciones...
+            }
+
+            guardarTodaConfiguracion() {
+                this.guardarConfigEmpresa();
+                this.saveOneDriveConfig();
+                this.mostrarNotificacion('✅ Toda la configuración ha sido guardada', 'success');
+            }
+
+            restablecerConfiguracion() {
+                if (confirm('¿Estás seguro de que deseas restablecer TODA la configuración a los valores por defecto? Esto no se puede deshacer.')) {
+                    // Eliminar solo configuraciones, no datos de la aplicación
+                    const keysToKeep = ['bs_dash_user', 'bs_dash_auth'];
+                    const keysToRemove = [];
+                    
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key.startsWith('bs_') && !keysToKeep.includes(key)) {
+                            keysToRemove.push(key);
+                        }
+                    }
+                    
+                    keysToRemove.forEach(key => localStorage.removeItem(key));
+                    
+                    this.mostrarNotificacion('✅ Configuración restablecida', 'success');
+                    setTimeout(() => location.reload(), 1000);
+                }
+            }
+
+            logout() {
+                if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+                    // Cerrar sesión en OneDrive también
+                    if (this.oneDriveManager) {
+                        this.oneDriveManager.logout();
+                    }
+                    
+                    localStorage.clear();
+                    window.location.href = '../index.html';
+                }
+            }
+
+            mostrarNotificacion(mensaje, tipo = 'info') {
+                const notificacion = document.createElement('div');
+                
+                const colors = {
+                    success: '#28CA42',
+                    error: '#FF5F57', 
+                    warning: '#FFBD2E',
+                    info: '#0D6EFD'
+                };
+                
+                const icons = {
+                    success: 'bi-check-circle',
+                    error: 'bi-exclamation-triangle',
+                    warning: 'bi-exclamation-circle',
+                    info: 'bi-info-circle'
+                };
+                
+                notificacion.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="bi ${icons[tipo]}" style="color: ${colors[tipo]}; font-size: 18px;"></i>
+                        <span>${mensaje}</span>
+                    </div>
+                `;
+                
+                // Aplicar estilos Ubuntu
+                Object.assign(notificacion.style, {
+                    position: 'fixed',
+                    top: '20px',
+                    right: '20px',
+                    background: 'rgba(51, 51, 51, 0.9)',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: '12px',
+                    padding: '15px 20px',
+                    color: 'white',
+                    zIndex: '10000',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                    animation: 'slideInRight 0.3s ease',
+                    fontFamily: 'Outfit, sans-serif'
+                });
+                
+                document.body.appendChild(notificacion);
+                
+                setTimeout(() => {
+                    notificacion.style.opacity = '0';
+                    notificacion.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => notificacion.remove(), 500);
+                }, 4000);
+            }
+
+            inicializarBusquedaGlobal() {
+                const searchInput = document.getElementById('globalSearch');
+                
+                searchInput.addEventListener('input', function(e) {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const ventanas = document.querySelectorAll('.window');
+                    
+                    ventanas.forEach(ventana => {
+                        const text = ventana.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            ventana.style.display = 'block';
+                        } else {
+                            ventana.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        }
+
+        // ==================== ONE DRIVE MANAGER ====================
+        class OneDriveManager {
+            constructor(clientId, tenantId = 'common') {
+                this.clientId = clientId;
+                this.tenantId = tenantId;
+                this.accessToken = null;
+                this.userName = null;
+                this.userEmail = null;
+                this.baseUrl = 'https://graph.microsoft.com/v1.0';
+                this.isAuthenticated = false;
+            }
+
+            async login() {
+                return new Promise((resolve, reject) => {
+                    try {
+                        const scopes = ['Files.ReadWrite.All', 'User.Read', 'offline_access'];
+                        const authUrl = `https://login.microsoftonline.com/${this.tenantId}/oauth2/v2.0/authorize?` +
+                            `client_id=${this.clientId}&` +
+                            `response_type=token&` +
+                            `redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}&` +
+                            `scope=${encodeURIComponent(scopes.join(' '))}&` +
+                            `response_mode=fragment&` +
+                            `state=${this.generateState()}`;
+
+                        console.log('🔗 Abriendo ventana de autenticación OneDrive...');
+
+                        const loginWindow = window.open(
+                            authUrl, 
+                            'OneDrive Login', 
+                            'width=600,height=700,top=100,left=100,toolbar=no,menubar=no,location=no'
+                        );
+                        
+                        if (!loginWindow) {
+                            reject(new Error('El navegador bloqueó la ventana emergente. Por favor permite ventanas emergentes para este sitio.'));
+                            return;
+                        }
+
+                        let authCompleted = false;
+                        const checkWindow = setInterval(() => {
+                            try {
+                                if (loginWindow.closed) {
+                                    clearInterval(checkWindow);
+                                    if (!authCompleted) {
+                                        reject(new Error('Ventana cerrada por el usuario'));
+                                    }
+                                    return;
+                                }
+                                
+                                const currentUrl = loginWindow.location.href;
+                                if (currentUrl.includes('access_token') || currentUrl.includes('error')) {
+                                    clearInterval(checkWindow);
+                                    authCompleted = true;
+                                    
+                                    try {
+                                        const url = new URL(currentUrl);
+                                        const hash = url.hash.substring(1);
+                                        const params = new URLSearchParams(hash);
+                                        
+                                        if (params.has('access_token')) {
+                                            this.accessToken = params.get('access_token');
+                                            
+                                            this.getUserInfo().then(userInfo => {
+                                                this.userName = userInfo.displayName;
+                                                this.userEmail = userInfo.mail || userInfo.userPrincipalName;
+                                                this.isAuthenticated = true;
+                                                
+                                                this.saveAuthData();
+                                                
+                                                loginWindow.close();
+                                                
+                                                resolve({
+                                                    success: true,
+                                                    accessToken: this.accessToken,
+                                                    userName: this.userName,
+                                                    userEmail: this.userEmail
+                                                });
+                                            }).catch(error => {
+                                                loginWindow.close();
+                                                reject(error);
+                                            });
+                                            
+                                        } else if (params.has('error')) {
+                                            loginWindow.close();
+                                            const errorMsg = params.get('error_description') || params.get('error');
+                                            reject(new Error(`Error de autenticación: ${errorMsg}`));
+                                        }
+                                    } catch (error) {
+                                        loginWindow.close();
+                                        reject(new Error('Error procesando la respuesta de autenticación'));
+                                    }
+                                }
+                            } catch (error) {
+                                // Ignorar errores de cross-origin
+                            }
+                        }, 500);
+
+                        setTimeout(() => {
+                            if (!loginWindow.closed && !authCompleted) {
+                                loginWindow.close();
+                                clearInterval(checkWindow);
+                                reject(new Error('Tiempo de espera agotado para la autenticación'));
+                            }
+                        }, 120000);
+
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+            }
+
+            generateState() {
+                return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+            }
+
+            async getUserInfo() {
+                if (!this.accessToken) {
+                    throw new Error('No hay token de acceso disponible');
+                }
+
+                const response = await fetch(`${this.baseUrl}/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${this.accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error obteniendo información del usuario: ${response.status} ${response.statusText}`);
+                }
+                
+                return await response.json();
+            }
+
+            saveAuthData() {
+                const authData = {
+                    accessToken: this.accessToken,
+                    userName: this.userName,
+                    userEmail: this.userEmail,
+                    clientId: this.clientId,
+                    tenantId: this.tenantId,
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem('bs_onedrive_auth', JSON.stringify(authData));
+            }
+
+            loadAuthData() {
+                const authData = JSON.parse(localStorage.getItem('bs_onedrive_auth') || '{}');
+                if (authData.accessToken && authData.clientId === this.clientId) {
+                    this.accessToken = authData.accessToken;
+                    this.userName = authData.userName;
+                    this.userEmail = authData.userEmail;
+                    this.isAuthenticated = true;
+                    return true;
+                }
+                return false;
+            }
+
+            clearAuthData() {
+                localStorage.removeItem('bs_onedrive_auth');
+                this.accessToken = null;
+                this.userName = null;
+                this.userEmail = null;
+                this.isAuthenticated = false;
+            }
+
+            async testConnection() {
+                try {
+                    if (!this.accessToken) {
+                        return {
+                            success: false,
+                            error: 'No autenticado. Por favor inicia sesión primero.'
+                        };
+                    }
+
+                    const response = await fetch(`${this.baseUrl}/me/drive`, {
+                        headers: {
+                            'Authorization': `Bearer ${this.accessToken}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const driveInfo = await response.json();
+                        return { 
+                            success: true, 
+                            message: `✅ Conectado a OneDrive como ${this.userName}`,
+                            drive: driveInfo
+                        };
+                    } else {
+                        return { 
+                            success: false, 
+                            error: `Error de conexión: ${response.status} ${response.statusText}` 
+                        };
+                    }
+                } catch (error) {
+                    return { 
+                        success: false, 
+                        error: error.message 
+                    };
+                }
+            }
+
+            async uploadBackup(backupData) {
+                try {
+                    const fileName = `backup-bsdash-${new Date().toISOString().replace(/[:.]/g, '-')}.json`;
+                    const fileContent = JSON.stringify(backupData, null, 2);
+                    
+                    // Crear carpeta si no existe
+                    const folderPath = 'BS-Dash/Backups/';
+                    await this.ensureFolderExists(folderPath);
+
+                    // Subir archivo
+                    const response = await fetch(
+                        `${this.baseUrl}/me/drive/root:/${folderPath}${fileName}:/content`,
+                        {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `Bearer ${this.accessToken}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: fileContent
+                        }
+                    );
+
+                    if (response.ok) {
+                        const fileInfo = await response.json();
+                        return { 
+                            success: true, 
+                            fileName: fileName,
+                            fileInfo: fileInfo
+                        };
+                    } else {
+                        const error = await response.json();
+                        return { 
+                            success: false, 
+                            error: error.error?.message || `Error ${response.status}` 
+                        };
+                    }
+                } catch (error) {
+                    return { 
+                        success: false, 
+                        error: error.message 
+                    };
+                }
+            }
+
+            async ensureFolderExists(folderPath) {
+                const folders = folderPath.split('/').filter(f => f);
+                let currentPath = '';
+                
+                for (const folder of folders) {
+                    currentPath += `/${folder}`;
+                    try {
+                        await fetch(
+                            `${this.baseUrl}/me/drive/root:${currentPath}`,
+                            {
+                                headers: {
+                                    'Authorization': `Bearer ${this.accessToken}`
+                                }
+                            }
+                        );
+                    } catch (error) {
+                        // Si no existe, crear la carpeta
+                        const parentPath = currentPath.split('/').slice(0, -1).join('/') || '/';
+                        await fetch(
+                            `${this.baseUrl}/me/drive/root:${parentPath}:/children`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${this.accessToken}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    name: folder,
+                                    folder: {},
+                                    '@microsoft.graph.conflictBehavior': 'rename'
+                                })
+                            }
+                        );
+                    }
+                }
+            }
+
+            async listBackups() {
+                try {
+                    const response = await fetch(
+                        `${this.baseUrl}/me/drive/root:/BS-Dash/Backups:/children?$orderby=createdDateTime desc`,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${this.accessToken}`
+                            }
+                        }
+                    );
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        return { 
+                            success: true, 
+                            files: data.value || [] 
+                        };
+                    } else {
+                        return { 
+                            success: false, 
+                            error: 'Error listando backups' 
+                        };
+                    }
+                } catch (error) {
+                    return { 
+                        success: false, 
+                        error: error.message 
+                    };
+                }
+            }
+
+            logout() {
+                this.clearAuthData();
+                
+                // Redirigir a logout de Microsoft
+                const logoutUrl = `https://login.microsoftonline.com/${this.tenantId}/oauth2/v2.0/logout?` +
+                    `post_logout_redirect_uri=${encodeURIComponent(window.location.origin + window.location.pathname)}`;
+                
+                window.open(logoutUrl, '_blank');
+            }
+        }
+
+        // ==================== INICIALIZACIÓN ====================
+        let configManager;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            configManager = new ConfiguracionManager();
+            configManager.inicializarBusquedaGlobal();
+        });
+
+        // ==================== FUNCIONES GLOBALES ====================
+        function abrirVentana(ventanaId) {
+            configManager.abrirVentana(ventanaId);
+        }
+
+        function minimizarVentana(ventanaId) {
+            configManager.minimizarVentana(ventanaId);
+        }
+
+        function maximizarVentana(ventanaId) {
+            configManager.maximizarVentana(ventanaId);
+        }
+
+        function cerrarVentana(ventanaId) {
+            configManager.cerrarVentana(ventanaId);
+        }
+
+        function saveOneDriveConfig() {
+            configManager.saveOneDriveConfig();
+        }
+
+        function connectOneDrive() {
+            configManager.connectOneDrive();
+        }
+
+        function testOneDriveConnection() {
+            configManager.testOneDriveConnection();
+        }
+
+        function disconnectOneDrive() {
+            configManager.disconnectOneDrive();
+        }
+
+        function createBackup() {
+            configManager.createBackup();
+        }
+
+        function listBackups() {
+            configManager.listBackups();
+        }
+
+        function guardarConfigEmpresa() {
+            configManager.guardarConfigEmpresa();
+        }
+
+        function restablecerEmpresa() {
+            configManager.restablecerEmpresa();
+        }
+
+        function guardarTodaConfiguracion() {
+            configManager.guardarTodaConfiguracion();
+        }
+
+        function restablecerConfiguracion() {
+            configManager.restablecerConfiguracion();
+        }
+
+        function logout() {
+            configManager.logout();
+        }
+
+        // Agregar keyframes para la animación de notificación
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            .ubuntu-checkbox {
+                width: 20px;
+                height: 20px;
+                border-radius: 6px;
+                border: 2px solid var(--border-light);
+                background: rgba(255, 255, 255, 0.1);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                appearance: none;
+                position: relative;
+            }
+            
+            .ubuntu-checkbox:checked {
+                background: var(--accent-orange);
+                border-color: var(--accent-orange);
+            }
+            
+            .ubuntu-checkbox:checked::after {
+                content: '✓';
+                position: absolute;
+                color: white;
+                font-size: 14px;
+                font-weight: bold;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

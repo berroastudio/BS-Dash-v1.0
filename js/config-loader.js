@@ -1,49 +1,56 @@
-// js/config-loader.js - Cargador seguro de configuración
+// js/config-loader.js - Cargador de configuración
+console.log('⚙️ Cargando configuración del sistema...');
+
 class ConfigLoader {
-    static load() {
-        console.log('🔄 Cargando configuración...');
-        
+    constructor() {
+        this.config = {};
+        this.load();
+    }
+
+    load() {
+        // Configuración por defecto
+        this.config = {
+            APP_NAME: 'BS Dash',
+            APP_VERSION: '2.0.0',
+            DEFAULT_EMPRESA: '1',
+            MODULOS_POR_DEFECTO: [
+                'dashboard', 'facturacion', 'inventario', 'clientes', 
+                'reportes', 'configuracion'
+            ],
+            ROLES: {
+                admin: 'Administrador',
+                gerente: 'Gerente', 
+                vendedor: 'Vendedor',
+                inventario: 'Inventario',
+                reportes: 'Solo Reportes'
+            }
+        };
+
+        // Cargar configuración desde localStorage
         try {
-            // Verificar si existe configuración personalizada
-            if (typeof CONFIG !== 'undefined' && CONFIG.ENCRYPTION_KEY) {
-                console.log('✅ Configuración personalizada cargada correctamente');
-                
-                // Validar configuración mínima
-                if (CONFIG.ENCRYPTION_KEY.includes('cambiar-por-clave')) {
-                    console.error('❌ ERROR: No has configurado ENCRYPTION_KEY en config.js');
-                    alert('ERROR: Debes configurar la clave de encriptación en config.js');
-                    return this.getDefaultConfig();
-                }
-                
-                return CONFIG;
+            const savedConfig = localStorage.getItem('bs_system_config');
+            if (savedConfig) {
+                this.config = { ...this.config, ...JSON.parse(savedConfig) };
             }
         } catch (error) {
-            console.warn('⚠️ Configuración personalizada no encontrada:', error);
+            console.error('Error cargando configuración:', error);
         }
-        
-        console.warn('⚠️ Usando configuración por defecto (menos segura)');
-        return this.getDefaultConfig();
+
+        window.CONFIG = this.config;
+        console.log('✅ Configuración cargada:', this.config);
     }
-    
-    static getDefaultConfig() {
-        // Configuración por defecto para desarrollo
-        return {
-            ENCRYPTION_KEY: 'bs-dash-dev-key-0722' + btoa(navigator.userAgent + Date.now()),
-            ADMIN_EMAIL: 'jberroa@berroastudio.com',
-            ADMIN_PASSWORD: 'RnKxNohk3vmTmKBm809415',
-            DEFAULT_EMPRESA: 1,
-            SESSION_TIMEOUT: 24 * 60 * 60 * 1000,
-            BACKUP_INTERVAL: 24 * 60 * 60 * 1000,
-            APP_NAME: 'BS Dashboard',
-            APP_VERSION: '1.0.0'
-        };
+
+    save(config) {
+        try {
+            this.config = { ...this.config, ...config };
+            localStorage.setItem('bs_system_config', JSON.stringify(this.config));
+            window.CONFIG = this.config;
+            console.log('✅ Configuración guardada');
+        } catch (error) {
+            console.error('Error guardando configuración:', error);
+        }
     }
 }
 
-// Cargar y hacer disponible globalmente
-window.CONFIG = ConfigLoader.load();
-console.log('🎯 Configuración cargada:', {
-    app: window.CONFIG.APP_NAME,
-    version: window.CONFIG.APP_VERSION,
-    empresa: window.CONFIG.DEFAULT_EMPRESA
-});
+// Inicializar inmediatamente
+window.configLoader = new ConfigLoader();

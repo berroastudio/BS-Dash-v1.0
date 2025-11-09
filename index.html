@@ -6,79 +6,188 @@
     <title>BS Dash - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Estilos mantenidos igual */
+        :root {
+            --bg-primary: #2D0922;
+            --bg-secondary: #1a0a15;
+            --accent-orange: #E95420;
+            --accent-purple: #77216F;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .ubuntu-glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .ubuntu-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .ubuntu-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(233, 84, 32, 0.2);
+        }
+
+        .ubuntu-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .ubuntu-btn {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .ubuntu-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(233, 84, 32, 0.4);
+        }
+
+        .ubuntu-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+        }
+
+        .status-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #3b82f6;
+        }
+    </style>
 </head>
-<body class="bg-[#fbfbfb] min-h-screen flex items-center justify-center p-4">
-    <div class="bs-card p-8 w-full max-w-md animate-fade-in">
-        <!-- Header -->
+<body class="min-h-screen flex items-center justify-center p-4">
+    <!-- Login Container -->
+    <div class="ubuntu-glass p-8 w-full max-w-md animate-fade-in">
+        <!-- Logo y Título -->
         <div class="text-center mb-8">
-            <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-200">
-                <i class="bi bi-grid-3x3-gap-fill text-blue-600 text-2xl"></i>
+            <div class="w-20 h-20 bg-gradient-to-br from-[#E95420] to-[#77216F] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class="bi bi-grid-3x3-gap text-3xl text-white"></i>
             </div>
-            <h1 class="text-2xl font-bold text-gray-800">BS Dash</h1>
-            <p class="text-gray-600 mt-2">Business Solution Dashboard</p>
+            <h1 class="text-3xl font-bold text-white mb-2">BS Dash</h1>
+            <p class="text-gray-300">Business Solutions Dashboard</p>
         </div>
 
-        <!-- Formulario Login -->
-        <form id="loginForm" class="space-y-4">
+        <!-- Formulario de Login -->
+        <form id="loginForm" class="space-y-6">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    <i class="bi bi-envelope mr-2"></i>Correo electrónico
+                <label class="block text-sm font-medium text-gray-300 mb-3">
+                    <i class="bi bi-person-circle mr-2"></i>Usuario o Email
                 </label>
                 <input 
                     id="email"
-                    type="email" 
+                    type="text" 
                     required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all bg-white"
-                    placeholder="admin@berroa.com"
-                    value="admin@berroa.com"
+                    class="ubuntu-input"
+                    placeholder="admin@berroastudio.com o admin"
+                    value="admin"
+                    autocomplete="username"
                 >
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    <i class="bi bi-lock mr-2"></i>Contraseña
+                <label class="block text-sm font-medium text-gray-300 mb-3">
+                    <i class="bi bi-shield-lock mr-2"></i>Contraseña
                 </label>
                 <input 
                     id="password"
                     type="password" 
                     required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-all bg-white"
+                    class="ubuntu-input"
                     placeholder="••••••••"
                     value="809415"
+                    autocomplete="current-password"
                 >
             </div>
 
-            <!-- Mensaje de error -->
-            <div id="errorMsg" class="hidden p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p class="text-red-700 text-sm text-center">
+            <!-- Mensaje de Error -->
+            <div id="errorMsg" class="hidden p-4 rounded-lg status-error">
+                <p class="text-sm text-center">
                     <i class="bi bi-exclamation-triangle mr-2"></i>
                     <span id="errorText">Credenciales incorrectas</span>
                 </p>
             </div>
 
+            <!-- Botón de Login -->
             <button 
                 type="submit"
-                class="w-full bs-btn-primary py-3 rounded-lg font-semibold transition-all mt-4"
+                class="ubuntu-btn"
                 id="loginButton"
             >
                 <i class="bi bi-box-arrow-in-right"></i>
-                Ingresar al Sistema
+                <span id="loginText">Ingresar al Sistema</span>
             </button>
         </form>
 
-        <!-- Credenciales -->
-        <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <p class="text-sm text-blue-700 text-center">
-                <strong class="text-blue-800">Credenciales de Acceso</strong><br>
-                <span class="text-blue-600">b@gmail.com / 809</span><br>
-                <span class="text-blue-600">admin@berroa.com / 809415</span>
+        <!-- Credenciales de Demo -->
+        <div class="mt-6 p-4 rounded-lg status-info">
+            <p class="text-sm text-center">
+                <strong>Usuario de Prueba:</strong><br>
+                <span class="text-xs">admin / 809415</span><br>
+                <span class="text-xs">admin@berroastudio.com</span>
             </p>
         </div>
 
-        <!-- Estado del sistema -->
-        <div id="systemStatus" class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 hidden">
-            <p class="text-xs text-gray-600 text-center">
+        <!-- Estado del Sistema -->
+        <div id="systemStatus" class="mt-4 p-3 rounded-lg status-info">
+            <p class="text-xs text-center">
                 <i class="bi bi-info-circle mr-1"></i>
                 <span id="statusText">Inicializando sistema...</span>
             </p>
@@ -86,13 +195,11 @@
     </div>
 
     <!-- Scripts en ORDEN CORRECTO -->
-    <script src="config-pages.js"></script>
     <script src="js/config-loader.js"></script>
     <script src="js/secure-database.js"></script>
     <script src="js/auth-system.js"></script>
     <script src="js/database-manager.js"></script>
     
-    <!-- Script de login actualizado -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loginForm = document.getElementById('loginForm');
@@ -101,145 +208,131 @@
             const errorMsg = document.getElementById('errorMsg');
             const errorText = document.getElementById('errorText');
             const loginButton = document.getElementById('loginButton');
+            const loginText = document.getElementById('loginText');
             const systemStatus = document.getElementById('systemStatus');
             const statusText = document.getElementById('statusText');
 
-            // Mostrar estado del sistema
+            let authSystem = null;
+            let dbManager = null;
+
             function showStatus(message, type = 'info') {
                 statusText.textContent = message;
-                systemStatus.className = `mt-4 p-3 rounded-lg border text-xs text-center `;
+                systemStatus.className = `mt-4 p-3 rounded-lg text-xs text-center`;
                 
-                if (type === 'error') {
-                    systemStatus.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
-                } else if (type === 'success') {
-                    systemStatus.classList.add('bg-green-50', 'border-green-200', 'text-green-700');
-                } else {
-                    systemStatus.classList.add('bg-gray-50', 'border-gray-200', 'text-gray-600');
-                }
+                const typeClass = {
+                    'error': 'status-error',
+                    'success': 'status-success', 
+                    'warning': 'status-warning',
+                    'info': 'status-info'
+                }[type] || 'status-info';
                 
-                systemStatus.classList.remove('hidden');
+                systemStatus.classList.add(typeClass);
             }
 
-            // Verificar si ya está autenticado
-            const session = localStorage.getItem('bs_dash_auth');
-            if (session) {
+            function initializeSystem() {
+                showStatus('🔧 Inicializando BS Dash...');
+
                 try {
-                    const sessionData = JSON.parse(session);
-                    if (sessionData.user && sessionData.loginTime) {
-                        showStatus('✅ Sesión activa, redirigiendo...', 'success');
+                    // Inicializar componentes
+                    authSystem = new AuthSystem();
+                    dbManager = new DatabaseManager();
+                    
+                    window.auth = authSystem;
+                    window.dbManager = dbManager;
+
+                    // Verificar sesión existente
+                    if (authSystem.checkExistingSession()) {
+                        showStatus('✅ Sesión activa encontrada, redirigiendo...', 'success');
                         setTimeout(() => {
                             window.location.href = 'dashboard.html';
                         }, 1000);
                         return;
                     }
-                } catch (e) {
-                    console.log('Sesión inválida, continuando...');
+
+                    showStatus('✅ Sistema listo. Puede iniciar sesión.', 'success');
+                    console.log('🚀 Sistema BS Dash inicializado correctamente');
+
+                } catch (error) {
+                    console.error('❌ Error inicializando sistema:', error);
+                    showStatus('❌ Error inicializando sistema', 'error');
                 }
             }
-
-            // Mostrar estado de inicialización
-            showStatus('🔧 Inicializando sistema...');
-
-            // Esperar a que el sistema esté listo
-            setTimeout(() => {
-                showStatus('✅ Sistema listo. Puede iniciar sesión.', 'success');
-            }, 1000);
 
             // Manejar el login
-            if (loginForm) {
-                loginForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    
-                    const email = emailInput.value.trim();
-                    const password = passwordInput.value;
-                    
-                    // Validaciones básicas
-                    if (!email || !password) {
-                        errorText.textContent = 'Por favor complete todos los campos';
-                        errorMsg.classList.remove('hidden');
-                        return;
-                    }
-
-                    // Mostrar loading
-                    const originalText = loginButton.innerHTML;
-                    loginButton.innerHTML = '<i class="bi bi-arrow-repeat animate-spin"></i> Verificando...';
-                    loginButton.disabled = true;
-                    errorMsg.classList.add('hidden');
-
-                    try {
-                        console.log('🔐 Intentando login:', email);
-                        
-                        // ✅ SISTEMA UNIVERSAL - Funciona en Pages y Local
-                        let success = false;
-                        
-                        // Credenciales para AMBOS entornos
-                        if ((email === 'b@gmail.com' && password === '809') ||
-                            (email === 'admin@berroa.com' && password === '809415')) {
-                            success = true;
-                            
-                            // Sesión que funciona en ambos
-                            localStorage.setItem('bs_dash_auth', JSON.stringify({
-                                user: { 
-                                    email: email, 
-                                    name: 'Administrador', 
-                                    role: 'admin',
-                                    empresa_id: 1 
-                                },
-                                loginTime: new Date().getTime(),
-                                expiresAt: new Date().getTime() + (24 * 60 * 60 * 1000) // 24 horas
-                            }));
-                            console.log('✅ Login exitoso - Usuario:', email);
-                        }
-                        
-                        if (success) {
-                            showStatus('✅ Login exitoso, redirigiendo...', 'success');
-                            setTimeout(() => {
-                                window.location.href = 'dashboard.html';
-                            }, 1000);
-                        } else {
-                            errorText.textContent = 'Credenciales incorrectas. Use: b@gmail.com/809 o admin@berroa.com/809415';
-                            errorMsg.classList.remove('hidden');
-                            showStatus('❌ Credenciales incorrectas', 'error');
-                            console.warn('❌ Login fallido para:', email);
-                        }
-                    } catch (error) {
-                        console.error('💥 Error en login:', error);
-                        errorText.textContent = 'Error del sistema. Use: b@gmail.com / 809';
-                        errorMsg.classList.remove('hidden');
-                        showStatus('❌ Error del sistema', 'error');
-                    } finally {
-                        // Restaurar botón
-                        loginButton.innerHTML = originalText;
-                        loginButton.disabled = false;
-                    }
-                });
-            }
-
-            // Auto-focus en el email
-            if (emailInput) {
-                emailInput.focus();
-            }
-
-            // Atajos de teclado
-            document.addEventListener('keydown', function(e) {
-                // Ctrl+Enter para login rápido
-                if (e.ctrlKey && e.key === 'Enter') {
-                    loginForm.dispatchEvent(new Event('submit'));
-                }
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
                 
-                // Tab entre campos
-                if (e.key === 'Enter' && e.target.type !== 'submit') {
-                    e.preventDefault();
-                    const inputs = Array.from(loginForm.querySelectorAll('input'));
-                    const currentIndex = inputs.indexOf(e.target);
-                    const nextIndex = (currentIndex + 1) % inputs.length;
-                    inputs[nextIndex].focus();
+                const email = emailInput.value.trim();
+                const password = passwordInput.value;
+                
+                if (!email || !password) {
+                    showError('Por favor complete todos los campos');
+                    return;
+                }
+
+                setLoading(true);
+
+                try {
+                    console.log('🔐 Intentando login con:', email);
+                    
+                    if (!authSystem) {
+                        throw new Error('Sistema de autenticación no disponible');
+                    }
+
+                    const result = await authSystem.login(email, password);
+                    
+                    if (result.success) {
+                        handleLoginSuccess(result.user);
+                    } else {
+                        throw new Error(result.error || 'Error en autenticación');
+                    }
+                    
+                } catch (error) {
+                    console.error('💥 Error en login:', error);
+                    showError(error.message);
+                } finally {
+                    setLoading(false);
                 }
             });
 
-            // Debug info en consola
-            console.log('🚀 Sistema de login cargado');
-            console.log('🌐 Entorno:', window.location.hostname.includes('github.io') ? 'GitHub Pages' : 'Local');
+            function showError(message) {
+                errorText.textContent = message;
+                errorMsg.classList.remove('hidden');
+                showStatus('❌ Error en autenticación', 'error');
+            }
+
+            function setLoading(loading) {
+                if (loading) {
+                    loginText.innerHTML = '<i class="bi bi-arrow-repeat animate-spin"></i> Verificando...';
+                    loginButton.disabled = true;
+                    errorMsg.classList.add('hidden');
+                } else {
+                    loginText.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Ingresar al Sistema';
+                    loginButton.disabled = false;
+                }
+            }
+
+            function handleLoginSuccess(user) {
+                showStatus('✅ ¡Login exitoso! Redirigiendo...', 'success');
+                console.log('🎉 Login exitoso para:', user.email);
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            }
+
+            // Iniciar el sistema
+            initializeSystem();
+
+            // Auto-focus
+            emailInput.focus();
+
+            // Atajos de teclado
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    loginForm.requestSubmit();
+                }
+            });
         });
     </script>
 </body>

@@ -1,75 +1,125 @@
-// js/database-manager.js - VERSIÓN COMPATIBLE CON MULTIEMPRESAS
-console.log('📊 Cargando database-manager.js...');
-
+// js/database-manager.js - Database manager corregido
 class DatabaseManager {
     constructor() {
-        this.storageKey = 'bs_dash_multiempresa_data';
+        this.secureDB = new SecureDatabase();
+        this.currentEmpresa = '1';
         this.init();
-        console.log('✅ Database manager inicializado para multiempresas');
     }
 
     init() {
-        // Inicializar datos de empresas si no existen
-        if (!localStorage.getItem(this.storageKey)) {
-            const initialData = {
-                empresas: [
-                    {
-                        id: 1,
-                        nombre: 'Empresa Principal',
-                        rif: 'J-123456789',
-                        direccion: 'Caracas, Venezuela',
-                        telefono: '+584123456789',
-                        color: '#3B82F6'
-                    }
-                ],
-                usuarios: [],
-                ventas: [],
-                productos: []
-            };
-            localStorage.setItem(this.storageKey, JSON.stringify(initialData));
+        console.log('🗄️ Inicializando Database Manager...');
+        this.loadCurrentEmpresa();
+    }
+
+    loadCurrentEmpresa() {
+        const empresaGuardada = localStorage.getItem('bs_current_empresa');
+        if (empresaGuardada) {
+            this.currentEmpresa = empresaGuardada;
         }
     }
 
-    getInfo() {
-        return { status: 'active', version: '1.0', multiempresa: true };
-    }
-
-    // Métodos para empresas (compatibilidad con empresa-context.js)
+    // Métodos de empresas
     getEmpresas() {
-        const data = JSON.parse(localStorage.getItem(this.storageKey) || '{"empresas":[]}');
-        return data.empresas;
+        return this.secureDB.getEmpresas();
     }
 
-    getEmpresa(id) {
-        const empresas = this.getEmpresas();
-        return empresas.find(emp => emp.id.toString() === id.toString());
+    getEmpresa(id = null) {
+        const empresaId = id || this.currentEmpresa;
+        return this.secureDB.getEmpresa(empresaId);
     }
 
-    crearEmpresa(nombre, rif, direccion, telefono, color) {
-        const data = JSON.parse(localStorage.getItem(this.storageKey));
+    crearEmpresa(nombre, rif, direccion, telefono, color = '#3B82F6') {
+        const db = this.secureDB.getDatabase();
+        const nuevoId = Math.max(...db.empresas.map(e => e.id), 0) + 1;
+        
         const nuevaEmpresa = {
-            id: Date.now(),
+            id: nuevoId,
             nombre,
             rif,
             direccion,
             telefono,
-            color
+            color,
+            email: '',
+            website: '',
+            eslogan: '',
+            activa: true,
+            fecha_creacion: new Date().toISOString()
         };
-        data.empresas.push(nuevaEmpresa);
-        localStorage.setItem(this.storageKey, JSON.stringify(data));
+
+        db.empresas.push(nuevaEmpresa);
+        this.secureDB.saveDatabase(db);
+
+        // Crear módulos por defecto para la nueva empresa
+        this.initializeModulosEmpresa(nuevoId);
+
         return nuevaEmpresa;
     }
 
-    getEstadisticas(empresaId) {
-        // Estadísticas simuladas
+    initializeModulosEmpresa(empresaId) {
+        const modulosPorDefecto = [
+            'dashboard', 'facturacion', 'inventario', 'clientes', 
+            'reportes', 'configuracion'
+        ];
+        
+        const db = this.secureDB.getDatabase();
+        db.modulos[`empresa_${empresaId}`] = modulosPorDefecto;
+        this.secureDB.saveDatabase(db);
+    }
+
+    // Métodos de backup
+    backup() {
+        try {
+            const db = this.secureDB.getDatabase();
+            const backupData = {
+                ...db,
+                backup_timestamp: new Date().toISOString(),
+                version: '2.0.0'
+            };
+
+            const backups = JSON.parse(localStorage.getItem('bs_backups') || '[]');
+            backups.unshift({
+                nombre: `backup-${new Date().toISOString().split('T')[0]}.json`,
+                fecha: new Date().toISOString(),
+                tamaño: JSON.stringify(backupData).length / 1024 / 1024, // MB
+                tipo: 'completo',
+                data: backupData
+            });
+
+            // Mantener solo los últimos 10 backups
+            if (backups.length > 10) {
+                backups.splice(10);
+            }
+
+            localStorage.setItem('bs_backups', JSON.stringify(backups));
+            return true;
+        } catch (error) {
+            console.error('Error en backup:', error);
+            return false;
+        }
+    }
+
+    getInfo() {
+        const db = this.secureDB.getDatabase();
         return {
-            ventas: 15000,
-            productos: 45,
-            productosBajoStock: 3,
-            ordenesPendientes: 7,
-            clientes: 23
+            multiempresa: true,
+            empresas: db.empresas.length,
+            usuarios: db.usuarios.length,
+            version: db.version
         };
+    }
+
+    // Métodos de módulos
+    getModulosEmpresa(empresaId = null) {
+        const id = empresaId || this.currentEmpresa;
+        const db = this.secureDB.getDatabase();
+        return db.modulos[`empresa_${id}`] || [];
+    }
+
+    setModulosEmpresa(empresaId, modulos) {
+        const db = this.secureDB.getDatabase();
+        db.modulos[`empresa_${empresaId}`] = modulos;
+        this.secureDB.saveDatabase(db);
     }
 }
 
-window.dbManager = new DatabaseManager();
+window.DatabaseManager = DatabaseManager;

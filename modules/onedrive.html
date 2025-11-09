@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BS Dash - OneDrive Integration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #2D0922;
+            --bg-secondary: #1a0a15;
+            --bg-card: rgba(45, 20, 44, 0.75);
+            --bg-hover: rgba(85, 40, 80, 0.8);
+            --border-light: rgba(255, 255, 255, 0.15);
+            --border-hover: rgba(233, 84, 32, 0.6);
+            --text-primary: #FFFFFF;
+            --text-secondary: #E8E8E8;
+            --text-muted: #AAAAAA;
+            --accent-orange: #E95420;
+            --accent-purple: #77216F;
+            --gradient-primary: linear-gradient(135deg, #E95420, #77216F);
+            --gradient-card: linear-gradient(135deg, rgba(65, 25, 60, 0.9), rgba(40, 15, 35, 0.9));
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(rgba(38, 1, 83, 0.16), rgba(21, 0, 48, 0.046)), 
+                        url('https://plus.unsplash.com/premium_photo-1685793804465-b12bbd8b7281?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .ubuntu-glass {
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: var(--gradient-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .ubuntu-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .ubuntu-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(233, 84, 32, 0.2);
+        }
+
+        .ubuntu-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 20px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .ubuntu-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .ubuntu-btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+        }
+
+        .ubuntu-btn-primary:hover {
+            background: linear-gradient(135deg, #77216F, #E95420);
+            transform: translateY(-2px);
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-connected {
+            background: rgba(32, 201, 151, 0.2);
+            color: #20C997;
+        }
+
+        .status-disconnected {
+            background: rgba(255, 107, 107, 0.2);
+            color: #FF6B6B;
+        }
+
+        .status-syncing {
+            background: rgba(13, 110, 253, 0.2);
+            color: #0D6EFD;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .drag-drop-zone {
+            border: 2px dashed var(--border-light);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .drag-drop-zone.active {
+            border-color: var(--accent-orange);
+            background: rgba(233, 84, 32, 0.1);
+        }
+
+        .file-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-orange);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-6">
+    <!-- Header -->
+    <div class="ubuntu-glass p-6 mb-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="../dashboard.html" class="ubuntu-btn">
+                    <i class="bi bi-arrow-left"></i> Volver al Dashboard
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#0078D4] to-[#005A9E]">
+                        <i class="bi bi-microsoft text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">OneDrive Integration</h1>
+                        <p class="text-sm text-gray-300">Sincronización con Microsoft OneDrive</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <span class="text-gray-300" id="userName">Cargando...</span>
+                <button onclick="logout()" class="ubuntu-btn bg-red-500 bg-opacity-20 text-red-400 border-red-500 border-opacity-30">
+                    <i class="bi bi-box-arrow-right"></i> Salir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Estado de Conexión -->
+        <div class="ubuntu-glass p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Estado de Conexión</h2>
+                <span id="connectionStatus" class="status-badge status-disconnected">Desconectado</span>
+            </div>
+            
+            <div id="connectionInfo" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <label class="text-gray-400">Conectado como:</label>
+                        <p id="connectedUser" class="text-white">-</p>
+                    </div>
+                    <div>
+                        <label class="text-gray-400">Email:</label>
+                        <p id="connectedEmail" class="text-white">-</p>
+                    </div>
+                    <div>
+                        <label class="text-gray-400">Última sincronización:</label>
+                        <p id="lastSync" class="text-white">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Configuración -->
+            <div class="ubuntu-glass p-6">
+                <h3 class="text-lg font-semibold mb-4">Configuración</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">
+                            Client ID *
+                            <span class="text-xs text-gray-400">(De Azure App Registration)</span>
+                        </label>
+                        <input type="text" id="clientId" class="ubuntu-input" 
+                               placeholder="12345678-1234-1234-1234-123456789abc">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">
+                            Tenant ID
+                            <span class="text-xs text-gray-400">(common para multi-tenant)</span>
+                        </label>
+                        <input type="text" id="tenantId" class="ubuntu-input" 
+                               placeholder="common" value="common">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">
+                            Carpeta de Sincronización
+                        </label>
+                        <input type="text" id="syncFolder" class="ubuntu-input" 
+                               value="/BS-Dash/Backups/">
+                    </div>
+                </div>
+
+                <!-- Configuración Automática -->
+                <div class="mt-6 space-y-3">
+                    <h4 class="font-medium text-gray-300 mb-3">Configuración Automática</h4>
+                    
+                    <div class="flex items-center justify-between p-3 bg-white bg-opacity-5 rounded-lg">
+                        <div>
+                            <label class="text-gray-300 font-medium">Backup automático</label>
+                            <p class="text-xs text-gray-400">Crear backup automáticamente cada 24h</p>
+                        </div>
+                        <input type="checkbox" id="autoBackup" class="ubuntu-checkbox">
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-white bg-opacity-5 rounded-lg">
+                        <div>
+                            <label class="text-gray-300 font-medium">Sincronizar en tiempo real</label>
+                            <p class="text-xs text-gray-400">Sincronizar cambios automáticamente</p>
+                        </div>
+                        <input type="checkbox" id="syncRealTime" class="ubuntu-checkbox">
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-3 bg-white bg-opacity-5 rounded-lg">
+                        <div>
+                            <label class="text-gray-300 font-medium">Capturar operaciones</label>
+                            <p class="text-xs text-gray-400">Registrar todas las operaciones en OneDrive</p>
+                        </div>
+                        <input type="checkbox" id="capturarOperaciones" class="ubuntu-checkbox" checked>
+                    </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="flex gap-3 mt-6 flex-wrap">
+                    <button onclick="saveConfig()" class="ubuntu-btn ubuntu-btn-primary">
+                        <i class="bi bi-cloud-check"></i> Guardar Configuración
+                    </button>
+                    <button onclick="connectOneDrive()" class="ubuntu-btn bg-blue-500 bg-opacity-20 text-blue-400 border-blue-500 border-opacity-30">
+                        <i class="bi bi-plug"></i> Conectar OneDrive
+                    </button>
+                    <button onclick="testConnection()" class="ubuntu-btn bg-green-500 bg-opacity-20 text-green-400 border-green-500 border-opacity-30">
+                        <i class="bi bi-wifi"></i> Probar Conexión
+                    </button>
+                    <button onclick="disconnectOneDrive()" class="ubuntu-btn bg-red-500 bg-opacity-20 text-red-400 border-red-500 border-opacity-30">
+                        <i class="bi bi-plug"></i> Desconectar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sincronización de Archivos -->
+            <div class="ubuntu-glass p-6">
+                <h3 class="text-lg font-semibold mb-4">Sincronización de Archivos</h3>
+                
+                <!-- Drag & Drop Zone -->
+                <div class="drag-drop-zone" id="dropZone">
+                    <i class="bi bi-cloud-arrow-up text-4xl text-gray-400 mb-3"></i>
+                    <p class="text-gray-300 mb-2">Arrastra archivos aquí para subir</p>
+                    <p class="text-sm text-gray-400">o haz clic para seleccionar archivos</p>
+                    <input type="file" id="fileInput" class="hidden" multiple>
+                </div>
+
+                <!-- Archivos Sincronizados -->
+                <div class="mt-6">
+                    <h4 class="font-medium text-gray-300 mb-3">Archivos Sincronizados</h4>
+                    <div id="fileList" class="space-y-2">
+                        <div class="text-center py-8 text-gray-400">
+                            <i class="bi bi-folder-x text-2xl mb-2"></i>
+                            <p>No hay archivos sincronizados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones de Sincronización -->
+                <div class="flex gap-3 mt-6">
+                    <button onclick="syncNow()" class="ubuntu-btn ubuntu-btn-primary flex-1">
+                        <i class="bi bi-arrow-repeat"></i> Sincronizar Ahora
+                    </button>
+                    <button onclick="viewOnOneDrive()" class="ubuntu-btn flex-1">
+                        <i class="bi bi-box-arrow-up-right"></i> Ver en OneDrive
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logs de Sincronización -->
+        <div class="ubuntu-glass p-6 mt-6">
+            <h3 class="text-lg font-semibold mb-4">Logs de Sincronización</h3>
+            <div class="bg-black bg-opacity-50 rounded-lg p-4 font-mono text-sm">
+                <div id="syncLogs" class="space-y-1 max-h-40 overflow-y-auto">
+                    <div class="text-gray-400">[Sistema] Inicializando módulo OneDrive...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/config-loader.js"></script>
+    <script src="../js/secure-database.js"></script>
+    <script src="../js/auth-system.js"></script>
+
+    <script>
+        class OneDriveManager {
+            constructor() {
+                this.config = null;
+                this.isConnected = false;
+                this.init();
+            }
+
+            async init() {
+                if (!this.verificarAutenticacion()) {
+                    return;
+                }
+
+                document.getElementById('userName').textContent = this.getUserName();
+                await this.cargarConfiguracion();
+                this.configurarEventos();
+                this.actualizarUI();
+            }
+
+            verificarAutenticacion() {
+                const user = localStorage.getItem('bs_dash_user');
+                if (!user) {
+                    window.location.href = '../index.html';
+                    return false;
+                }
+                return true;
+            }
+
+            getUserName() {
+                const user = JSON.parse(localStorage.getItem('bs_dash_user') || '{}');
+                return user.name || user.email || 'Usuario';
+            }
+
+            async cargarConfiguracion() {
+                this.config = JSON.parse(localStorage.getItem('bs_onedrive_config') || '{}');
+                
+                document.getElementById('clientId').value = this.config.clientId || '';
+                document.getElementById('tenantId').value = this.config.tenantId || 'common';
+                document.getElementById('syncFolder').value = this.config.syncFolder || '/BS-Dash/Backups/';
+                document.getElementById('autoBackup').checked = this.config.autoBackup || false;
+                document.getElementById('syncRealTime').checked = this.config.syncRealTime || false;
+                document.getElementById('capturarOperaciones').checked = this.config.capturarOperaciones !== false;
+
+                this.isConnected = !!(this.config.accessToken);
+            }
+
+            async saveConfig() {
+                const config = {
+                    clientId: document.getElementById('clientId').value.trim(),
+                    tenantId: document.getElementById('tenantId').value.trim() || 'common',
+                    syncFolder: document.getElementById('syncFolder').value.trim(),
+                    autoBackup: document.getElementById('autoBackup').checked,
+                    syncRealTime: document.getElementById('syncRealTime').checked,
+                    capturarOperaciones: document.getElementById('capturarOperaciones').checked,
+                    accessToken: this.config?.accessToken,
+                    userName: this.config?.userName,
+                    userEmail: this.config?.userEmail,
+                    lastSync: this.config?.lastSync
+                };
+
+                if (!config.clientId) {
+                    this.mostrarNotificacion('❌ Client ID es requerido', 'error');
+                    return;
+                }
+
+                localStorage.setItem('bs_onedrive_config', JSON.stringify(config));
+                this.config = config;
+                this.mostrarNotificacion('✅ Configuración guardada correctamente', 'success');
+                this.agregarLog('Configuración guardada');
+            }
+
+            async connectOneDrive() {
+                if (!this.config.clientId) {
+                    this.mostrarNotificacion('❌ Configure el Client ID primero', 'error');
+                    return;
+                }
+
+                this.agregarLog('Iniciando conexión con OneDrive...');
+                
+                // Simular conexión (en un entorno real, aquí iría la autenticación OAuth2)
+                setTimeout(() => {
+                    this.config.accessToken = 'simulated_access_token_' + Date.now();
+                    this.config.userName = 'Usuario Demo';
+                    this.config.userEmail = 'usuario@ejemplo.com';
+                    this.config.lastSync = new Date().toISOString();
+                    this.isConnected = true;
+                    
+                    localStorage.setItem('bs_onedrive_config', JSON.stringify(this.config));
+                    this.actualizarUI();
+                    this.agregarLog('✅ Conexión exitosa con OneDrive');
+                    this.mostrarNotificacion('✅ Conectado a OneDrive exitosamente', 'success');
+                }, 2000);
+            }
+
+            async testConnection() {
+                if (!this.isConnected) {
+                    this.mostrarNotificacion('❌ Primero conecte a OneDrive', 'error');
+                    return;
+                }
+
+                this.agregarLog('Probando conexión con OneDrive...');
+                
+                // Simular prueba de conexión
+                setTimeout(() => {
+                    this.agregarLog('✅ Conexión a OneDrive funcionando correctamente');
+                    this.mostrarNotificacion('✅ Conexión a OneDrive verificada', 'success');
+                }, 1000);
+            }
+
+            async disconnectOneDrive() {
+                if (confirm('¿Estás seguro de que deseas desconectar OneDrive?')) {
+                    this.config.accessToken = null;
+                    this.config.userName = null;
+                    this.config.userEmail = null;
+                    this.isConnected = false;
+                    
+                    localStorage.setItem('bs_onedrive_config', JSON.stringify(this.config));
+                    this.actualizarUI();
+                    this.agregarLog('🔌 Desconectado de OneDrive');
+                    this.mostrarNotificacion('Sesión de OneDrive cerrada', 'info');
+                }
+            }
+
+            async syncNow() {
+                if (!this.isConnected) {
+                    this.mostrarNotificacion('❌ Primero conecte a OneDrive', 'error');
+                    return;
+                }
+
+                this.agregarLog('Iniciando sincronización manual...');
+                
+                // Simular sincronización
+                setTimeout(() => {
+                    this.config.lastSync = new Date().toISOString();
+                    localStorage.setItem('bs_onedrive_config', JSON.stringify(this.config));
+                    this.actualizarUI();
+                    this.agregarLog('✅ Sincronización completada');
+                    this.mostrarNotificacion('✅ Sincronización completada', 'success');
+                }, 3000);
+            }
+
+            viewOnOneDrive() {
+                if (!this.isConnected) {
+                    this.mostrarNotificacion('❌ Primero conecte a OneDrive', 'error');
+                    return;
+                }
+
+                window.open('https://onedrive.live.com/', '_blank');
+            }
+
+            actualizarUI() {
+                const statusElement = document.getElementById('connectionStatus');
+                const infoElement = document.getElementById('connectionInfo');
+                
+                if (this.isConnected) {
+                    statusElement.textContent = 'Conectado';
+                    statusElement.className = 'status-badge status-connected';
+                    infoElement.classList.remove('hidden');
+                    
+                    document.getElementById('connectedUser').textContent = this.config.userName || '-';
+                    document.getElementById('connectedEmail').textContent = this.config.userEmail || '-';
+                    document.getElementById('lastSync').textContent = 
+                        this.config.lastSync ? new Date(this.config.lastSync).toLocaleString() : '-';
+                } else {
+                    statusElement.textContent = 'Desconectado';
+                    statusElement.className = 'status-badge status-disconnected';
+                    infoElement.classList.add('hidden');
+                }
+            }
+
+            configurarEventos() {
+                // Drag & Drop
+                const dropZone = document.getElementById('dropZone');
+                const fileInput = document.getElementById('fileInput');
+
+                dropZone.addEventListener('click', () => fileInput.click());
+                
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('active');
+                });
+
+                dropZone.addEventListener('dragleave', () => {
+                    dropZone.classList.remove('active');
+                });
+
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('active');
+                    this.handleFiles(e.dataTransfer.files);
+                });
+
+                fileInput.addEventListener('change', (e) => {
+                    this.handleFiles(e.target.files);
+                });
+            }
+
+            async handleFiles(files) {
+                if (!this.isConnected) {
+                    this.mostrarNotificacion('❌ Conecte a OneDrive primero', 'error');
+                    return;
+                }
+
+                for (let file of files) {
+                    this.agregarLog(`Subiendo archivo: ${file.name}`);
+                    // Simular subida
+                    setTimeout(() => {
+                        this.agregarLog(`✅ Archivo subido: ${file.name}`);
+                        this.actualizarListaArchivos();
+                    }, 1000);
+                }
+            }
+
+            actualizarListaArchivos() {
+                // Simular lista de archivos
+                const fileList = document.getElementById('fileList');
+                fileList.innerHTML = `
+                    <div class="file-item">
+                        <i class="bi bi-file-earmark-text text-blue-400"></i>
+                        <div class="flex-1">
+                            <div class="font-medium">backup_${new Date().toISOString().split('T')[0]}.json</div>
+                            <div class="text-xs text-gray-400">2.4 MB • ${new Date().toLocaleString()}</div>
+                        </div>
+                        <button class="ubuntu-btn text-sm">
+                            <i class="bi bi-download"></i>
+                        </button>
+                    </div>
+                `;
+            }
+
+            agregarLog(mensaje) {
+                const logs = document.getElementById('syncLogs');
+                const logEntry = document.createElement('div');
+                logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${mensaje}`;
+                logEntry.className = 'text-green-400';
+                logs.appendChild(logEntry);
+                logs.scrollTop = logs.scrollHeight;
+            }
+
+            mostrarNotificacion(mensaje, tipo = 'info') {
+                const notificacion = document.createElement('div');
+                
+                const colors = {
+                    success: '#10B981',
+                    error: '#EF4444',
+                    info: '#3B82F6'
+                };
+                
+                Object.assign(notificacion.style, {
+                    position: 'fixed',
+                    top: '20px',
+                    right: '20px',
+                    background: colors[tipo] || colors.info,
+                    color: 'white',
+                    padding: '12px 20px',
+                    borderRadius: '8px',
+                    zIndex: '10000',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                });
+                
+                notificacion.textContent = mensaje;
+                document.body.appendChild(notificacion);
+                
+                setTimeout(() => {
+                    notificacion.remove();
+                }, 4000);
+            }
+        }
+
+        // Inicialización
+        let oneDriveManager;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            oneDriveManager = new OneDriveManager();
+        });
+
+        // Funciones globales
+        function saveConfig() {
+            oneDriveManager.saveConfig();
+        }
+
+        function connectOneDrive() {
+            oneDriveManager.connectOneDrive();
+        }
+
+        function testConnection() {
+            oneDriveManager.testConnection();
+        }
+
+        function disconnectOneDrive() {
+            oneDriveManager.disconnectOneDrive();
+        }
+
+        function syncNow() {
+            oneDriveManager.syncNow();
+        }
+
+        function viewOnOneDrive() {
+            oneDriveManager.viewOnOneDrive();
+        }
+
+        function logout() {
+            if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+                localStorage.clear();
+                window.location.href = '../index.html';
+            }
+        }
+
+        // Agregar estilos para checkbox
+        const style = document.createElement('style');
+        style.textContent = `
+            .ubuntu-checkbox {
+                width: 20px;
+                height: 20px;
+                border-radius: 6px;
+                border: 2px solid var(--border-light);
+                background: rgba(255, 255, 255, 0.1);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                appearance: none;
+                position: relative;
+            }
+            
+            .ubuntu-checkbox:checked {
+                background: var(--accent-orange);
+                border-color: var(--accent-orange);
+            }
+            
+            .ubuntu-checkbox:checked::after {
+                content: '✓';
+                position: absolute;
+                color: white;
+                font-size: 14px;
+                font-weight: bold;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

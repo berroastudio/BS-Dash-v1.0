@@ -27,13 +27,14 @@
 
         body {
             font-family: 'Outfit', sans-serif;
-            background: linear-gradient(rgba(14, 2, 64, 0.034), rgba(20, 9, 45, 0.477)), 
-                        url('');
+            background: linear-gradient(rgba(38, 1, 83, 0.16), rgba(21, 0, 48, 0.046)), 
+                        url('https://plus.unsplash.com/premium_photo-1685793804465-b12bbd8b7281?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             color: var(--text-primary);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .ubuntu-glass {
@@ -63,7 +64,6 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            cursor: move;
         }
 
         .window-title {
@@ -155,43 +155,6 @@
             transform: translateY(-2px);
         }
 
-        .ubuntu-checkbox {
-            width: 20px;
-            height: 20px;
-            border-radius: 6px;
-            border: 2px solid var(--border-light);
-            background: rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .ubuntu-checkbox:checked {
-            background: var(--accent-orange);
-            border-color: var(--accent-orange);
-        }
-
-        .ubuntu-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .ubuntu-table th {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 12px 16px;
-            text-align: left;
-            font-weight: 600;
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .ubuntu-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .ubuntu-table tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
         /* Dock Interno */
         .internal-dock {
             display: flex;
@@ -252,10 +215,6 @@
         }
 
         .window.hidden {
-            display: none;
-        }
-
-        .window.minimized {
             display: none;
         }
 
@@ -326,6 +285,160 @@
         .animate-window-open {
             animation: windowOpen 0.3s ease-out;
         }
+
+        /* Scrollbar personalizado */
+        .window-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .window-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .window-content::-webkit-scrollbar-thumb {
+            background: var(--accent-orange);
+            border-radius: 3px;
+        }
+
+        .window-content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-purple);
+        }
+
+        /* Drag and Drop */
+        .modulo-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            cursor: move;
+            transition: all 0.3s ease;
+        }
+
+        .modulo-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-orange);
+        }
+
+        .modulo-item.dragging {
+            opacity: 0.5;
+        }
+
+        .zona-drop {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed var(--border-light);
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 100px;
+            transition: all 0.3s ease;
+        }
+
+        .zona-drop.active {
+            border-color: var(--accent-orange);
+            background: rgba(233, 84, 32, 0.1);
+        }
+
+        /* Configuración de Tablas */
+        .config-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .config-table th {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .config-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .config-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Configuración de Métodos de Pago */
+        .metodo-pago-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Configuración de Secuencias */
+        .secuencia-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 8px 0;
+        }
+
+        /* Configuración SMTP */
+        .smtp-config-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        /* Plantillas de Email */
+        .plantilla-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .plantilla-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent-orange);
+        }
+
+        /* Checkbox personalizado */
+        .ubuntu-checkbox {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            border: 2px solid var(--border-light);
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .ubuntu-checkbox:checked {
+            background: var(--accent-orange);
+            border-color: var(--accent-orange);
+        }
+
+        .ubuntu-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Notificaciones */
+        .notificacion-global {
+            transition: transform 0.3s ease;
+        }
     </style>
 </head>
 <body class="min-h-screen">
@@ -351,7 +464,7 @@
                 <!-- Selector de Empresa -->
                 <div class="flex items-center gap-2 bg-gray-800 bg-opacity-50 px-3 py-2 rounded-lg border border-gray-700">
                     <label class="text-sm font-medium">Empresa:</label>
-                    <select id="empresaSwitcher" class="bg-transparent border-none outline-none text-sm text-white">
+                    <select id="empresaSwitcher" class="bg-transparent border-none outline-none text-sm text-white" onchange="cambiarEmpresa()">
                         <option value="1">Berroa Studio S.R.L.</option>
                         <option value="2">Empresa Secundaria</option>
                         <option value="3">Otra Empresa</option>
@@ -379,29 +492,41 @@
                 <i class="bi bi-building"></i>
                 <span>Empresa</span>
             </div>
-            <div class="dock-item" onclick="abrirVentana('pos')">
-                <i class="bi bi-cash-coin"></i>
-                <span>Punto de Venta</span>
-            </div>
-            <div class="dock-item" onclick="abrirVentana('secuencias')">
-                <i class="bi bi-123"></i>
-                <span>Secuencias</span>
+            <div class="dock-item" onclick="abrirVentana('empresas')">
+                <i class="bi bi-buildings"></i>
+                <span>Multi-Empresa</span>
             </div>
             <div class="dock-item" onclick="abrirVentana('usuarios')">
                 <i class="bi bi-shield-check"></i>
                 <span>Usuarios</span>
             </div>
-            <div class="dock-item" onclick="abrirVentana('clientes')">
-                <i class="bi bi-people"></i>
-                <span>Clientes</span>
+            <div class="dock-item" onclick="abrirVentana('modulos')">
+                <i class="bi bi-grid-3x3"></i>
+                <span>Módulos</span>
             </div>
-            <div class="dock-item" onclick="abrirVentana('plantillas')">
-                <i class="bi bi-palette"></i>
-                <span>Plantillas</span>
+            <div class="dock-item" onclick="abrirVentana('onedrive')">
+                <i class="bi bi-microsoft"></i>
+                <span>OneDrive</span>
             </div>
-            <div class="dock-item" onclick="abrirVentana('azure')">
+            <div class="dock-item" onclick="abrirVentana('smtp')">
+                <i class="bi bi-envelope"></i>
+                <span>SMTP</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('backups')">
                 <i class="bi bi-cloud-arrow-up"></i>
-                <span>Azure Cloud</span>
+                <span>Backups</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('sistema')">
+                <i class="bi bi-cpu"></i>
+                <span>Sistema</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('pos')">
+                <i class="bi bi-cash-coin"></i>
+                <span>POS</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('facturacion')">
+                <i class="bi bi-receipt"></i>
+                <span>Facturación</span>
             </div>
         </div>
 
@@ -421,187 +546,80 @@
                     </div>
                 </div>
                 <div class="window-content">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Nombre de la Empresa *</label>
-                            <input type="text" id="empresaNombre" class="ubuntu-input" placeholder="Berroa Studio S.R.L.">
+                            <input type="text" id="empresaNombre" class="ubuntu-input" value="Berroa Studio S.R.L.">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">RNC *</label>
-                            <input type="text" id="empresaRNC" class="ubuntu-input" placeholder="123456789">
+                            <input type="text" id="empresaRNC" class="ubuntu-input" placeholder="RNC de la empresa">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Teléfono</label>
-                            <input type="text" id="empresaTelefono" class="ubuntu-input" placeholder="(809) 123-4567">
+                            <input type="text" id="empresaTelefono" class="ubuntu-input" placeholder="Teléfono">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                            <input type="email" id="empresaEmail" class="ubuntu-input" placeholder="info@berroastudio.com">
+                            <input type="email" id="empresaEmail" class="ubuntu-input" placeholder="Email corporativo">
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-300 mb-2">Dirección</label>
-                            <textarea id="empresaDireccion" class="ubuntu-input" rows="2" placeholder="Av. Principal #123, Santo Domingo"></textarea>
+                            <textarea id="empresaDireccion" class="ubuntu-input" rows="3" placeholder="Dirección completa"></textarea>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Sitio Web</label>
-                            <input type="url" id="empresaWebsite" class="ubuntu-input" placeholder="https://berroastudio.com">
+                            <input type="url" id="empresaWebsite" class="ubuntu-input" placeholder="https://ejemplo.com">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Eslogan</label>
-                            <input type="text" id="empresaEslogan" class="ubuntu-input" placeholder="Soluciones digitales innovadoras">
+                            <input type="text" id="empresaEslogan" class="ubuntu-input" placeholder="Eslogan de la empresa">
                         </div>
                     </div>
-                    <div class="flex justify-end gap-3 mt-6">
-                        <button onclick="guardarConfiguracionEmpresa()" class="ubuntu-btn ubuntu-btn-primary">
-                            <i class="bi bi-check-lg"></i> Guardar Empresa
+                    <div class="flex justify-end mt-6 gap-3">
+                        <button onclick="restablecerEmpresa()" class="ubuntu-btn bg-gray-700 bg-opacity-50 text-gray-300 border-gray-600">
+                            <i class="bi bi-arrow-clockwise"></i> Restablecer
+                        </button>
+                        <button onclick="guardarConfigEmpresa()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar Cambios
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Ventana: Punto de Venta -->
-            <div id="ventana-pos" class="ubuntu-window window hidden animate-window-open">
+            <!-- Ventana: Gestión Multi-Empresa -->
+            <div id="ventana-empresas" class="ubuntu-window window hidden animate-window-open">
                 <div class="window-header">
                     <div class="window-title">
-                        <i class="bi bi-cash-coin"></i>
-                        <span>Configuración Punto de Venta</span>
+                        <i class="bi bi-buildings"></i>
+                        <span>Gestión Multi-Empresa</span>
                     </div>
                     <div class="window-controls">
-                        <div class="window-control minimize" onclick="minimizarVentana('pos')"></div>
-                        <div class="window-control maximize" onclick="maximizarVentana('pos')"></div>
-                        <div class="window-control close" onclick="cerrarVentana('pos')"></div>
+                        <div class="window-control minimize" onclick="minimizarVentana('empresas')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('empresas')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('empresas')"></div>
                     </div>
                 </div>
                 <div class="window-content">
-                    <div class="space-y-6">
-                        <div>
-                            <h3 class="font-medium text-gray-300 mb-3">Métodos de Pago</h3>
-                            <div class="space-y-2" id="metodosPagoContainer">
-                                <div class="flex items-center justify-between p-3 ubuntu-glass">
-                                    <span>Efectivo</span>
-                                    <div class="flex gap-2">
-                                        <button class="ubuntu-btn text-sm"><i class="bi bi-pencil"></i></button>
-                                        <button class="ubuntu-btn text-sm bg-red-500 bg-opacity-20 text-red-400"><i class="bi bi-trash"></i></button>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between p-3 ubuntu-glass">
-                                    <span>Tarjeta de Crédito</span>
-                                    <div class="flex gap-2">
-                                        <button class="ubuntu-btn text-sm"><i class="bi bi-pencil"></i></button>
-                                        <button class="ubuntu-btn text-sm bg-red-500 bg-opacity-20 text-red-400"><i class="bi bi-trash"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <button onclick="agregarMetodoPago()" class="ubuntu-btn mt-3 w-full">
-                                <i class="bi bi-plus"></i> Agregar Método de Pago
-                            </button>
-                        </div>
-
-                        <div>
-                            <h3 class="font-medium text-gray-300 mb-3">Configuración General</h3>
-                            <div class="space-y-4">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <label class="text-gray-300 font-medium">Habilitar descuentos</label>
-                                        <p class="text-xs text-gray-400">Permitir aplicar descuentos en ventas</p>
-                                    </div>
-                                    <input type="checkbox" id="habilitarDescuentos" class="ubuntu-checkbox" checked>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <label class="text-gray-300 font-medium">Solicitar cliente obligatorio</label>
-                                        <p class="text-xs text-gray-400">Requerir selección de cliente en ventas</p>
-                                    </div>
-                                    <input type="checkbox" id="solicitarCliente" class="ubuntu-checkbox">
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <label class="text-gray-300 font-medium">Imprimir automáticamente</label>
-                                        <p class="text-xs text-gray-400">Imprimir ticket al finalizar venta</p>
-                                    </div>
-                                    <input type="checkbox" id="imprimirAutomatico" class="ubuntu-checkbox" checked>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">IVA por defecto (%)</label>
-                                    <input type="number" id="ivaPorDefecto" class="ubuntu-input" value="18" min="0" max="100" step="0.1">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex justify-end gap-3 mt-6">
-                        <button onclick="guardarConfiguracionPOS()" class="ubuntu-btn ubuntu-btn-primary">
-                            <i class="bi bi-check-lg"></i> Guardar POS
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold">Empresas Registradas</h3>
+                        <button onclick="abrirModalEmpresa()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-building-add"></i> Nueva Empresa
                         </button>
                     </div>
-                </div>
-            </div>
 
-            <!-- Ventana: Secuencias -->
-            <div id="ventana-secuencias" class="ubuntu-window window hidden animate-window-open">
-                <div class="window-header">
-                    <div class="window-title">
-                        <i class="bi bi-123"></i>
-                        <span>Secuencias y Numeración</span>
-                    </div>
-                    <div class="window-controls">
-                        <div class="window-control minimize" onclick="minimizarVentana('secuencias')"></div>
-                        <div class="window-control maximize" onclick="maximizarVentana('secuencias')"></div>
-                        <div class="window-control close" onclick="cerrarVentana('secuencias')"></div>
-                    </div>
-                </div>
-                <div class="window-content">
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-1 gap-3">
-                            <div class="flex items-center justify-between p-4 ubuntu-glass">
-                                <div>
-                                    <span class="font-medium text-gray-300">Facturas</span>
-                                    <p class="text-sm text-gray-400">Próximo número: <span id="secuenciaFacturas">FACT-001</span></p>
-                                </div>
-                                <button onclick="editarSecuencia('facturas')" class="ubuntu-btn text-sm">
-                                    <i class="bi bi-pencil"></i> Editar
-                                </button>
-                            </div>
-                            
-                            <div class="flex items-center justify-between p-4 ubuntu-glass">
-                                <div>
-                                    <span class="font-medium text-gray-300">Cotizaciones</span>
-                                    <p class="text-sm text-gray-400">Próximo número: <span id="secuenciaCotizaciones">COT-001</span></p>
-                                </div>
-                                <button onclick="editarSecuencia('cotizaciones')" class="ubuntu-btn text-sm">
-                                    <i class="bi bi-pencil"></i> Editar
-                                </button>
-                            </div>
-                            
-                            <div class="flex items-center justify-between p-4 ubuntu-glass">
-                                <div>
-                                    <span class="font-medium text-gray-300">Órdenes</span>
-                                    <p class="text-sm text-gray-400">Próximo número: <span id="secuenciaOrdenes">ORD-001</span></p>
-                                </div>
-                                <button onclick="editarSecuencia('ordenes')" class="ubuntu-btn text-sm">
-                                    <i class="bi bi-pencil"></i> Editar
-                                </button>
-                            </div>
-                            
-                            <div class="flex items-center justify-between p-4 ubuntu-glass">
-                                <div>
-                                    <span class="font-medium text-gray-300">Reportes</span>
-                                    <p class="text-sm text-gray-400">Próximo número: <span id="secuenciaReportes">REP-001</span></p>
-                                </div>
-                                <button onclick="editarSecuencia('reportes')" class="ubuntu-btn text-sm">
-                                    <i class="bi bi-pencil"></i> Editar
-                                </button>
-                            </div>
-                        </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="gridEmpresas">
+                        <!-- Las empresas se cargan aquí -->
                     </div>
                 </div>
             </div>
 
-            <!-- Ventana: Usuarios -->
+            <!-- Ventana: Gestión de Usuarios -->
             <div id="ventana-usuarios" class="ubuntu-window window hidden animate-window-open">
                 <div class="window-header">
                     <div class="window-title">
                         <i class="bi bi-shield-check"></i>
-                        <span>Usuarios y Permisos</span>
+                        <span>Gestión de Usuarios</span>
                     </div>
                     <div class="window-controls">
                         <div class="window-control minimize" onclick="minimizarVentana('usuarios')"></div>
@@ -610,211 +628,664 @@
                     </div>
                 </div>
                 <div class="window-content">
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-medium text-gray-300">Usuarios del Sistema</h3>
-                            <button onclick="abrirModalUsuario()" class="ubuntu-btn ubuntu-btn-primary text-sm">
-                                <i class="bi bi-person-plus"></i> Nuevo Usuario
-                            </button>
-                        </div>
-                        
-                        <div class="overflow-x-auto">
-                            <table class="ubuntu-table">
-                                <thead>
-                                    <tr>
-                                        <th>Usuario</th>
-                                        <th>Rol</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaUsuarios">
-                                    <tr>
-                                        <td>admin@berroastudio.com</td>
-                                        <td>Administrador</td>
-                                        <td><span class="status-badge status-active">Activo</span></td>
-                                        <td>
-                                            <div class="flex gap-2">
-                                                <button class="ubuntu-btn text-sm"><i class="bi bi-pencil"></i></button>
-                                                <button class="ubuntu-btn text-sm bg-red-500 bg-opacity-20 text-red-400"><i class="bi bi-trash"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ventana: Clientes -->
-            <div id="ventana-clientes" class="ubuntu-window window hidden animate-window-open">
-                <div class="window-header">
-                    <div class="window-title">
-                        <i class="bi bi-people"></i>
-                        <span>Gestión de Clientes</span>
-                    </div>
-                    <div class="window-controls">
-                        <div class="window-control minimize" onclick="minimizarVentana('clientes')"></div>
-                        <div class="window-control maximize" onclick="maximizarVentana('clientes')"></div>
-                        <div class="window-control close" onclick="cerrarVentana('clientes')"></div>
-                    </div>
-                </div>
-                <div class="window-content">
-                    <div class="space-y-4">
-                        <button onclick="abrirModalCliente()" class="ubuntu-btn ubuntu-btn-primary w-full">
-                            <i class="bi bi-person-plus"></i> Agregar Cliente
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold">Usuarios del Sistema</h3>
+                        <button onclick="abrirModalUsuario()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-person-plus"></i> Nuevo Usuario
                         </button>
-                        
-                        <div class="overflow-x-auto max-h-80">
-                            <table class="ubuntu-table">
-                                <thead>
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Nombre</th>
-                                        <th>Identificación</th>
-                                        <th>Teléfono</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaClientes">
-                                    <tr>
-                                        <td>CF</td>
-                                        <td>CONSUMIDOR FINAL</td>
-                                        <td>000-000000-0</td>
-                                        <td>-</td>
-                                        <td>
-                                            <div class="flex gap-2">
-                                                <button class="ubuntu-btn text-sm"><i class="bi bi-pencil"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="config-table">
+                            <thead>
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Email</th>
+                                    <th>Empresa</th>
+                                    <th>Rol</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaUsuarios">
+                                <!-- Los usuarios se cargan aquí -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Ventana: Plantillas -->
-            <div id="ventana-plantillas" class="ubuntu-window window hidden animate-window-open">
+            <!-- Ventana: Gestión de Módulos -->
+            <div id="ventana-modulos" class="ubuntu-window window hidden animate-window-open">
                 <div class="window-header">
                     <div class="window-title">
-                        <i class="bi bi-palette"></i>
-                        <span>Plantillas y Personalización</span>
+                        <i class="bi bi-grid-3x3"></i>
+                        <span>Gestión de Módulos</span>
                     </div>
                     <div class="window-controls">
-                        <div class="window-control minimize" onclick="minimizarVentana('plantillas')"></div>
-                        <div class="window-control maximize" onclick="maximizarVentana('plantillas')"></div>
-                        <div class="window-control close" onclick="cerrarVentana('plantillas')"></div>
+                        <div class="window-control minimize" onclick="minimizarVentana('modulos')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('modulos')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('modulos')"></div>
                     </div>
                 </div>
                 <div class="window-content">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="text-center ubuntu-glass p-6">
-                            <div class="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 bg-gradient-to-br from-blue-500 to-blue-600">
-                                <i class="bi bi-file-earmark-text text-white text-2xl"></i>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Módulos Disponibles -->
+                        <div class="ubuntu-glass p-4">
+                            <h4 class="font-semibold mb-4">Módulos Disponibles</h4>
+                            <div id="modulosDisponibles" class="zona-drop">
+                                <!-- Módulos disponibles se cargan aquí -->
                             </div>
-                            <h3 class="font-medium text-gray-300 mb-2">Facturas</h3>
-                            <p class="text-sm text-gray-400 mb-4">Personalizar plantilla de facturas</p>
-                            <button onclick="personalizarPlantilla('facturas')" class="ubuntu-btn ubuntu-btn-primary w-full text-sm">
-                                <i class="bi bi-pencil"></i> Personalizar
-                            </button>
                         </div>
-                        
-                        <div class="text-center ubuntu-glass p-6">
-                            <div class="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 bg-gradient-to-br from-green-500 to-green-600">
-                                <i class="bi bi-receipt text-white text-2xl"></i>
+
+                        <!-- Módulos Asignados -->
+                        <div class="ubuntu-glass p-4">
+                            <h4 class="font-semibold mb-4">Módulos Asignados a la Empresa</h4>
+                            <div id="modulosAsignados" class="zona-drop">
+                                <!-- Módulos asignados se cargan aquí -->
                             </div>
-                            <h3 class="font-medium text-gray-300 mb-2">Cotizaciones</h3>
-                            <p class="text-sm text-gray-400 mb-4">Personalizar plantilla de cotizaciones</p>
-                            <button onclick="personalizarPlantilla('cotizaciones')" class="ubuntu-btn ubuntu-btn-primary w-full text-sm">
-                                <i class="bi bi-pencil"></i> Personalizar
-                            </button>
                         </div>
-                        
-                        <div class="text-center ubuntu-glass p-6">
-                            <div class="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-4 bg-gradient-to-br from-purple-500 to-purple-600">
-                                <i class="bi bi-printer text-white text-2xl"></i>
-                            </div>
-                            <h3 class="font-medium text-gray-300 mb-2">Tickets</h3>
-                            <p class="text-sm text-gray-400 mb-4">Personalizar plantilla de tickets</p>
-                            <button onclick="personalizarPlantilla('tickets')" class="ubuntu-btn ubuntu-btn-primary w-full text-sm">
-                                <i class="bi bi-pencil"></i> Personalizar
-                            </button>
-                        </div>
+                    </div>
+
+                    <div class="flex justify-end mt-6">
+                        <button onclick="guardarConfiguracionModulos()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar Configuración
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Ventana: Azure Cloud -->
-            <div id="ventana-azure" class="ubuntu-window window hidden animate-window-open">
+            <!-- Ventana: OneDrive -->
+            <div id="ventana-onedrive" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-microsoft"></i>
+                        <span>OneDrive Integration</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('onedrive')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('onedrive')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('onedrive')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <!-- Estado de Conexión -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h4 class="font-medium text-gray-300 mb-3">Estado de Conexión OneDrive:</h4>
+                        <div id="onedriveStatus" class="flex items-center gap-3 mb-3">
+                            <div class="w-3 h-3 rounded-full bg-orange-500 animate-pulse"></div>
+                            <span class="text-orange-400">⏳ No autenticado</span>
+                        </div>
+                        <div id="onedriveUserInfo" class="text-sm text-gray-400 space-y-1 hidden">
+                            <div><strong>Conectado como:</strong> <span id="onedriveUserName">-</span></div>
+                            <div><strong>Email:</strong> <span id="onedriveUserEmail">-</span></div>
+                            <div><strong>Última sincronización:</strong> <span id="onedriveLastSync">-</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración OneDrive -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                Client ID *
+                                <span class="text-xs text-gray-400">(De Azure App Registration)</span>
+                            </label>
+                            <input type="text" id="onedriveClientId" class="ubuntu-input" 
+                                   placeholder="12345678-1234-1234-1234-123456789abc">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                Tenant ID
+                                <span class="text-xs text-gray-400">(common para multi-tenant)</span>
+                            </label>
+                            <input type="text" id="onedriveTenantId" class="ubuntu-input" 
+                                   placeholder="common" value="common">
+                        </div>
+                    </div>
+
+                    <!-- Configuración Automática -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h5 class="font-medium text-gray-300 mb-3">Configuración Automática</h5>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Backup automático</label>
+                                    <p class="text-xs text-gray-400">Crear backup automáticamente cada 24h</p>
+                                </div>
+                                <input type="checkbox" id="autoBackup" class="ubuntu-checkbox">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Sincronizar en tiempo real</label>
+                                    <p class="text-xs text-gray-400">Sincronizar cambios automáticamente</p>
+                                </div>
+                                <input type="checkbox" id="syncRealTime" class="ubuntu-checkbox">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Capturar operaciones</label>
+                                    <p class="text-xs text-gray-400">Registrar todas las operaciones en OneDrive</p>
+                                </div>
+                                <input type="checkbox" id="capturarOperaciones" class="ubuntu-checkbox" checked>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acciones OneDrive -->
+                    <div class="flex gap-3 flex-wrap">
+                        <button onclick="saveOneDriveConfig()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-cloud-check"></i> Guardar Configuración
+                        </button>
+                        <button onclick="connectOneDrive()" class="ubuntu-btn bg-blue-500 bg-opacity-20 text-blue-400 border-blue-500 border-opacity-30">
+                            <i class="bi bi-plug"></i> Conectar OneDrive
+                        </button>
+                        <button onclick="testOneDriveConnection()" class="ubuntu-btn bg-green-500 bg-opacity-20 text-green-400 border-green-500 border-opacity-30">
+                            <i class="bi bi-wifi"></i> Probar Conexión
+                        </button>
+                        <button onclick="disconnectOneDrive()" class="ubuntu-btn bg-red-500 bg-opacity-20 text-red-400 border-red-500 border-opacity-30">
+                            <i class="bi bi-plug"></i> Desconectar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: SMTP -->
+            <div id="ventana-smtp" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-envelope"></i>
+                        <span>Configuración SMTP</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('smtp')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('smtp')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('smtp')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <!-- Estado SMTP -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h4 class="font-medium text-gray-300 mb-3">Estado del Servidor SMTP:</h4>
+                        <div id="smtpStatus" class="flex items-center gap-3 mb-3">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <span class="text-red-400">No configurado</span>
+                        </div>
+                    </div>
+
+                    <!-- Configuración SMTP -->
+                    <div class="smtp-config-section">
+                        <h5 class="font-medium text-gray-300 mb-4">Configuración del Servidor</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Servidor SMTP *</label>
+                                <input type="text" id="smtpServer" class="ubuntu-input" placeholder="smtp.gmail.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Puerto *</label>
+                                <input type="number" id="smtpPort" class="ubuntu-input" value="587">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Email *</label>
+                                <input type="email" id="smtpEmail" class="ubuntu-input" placeholder="tu-email@empresa.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Contraseña *</label>
+                                <input type="password" id="smtpPassword" class="ubuntu-input" placeholder="••••••••">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Seguridad</label>
+                                <select id="smtpSecurity" class="ubuntu-input">
+                                    <option value="tls">TLS</option>
+                                    <option value="ssl">SSL</option>
+                                    <option value="none">Ninguna</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Nombre del Remitente</label>
+                                <input type="text" id="smtpSenderName" class="ubuntu-input" placeholder="Mi Empresa">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Plantillas de Email -->
+                    <div class="smtp-config-section">
+                        <h5 class="font-medium text-gray-300 mb-4">Plantillas de Email</h5>
+                        <div class="space-y-3">
+                            <div class="plantilla-item" onclick="editarPlantilla('facturas')">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h6 class="font-medium">Plantilla de Facturas</h6>
+                                        <p class="text-sm text-gray-400">Email para envío de facturas</p>
+                                    </div>
+                                    <i class="bi bi-chevron-right text-gray-400"></i>
+                                </div>
+                            </div>
+                            <div class="plantilla-item" onclick="editarPlantilla('cotizaciones')">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h6 class="font-medium">Plantilla de Cotizaciones</h6>
+                                        <p class="text-sm text-gray-400">Email para envío de cotizaciones</p>
+                                    </div>
+                                    <i class="bi bi-chevron-right text-gray-400"></i>
+                                </div>
+                            </div>
+                            <div class="plantilla-item" onclick="editarPlantilla('notificaciones')">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h6 class="font-medium">Plantilla de Notificaciones</h6>
+                                        <p class="text-sm text-gray-400">Email para notificaciones del sistema</p>
+                                    </div>
+                                    <i class="bi bi-chevron-right text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acciones SMTP -->
+                    <div class="flex gap-3 flex-wrap mt-6">
+                        <button onclick="saveSMTPConfig()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar Configuración
+                        </button>
+                        <button onclick="testSMTPConnection()" class="ubuntu-btn bg-green-500 bg-opacity-20 text-green-400 border-green-500 border-opacity-30">
+                            <i class="bi bi-wifi"></i> Probar Conexión
+                        </button>
+                        <button onclick="sendTestEmail()" class="ubuntu-btn bg-blue-500 bg-opacity-20 text-blue-400 border-blue-500 border-opacity-30">
+                            <i class="bi bi-send"></i> Enviar Email de Prueba
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Backups -->
+            <div id="ventana-backups" class="ubuntu-window window hidden animate-window-open">
                 <div class="window-header">
                     <div class="window-title">
                         <i class="bi bi-cloud-arrow-up"></i>
-                        <span>Configuración Azure Cloud</span>
+                        <span>Gestión de Backups</span>
                     </div>
                     <div class="window-controls">
-                        <div class="window-control minimize" onclick="minimizarVentana('azure')"></div>
-                        <div class="window-control maximize" onclick="maximizarVentana('azure')"></div>
-                        <div class="window-control close" onclick="cerrarVentana('azure')"></div>
+                        <div class="window-control minimize" onclick="minimizarVentana('backups')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('backups')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('backups')"></div>
                     </div>
                 </div>
                 <div class="window-content">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Cosmos DB Endpoint *</label>
-                            <input type="text" id="azureCosmosEndpoint" class="ubuntu-input" 
-                                   placeholder="https://tu-cuenta.documents.azure.com:443/">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Cosmos DB Key *</label>
-                            <input type="password" id="azureCosmosKey" class="ubuntu-input" 
-                                   placeholder="Tu primary key">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Azure Client ID *</label>
-                            <input type="text" id="azureClientId" class="ubuntu-input" 
-                                   placeholder="Application ID">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Azure Client Secret *</label>
-                            <input type="password" id="azureClientSecret" class="ubuntu-input" 
-                                   placeholder="Client secret">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Azure Tenant ID *</label>
-                            <input type="text" id="azureTenantId" class="ubuntu-input" 
-                                   placeholder="Tenant ID">
-                        </div>
-                    </div>
-                    
-                    <!-- Estado de Conexión -->
+                    <!-- Estado de Backups -->
                     <div class="ubuntu-glass p-4 mb-6">
-                        <h4 class="font-medium text-gray-300 mb-3">Estado de Conexión:</h4>
-                        <div id="azureStatus" class="flex items-center gap-3">
-                            <div class="w-3 h-3 rounded-full bg-orange-500 animate-pulse"></div>
-                            <span class="text-orange-400">⏳ No configurado</span>
-                        </div>
-                        <div id="azureDetails" class="mt-2 text-sm text-gray-400 hidden">
-                            <div>Cosmos DB: <span id="cosmosStatus">❌ No conectado</span></div>
-                            <div>OneDrive: <span id="onedriveStatus">❌ No conectado</span></div>
+                        <h4 class="font-medium text-gray-300 mb-3">Estado de Backups:</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                                <label class="text-gray-400">Último Backup:</label>
+                                <p id="lastBackup" class="text-white">Nunca</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400">Tamaño Total:</label>
+                                <p id="backupSize" class="text-white">0 MB</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400">Backups Realizados:</label>
+                                <p id="backupCount" class="text-white">0</p>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Acciones Azure -->
+
+                    <!-- Configuración de Backups -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h5 class="font-medium text-gray-300 mb-4">Configuración de Backups</h5>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Backup automático</label>
+                                    <p class="text-xs text-gray-400">Crear backup automáticamente cada 24 horas</p>
+                                </div>
+                                <input type="checkbox" id="backupAutomatico" class="ubuntu-checkbox">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Comprimir backups</label>
+                                    <p class="text-xs text-gray-400">Reducir tamaño de los archivos de backup</p>
+                                </div>
+                                <input type="checkbox" id="backupComprimir" class="ubuntu-checkbox" checked>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Encriptar backups</label>
+                                    <p class="text-xs text-gray-400">Proteger backups con contraseña</p>
+                                </div>
+                                <input type="checkbox" id="backupEncriptar" class="ubuntu-checkbox">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Retención de Backups (días)</label>
+                                <input type="number" id="backupRetencion" class="ubuntu-input" value="30" min="1" max="365">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Backups -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h5 class="font-medium text-gray-300 mb-4">Backups Existentes</h5>
+                        <div id="listaBackups" class="space-y-2">
+                            <div class="text-center py-4 text-gray-400">
+                                <i class="bi bi-inbox text-2xl mb-2"></i>
+                                <p>No hay backups realizados</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acciones Backups -->
                     <div class="flex gap-3 flex-wrap">
-                        <button onclick="testAzureConnection()" class="ubuntu-btn bg-blue-500 bg-opacity-20 text-blue-400 border-blue-500 border-opacity-30">
-                            <i class="bi bi-plug"></i> Probar Conexión
+                        <button onclick="crearBackup()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-download"></i> Crear Backup
                         </button>
-                        <button onclick="saveAzureConfig()" class="ubuntu-btn ubuntu-btn-primary">
-                            <i class="bi bi-cloud-check"></i> Guardar Azure
+                        <button onclick="programarBackup()" class="ubuntu-btn bg-purple-500 bg-opacity-20 text-purple-400 border-purple-500 border-opacity-30">
+                            <i class="bi bi-clock"></i> Programar Backup
                         </button>
-                        <button onclick="crearBackupAzure()" class="ubuntu-btn bg-green-500 bg-opacity-20 text-green-400 border-green-500 border-opacity-30">
-                            <i class="bi bi-cloud-arrow-up"></i> Backup
+                        <button onclick="restaurarBackup()" class="ubuntu-btn bg-green-500 bg-opacity-20 text-green-400 border-green-500 border-opacity-30">
+                            <i class="bi bi-arrow-clockwise"></i> Restaurar Backup
                         </button>
-                        <button onclick="sincronizarDesdeAzure()" class="ubuntu-btn bg-purple-500 bg-opacity-20 text-purple-400 border-purple-500 border-opacity-30">
-                            <i class="bi bi-cloud-arrow-down"></i> Sincronizar
+                        <button onclick="limpiarBackups()" class="ubuntu-btn bg-red-500 bg-opacity-20 text-red-400 border-red-500 border-opacity-30">
+                            <i class="bi bi-trash"></i> Limpiar Backups
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Sistema -->
+            <div id="ventana-sistema" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-cpu"></i>
+                        <span>Configuración del Sistema</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('sistema')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('sistema')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('sistema')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <!-- Información del Sistema -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h4 class="font-medium text-gray-300 mb-4">Información del Sistema</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <label class="text-gray-400">Versión:</label>
+                                <p id="systemVersion" class="text-white">BS Dash 2.0.0</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400">Base de Datos:</label>
+                                <p id="systemDatabase" class="text-white">Supabase</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400">Empresas Registradas:</label>
+                                <p id="systemEmpresas" class="text-white">3</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400">Usuarios Activos:</label>
+                                <p id="systemUsuarios" class="text-white">5</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración General -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h5 class="font-medium text-gray-300 mb-4">Configuración General</h5>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Modo Oscuro</label>
+                                    <p class="text-xs text-gray-400">Activar interfaz en modo oscuro</p>
+                                </div>
+                                <input type="checkbox" id="systemDarkMode" class="ubuntu-checkbox" checked>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Notificaciones</label>
+                                    <p class="text-xs text-gray-400">Mostrar notificaciones del sistema</p>
+                                </div>
+                                <input type="checkbox" id="systemNotificaciones" class="ubuntu-checkbox" checked>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Auto-guardado</label>
+                                    <p class="text-xs text-gray-400">Guardar cambios automáticamente</p>
+                                </div>
+                                <input type="checkbox" id="systemAutoguardado" class="ubuntu-checkbox" checked>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Idioma</label>
+                                <select id="systemIdioma" class="ubuntu-input">
+                                    <option value="es">Español</option>
+                                    <option value="en">English</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Zona Horaria</label>
+                                <select id="systemZonaHoraria" class="ubuntu-input">
+                                    <option value="America/Santo_Domingo">Santo Domingo (UTC-4)</option>
+                                    <option value="UTC">UTC</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Métodos de Pago -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h5 class="font-medium text-gray-300 mb-4">Métodos de Pago</h5>
+                        <div id="metodosPagoContainer" class="space-y-2 mb-4">
+                            <!-- Métodos de pago se cargan aquí -->
+                        </div>
+                        <button onclick="agregarMetodoPago()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-plus"></i> Agregar Método
+                        </button>
+                    </div>
+
+                    <!-- Secuencias -->
+                    <div class="ubuntu-glass p-4">
+                        <h5 class="font-medium text-gray-300 mb-4">Secuencias del Sistema</h5>
+                        <div class="space-y-3">
+                            <div class="secuencia-item">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h6 class="font-medium">Facturas</h6>
+                                        <p class="text-sm text-gray-400" id="secuenciaFacturas">FACT-001</p>
+                                    </div>
+                                    <button onclick="editarSecuencia('facturas')" class="ubuntu-btn text-sm">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="secuencia-item">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h6 class="font-medium">Cotizaciones</h6>
+                                        <p class="text-sm text-gray-400" id="secuenciaCotizaciones">COT-001</p>
+                                    </div>
+                                    <button onclick="editarSecuencia('cotizaciones')" class="ubuntu-btn text-sm">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="secuencia-item">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h6 class="font-medium">Órdenes</h6>
+                                        <p class="text-sm text-gray-400" id="secuenciaOrdenes">ORD-001</p>
+                                    </div>
+                                    <button onclick="editarSecuencia('ordenes')" class="ubuntu-btn text-sm">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Configuración POS -->
+            <div id="ventana-pos" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-cash-coin"></i>
+                        <span>Configuración POS</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('pos')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('pos')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('pos')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <!-- Configuración General POS -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h4 class="font-medium text-gray-300 mb-4">Configuración General</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Habilitar Descuentos</label>
+                                    <p class="text-xs text-gray-400">Permitir aplicar descuentos en ventas</p>
+                                </div>
+                                <input type="checkbox" id="posHabilitarDescuentos" class="ubuntu-checkbox" checked>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Solicitar Cliente</label>
+                                    <p class="text-xs text-gray-400">Requerir selección de cliente en ventas</p>
+                                </div>
+                                <input type="checkbox" id="posSolicitarCliente" class="ubuntu-checkbox">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Impresión Automática</label>
+                                    <p class="text-xs text-gray-400">Imprimir ticket automáticamente</p>
+                                </div>
+                                <input type="checkbox" id="posImprimirAutomatico" class="ubuntu-checkbox">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">IVA por Defecto (%)</label>
+                                <input type="number" id="posIvaPorDefecto" class="ubuntu-input" value="18" min="0" max="100" step="0.1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración de Impresión -->
+                    <div class="ubuntu-glass p-4">
+                        <h4 class="font-medium text-gray-300 mb-4">Configuración de Impresión</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Nombre de la Impresora</label>
+                                <input type="text" id="posNombreImpresora" class="ubuntu-input" placeholder="Nombre de la impresora térmica">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Ancho del Ticket (caracteres)</label>
+                                <input type="number" id="posAnchoTicket" class="ubuntu-input" value="42" min="20" max="80">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Imprimir Logo</label>
+                                    <p class="text-xs text-gray-400">Incluir logo de la empresa en el ticket</p>
+                                </div>
+                                <input type="checkbox" id="posImprimirLogo" class="ubuntu-checkbox" checked>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end mt-6">
+                        <button onclick="guardarConfigPOS()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar Configuración POS
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Configuración Facturación -->
+            <div id="ventana-facturacion" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-receipt"></i>
+                        <span>Configuración Facturación</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('facturacion')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('facturacion')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('facturacion')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <!-- Configuración DGII -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h4 class="font-medium text-gray-300 mb-4">Configuración DGII</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">RNC Emisor</label>
+                                <input type="text" id="facturacionRNC" class="ubuntu-input" placeholder="RNC de la empresa">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Nombre Comercial</label>
+                                <input type="text" id="facturacionNombreComercial" class="ubuntu-input" placeholder="Nombre comercial">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Dirección</label>
+                                <textarea id="facturacionDireccion" class="ubuntu-input" rows="2" placeholder="Dirección fiscal completa"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración de Facturación -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <h4 class="font-medium text-gray-300 mb-4">Configuración de Facturación</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Facturación Electrónica</label>
+                                    <p class="text-xs text-gray-400">Habilitar envío a DGII</p>
+                                </div>
+                                <input type="checkbox" id="facturacionElectronica" class="ubuntu-checkbox">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-gray-300 font-medium">Validación RNC</label>
+                                    <p class="text-xs text-gray-400">Validar RNC de clientes automáticamente</p>
+                                </div>
+                                <input type="checkbox" id="facturacionValidacionRNC" class="ubuntu-checkbox" checked>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Formato de Factura</label>
+                                <select id="facturacionFormato" class="ubuntu-input">
+                                    <option value="estandar">Estándar</option>
+                                    <option value="detallado">Detallado</option>
+                                    <option value="simplificado">Simplificado</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuración de NCF -->
+                    <div class="ubuntu-glass p-4">
+                        <h4 class="font-medium text-gray-300 mb-4">Configuración de NCF</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Secuencia Facturas</label>
+                                <input type="text" id="facturacionSecuenciaFacturas" class="ubuntu-input" value="B01">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Secuencia Créditos</label>
+                                <input type="text" id="facturacionSecuenciaCreditos" class="ubuntu-input" value="B04">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Secuencia Débitos</label>
+                                <input type="text" id="facturacionSecuenciaDebitos" class="ubuntu-input" value="B03">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Secuencia Gastos</label>
+                                <input type="text" id="facturacionSecuenciaGastos" class="ubuntu-input" value="B02">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end mt-6">
+                        <button onclick="guardarConfigFacturacion()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-check-lg"></i> Guardar Configuración Facturación
                         </button>
                     </div>
                 </div>
@@ -824,7 +1295,7 @@
         <!-- Botones de Acción Globales -->
         <div class="flex gap-4 justify-end mt-6">
             <button onclick="restablecerConfiguracion()" class="ubuntu-btn bg-gray-700 bg-opacity-50 text-gray-300 border-gray-600">
-                <i class="bi bi-arrow-clockwise"></i> Restablecer
+                <i class="bi bi-arrow-clockwise"></i> Restablecer Todo
             </button>
             <button onclick="guardarTodaConfiguracion()" class="ubuntu-btn ubuntu-btn-primary">
                 <i class="bi bi-check-lg"></i> Guardar Todo
@@ -832,461 +1303,182 @@
         </div>
     </main>
 
+    <!-- Modal Empresa -->
+    <div id="modalEmpresa" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="ubuntu-glass p-6 w-full max-w-2xl mx-4">
+            <h3 class="text-xl font-bold mb-4" id="tituloModalEmpresa">Nueva Empresa</h3>
+            
+            <form id="formEmpresa" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nombre *</label>
+                        <input type="text" id="empresaModalNombre" class="ubuntu-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">RNC *</label>
+                        <input type="text" id="empresaModalRNC" class="ubuntu-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Teléfono</label>
+                        <input type="text" id="empresaModalTelefono" class="ubuntu-input w-full">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                        <input type="email" id="empresaModalEmail" class="ubuntu-input w-full">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Dirección</label>
+                        <textarea id="empresaModalDireccion" class="ubuntu-input w-full" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Usuario Administrador *</label>
+                        <input type="text" id="empresaModalAdminUser" class="ubuntu-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Email Administrador *</label>
+                        <input type="email" id="empresaModalAdminEmail" class="ubuntu-input w-full" required>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="cerrarModalEmpresa()" class="ubuntu-btn">Cancelar</button>
+                    <button type="submit" class="ubuntu-btn ubuntu-btn-primary">Guardar Empresa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Usuario -->
+    <div id="modalUsuario" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="ubuntu-glass p-6 w-full max-w-md mx-4">
+            <h3 class="text-xl font-bold mb-4" id="tituloModalUsuario">Nuevo Usuario</h3>
+            
+            <form id="formUsuario" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Nombre Completo *</label>
+                    <input type="text" id="usuarioNombre" class="ubuntu-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email *</label>
+                    <input type="email" id="usuarioEmail" class="ubuntu-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Usuario *</label>
+                    <input type="text" id="usuarioUsername" class="ubuntu-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Contraseña *</label>
+                    <input type="password" id="usuarioPassword" class="ubuntu-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Empresa *</label>
+                    <select id="usuarioEmpresa" class="ubuntu-input w-full" required>
+                        <option value="">Seleccionar empresa...</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Rol *</label>
+                    <select id="usuarioRol" class="ubuntu-input w-full" required>
+                        <option value="admin">Administrador</option>
+                        <option value="gerente">Gerente</option>
+                        <option value="vendedor">Vendedor</option>
+                        <option value="inventario">Inventario</option>
+                        <option value="reportes">Solo Reportes</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="cerrarModalUsuario()" class="ubuntu-btn">Cancelar</button>
+                    <button type="submit" class="ubuntu-btn ubuntu-btn-primary">Guardar Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Secuencia -->
+    <div id="modalSecuencia" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="ubuntu-glass p-6 w-full max-w-md mx-4">
+            <h3 class="text-xl font-bold mb-4" id="tituloModalSecuencia">Editar Secuencia</h3>
+            
+            <form id="formSecuencia" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Prefijo *</label>
+                    <input type="text" id="secuenciaPrefijo" class="ubuntu-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Número Actual *</label>
+                    <input type="number" id="secuenciaNumero" class="ubuntu-input w-full" required min="1">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Ceros a la Izquierda</label>
+                    <input type="number" id="secuenciaCeros" class="ubuntu-input w-full" value="3" min="1" max="6">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="cerrarModalSecuencia()" class="ubuntu-btn">Cancelar</button>
+                    <button type="submit" class="ubuntu-btn ubuntu-btn-primary">Guardar Secuencia</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Plantilla Email -->
+    <div id="modalPlantillaEmail" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="ubuntu-glass p-6 w-full max-w-4xl mx-4">
+            <h3 class="text-xl font-bold mb-4" id="tituloModalPlantilla">Editar Plantilla</h3>
+            
+            <form id="formPlantillaEmail" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Asunto *</label>
+                    <input type="text" id="plantillaAsunto" class="ubuntu-input w-full" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Cuerpo del Email *</label>
+                    <textarea id="plantillaCuerpo" class="ubuntu-input w-full" rows="12" required></textarea>
+                </div>
+
+                <div class="bg-white bg-opacity-5 rounded-lg p-4">
+                    <h4 class="font-medium text-gray-300 mb-2">Variables Disponibles</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                        <code class="bg-black bg-opacity-50 px-2 py-1 rounded">{cliente_nombre}</code>
+                        <code class="bg-black bg-opacity-50 px-2 py-1 rounded">{empresa_nombre}</code>
+                        <code class="bg-black bg-opacity-50 px-2 py-1 rounded">{numero_factura}</code>
+                        <code class="bg-black bg-opacity-50 px-2 py-1 rounded">{total}</code>
+                        <code class="bg-black bg-opacity-50 px-2 py-1 rounded">{fecha}</code>
+                        <code class="bg-black bg-opacity-50 px-2 py-1 rounded">{rnc}</code>
+                        <code class="bg-black bg-opacity-50 px-2 py-1 rounded">{telefono}</code>
+                        <code class="bg-black bg-opacity-50 px-2 py-1 rounded">{direccion}</code>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="cerrarModalPlantillaEmail()" class="ubuntu-btn">Cancelar</button>
+                    <button type="submit" class="ubuntu-btn ubuntu-btn-primary">Guardar Plantilla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="../js/config-loader.js"></script>
     <script src="../js/secure-database.js"></script>
     <script src="../js/auth-system.js"></script>
     <script src="../js/database-manager.js"></script>
     <script src="../js/empresa-context.js"></script>
-    <script src="../js/configuracion.js"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/onedrive-manager.js"></script>
+    <script src="../js/config-manager.js"></script>
 
-    <!-- Scripts Azure -->
-    <script src="../services/azure-config.js"></script>
-    <script src="../services/cosmos-service.js"></script>
-    <script src="../services/onedrive-service.js"></script>
-
-    <script>
-        // Variables globales
-        let ventanaActual = 'empresa';
-        let ventanasMinimizadas = new Set();
-
-        document.addEventListener("DOMContentLoaded", function() {
-            console.log("⚙️ Módulo de configuración cargando...");
-            
-            // Verificar autenticación
-            if (!window.auth || !window.auth.getCurrentUser()) {
-                console.log('❌ No autenticado, redirigiendo a login...');
-                window.location.href = '../login.html';
-                return;
-            }
-
-            // Cargar información del usuario
-            const user = window.auth.getCurrentUser();
-            if (user) {
-                document.getElementById('userName').textContent = user.name || user.email;
-                console.log('👤 Usuario cargado:', user.email);
-            }
-
-            // Inicializar búsqueda global
-            inicializarBusquedaGlobal();
-
-            // Inicializar configuración
-            if (window.configuracionManager) {
-                window.configuracionManager.cargarTodaConfiguracion();
-            } else {
-                console.error('❌ ConfiguraciónManager no disponible');
-                cargarTodaConfiguracion();
-            }
-            
-            console.log("✅ Configuración cargada correctamente");
-        });
-
-        // ==================== SISTEMA DE VENTANAS ====================
-        function abrirVentana(ventanaId) {
-            // Ocultar ventana actual
-            document.getElementById(`ventana-${ventanaActual}`).classList.add('hidden');
-            document.querySelector(`.dock-item[onclick="abrirVentana('${ventanaActual}')"]`).classList.remove('active');
-            
-            // Mostrar nueva ventana
-            const ventana = document.getElementById(`ventana-${ventanaId}`);
-            ventana.classList.remove('hidden');
-            ventana.classList.remove('minimized');
-            ventana.style.animation = 'windowOpen 0.3s ease-out';
-            
-            // Actualizar dock
-            document.querySelector(`.dock-item[onclick="abrirVentana('${ventanaId}')"]`).classList.add('active');
-            
-            ventanaActual = ventanaId;
-            ventanasMinimizadas.delete(ventanaId);
-
-            // Cargar configuración Azure si se abre esa ventana
-            if (ventanaId === 'azure') {
-                setTimeout(() => {
-                    loadAzureConfig();
-                }, 100);
-            }
-        }
-
-        function minimizarVentana(ventanaId) {
-            const ventana = document.getElementById(`ventana-${ventanaId}`);
-            ventana.classList.add('minimized');
-            ventanasMinimizadas.add(ventanaId);
-        }
-
-        function maximizarVentana(ventanaId) {
-            const ventana = document.getElementById(`ventana-${ventanaId}`);
-            // Alternar entre maximizado y normal
-            if (ventana.style.width === '90vw') {
-                ventana.style.width = '';
-                ventana.style.height = '';
-                ventana.style.position = '';
-            } else {
-                ventana.style.width = '90vw';
-                ventana.style.height = '80vh';
-                ventana.style.position = 'fixed';
-                ventana.style.top = '10%';
-                ventana.style.left = '5%';
-                ventana.style.zIndex = '1000';
-            }
-        }
-
-        function cerrarVentana(ventanaId) {
-            // No permitir cerrar la única ventana abierta
-            if (document.querySelectorAll('.window:not(.hidden):not(.minimized)').length <= 1) {
-                alert('Debe haber al menos una ventana abierta');
-                return;
-            }
-            
-            const ventana = document.getElementById(`ventana-${ventanaId}`);
-            ventana.classList.add('hidden');
-            document.querySelector(`.dock-item[onclick="abrirVentana('${ventanaId}')"]`).classList.remove('active');
-            
-            // Abrir la primera ventana disponible
-            const ventanasDisponibles = Array.from(document.querySelectorAll('.dock-item:not(.active)'));
-            if (ventanasDisponibles.length > 0) {
-                const primeraVentana = ventanasDisponibles[0];
-                const nuevaVentanaId = primeraVentana.getAttribute('onclick').match(/'([^']+)'/)[1];
-                abrirVentana(nuevaVentanaId);
-            }
-        }
-
-        // ==================== BÚSQUEDA GLOBAL ====================
-        function inicializarBusquedaGlobal() {
-            const searchInput = document.getElementById('globalSearch');
-            
-            searchInput.addEventListener('input', function(e) {
-                const searchTerm = e.target.value.toLowerCase();
-                const ventanas = document.querySelectorAll('.window');
-                
-                ventanas.forEach(ventana => {
-                    const text = ventana.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
-                        ventana.style.display = 'block';
-                    } else {
-                        ventana.style.display = 'none';
-                    }
-                });
-            });
-        }
-
-        // ==================== FUNCIONES DE CONFIGURACIÓN ====================
-        function guardarConfiguracionEmpresa() {
-            const nombre = document.getElementById('empresaNombre').value;
-            const rnc = document.getElementById('empresaRNC').value;
-            
-            if (!nombre || !rnc) {
-                alert('Por favor complete los campos obligatorios');
-                return;
-            }
-            
-            // Guardar en localStorage
-            const configEmpresa = {
-                nombre: nombre,
-                rnc: rnc,
-                telefono: document.getElementById('empresaTelefono').value,
-                email: document.getElementById('empresaEmail').value,
-                direccion: document.getElementById('empresaDireccion').value,
-                website: document.getElementById('empresaWebsite').value,
-                eslogan: document.getElementById('empresaEslogan').value
-            };
-            
-            localStorage.setItem('bs_config_empresa', JSON.stringify(configEmpresa));
-            alert('✅ Configuración de empresa guardada correctamente');
-        }
-
-        function guardarConfiguracionPOS() {
-            const iva = document.getElementById('ivaPorDefecto').value;
-            const descuentos = document.getElementById('habilitarDescuentos').checked;
-            
-            const configPOS = {
-                iva: parseFloat(iva),
-                habilitarDescuentos: descuentos,
-                solicitarCliente: document.getElementById('solicitarCliente').checked,
-                imprimirAutomatico: document.getElementById('imprimirAutomatico').checked
-            };
-            
-            localStorage.setItem('bs_config_pos', JSON.stringify(configPOS));
-            alert('✅ Configuración POS guardada correctamente');
-        }
-
-        function agregarMetodoPago() {
-            const nombre = prompt('Nombre del método de pago:');
-            if (nombre) {
-                alert(`Método de pago "${nombre}" agregado`);
-                // Aquí se agregaría a la lista
-            }
-        }
-
-        function editarSecuencia(tipo) {
-            const nuevoNumero = prompt(`Nuevo número para ${tipo}:`, '001');
-            if (nuevoNumero) {
-                document.getElementById(`secuencia${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`).textContent = 
-                    `${tipo.toUpperCase().substring(0,4)}-${nuevoNumero}`;
-                alert(`Secuencia de ${tipo} actualizada`);
-            }
-        }
-
-        function abrirModalUsuario() {
-            alert('Abrir modal de usuario - Funcionalidad en desarrollo');
-        }
-
-        function abrirModalCliente() {
-            alert('Abrir modal de cliente - Funcionalidad en desarrollo');
-        }
-
-        function personalizarPlantilla(tipo) {
-            alert(`Personalizando plantilla de ${tipo} - Funcionalidad en desarrollo`);
-        }
-
-        function restablecerConfiguracion() {
-            if (confirm('¿Restablecer toda la configuración a valores por defecto?')) {
-                localStorage.removeItem('bs_config_empresa');
-                localStorage.removeItem('bs_config_pos');
-                alert('✅ Configuración restablecida');
-                location.reload();
-            }
-        }
-
-        function guardarTodaConfiguracion() {
-            guardarConfiguracionEmpresa();
-            guardarConfiguracionPOS();
-            alert('✅ Toda la configuración ha sido guardada');
-        }
-
-        function logout() {
-            if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
-                console.log('👋 Cerrando sesión...');
-                window.auth.logout();
-                window.location.href = '../login.html';
-            }
-        }
-
-        // Cargar configuración existente al iniciar
-        function cargarTodaConfiguracion() {
-            const configEmpresa = JSON.parse(localStorage.getItem('bs_config_empresa') || '{}');
-            const configPOS = JSON.parse(localStorage.getItem('bs_config_pos') || '{}');
-            
-            // Cargar datos de empresa
-            if (configEmpresa.nombre) {
-                document.getElementById('empresaNombre').value = configEmpresa.nombre;
-                document.getElementById('empresaRNC').value = configEmpresa.rnc;
-                document.getElementById('empresaTelefono').value = configEmpresa.telefono || '';
-                document.getElementById('empresaEmail').value = configEmpresa.email || '';
-                document.getElementById('empresaDireccion').value = configEmpresa.direccion || '';
-                document.getElementById('empresaWebsite').value = configEmpresa.website || '';
-                document.getElementById('empresaEslogan').value = configEmpresa.eslogan || '';
-            }
-            
-            // Cargar datos POS
-            if (configPOS.iva) {
-                document.getElementById('ivaPorDefecto').value = configPOS.iva;
-                document.getElementById('habilitarDescuentos').checked = configPOS.habilitarDescuentos || false;
-                document.getElementById('solicitarCliente').checked = configPOS.solicitarCliente || false;
-                document.getElementById('imprimirAutomatico').checked = configPOS.imprimirAutomatico || false;
-            }
-        }
-
-        // ==================== CONFIGURACIÓN AZURE ====================
-        function loadAzureConfig() {
-            if (!window.azureConfig) {
-                console.warn('⚠️ Azure Config no disponible');
-                return;
-            }
-            
-            const config = window.azureConfig;
-            document.getElementById('azureCosmosEndpoint').value = config.cosmosEndpoint || '';
-            document.getElementById('azureCosmosKey').value = config.cosmosKey || '';
-            document.getElementById('azureClientId').value = config.clientId || '';
-            document.getElementById('azureClientSecret').value = config.clientSecret || '';
-            document.getElementById('azureTenantId').value = config.tenantId || '';
-            updateAzureStatus();
-        }
-
-        function saveAzureConfig() {
-            if (!window.azureConfig) {
-                mostrarNotificacionAzure('❌ Servicios Azure no disponibles', 'error');
-                return;
-            }
-
-            const config = {
-                endpoint: document.getElementById('azureCosmosEndpoint').value.trim(),
-                key: document.getElementById('azureCosmosKey').value.trim(),
-                clientId: document.getElementById('azureClientId').value.trim(),
-                clientSecret: document.getElementById('azureClientSecret').value.trim(),
-                tenantId: document.getElementById('azureTenantId').value.trim()
-            };
-
-            if (!config.endpoint || !config.key || !config.clientId || !config.clientSecret || !config.tenantId) {
-                mostrarNotificacionAzure('❌ Todos los campos de Azure son requeridos', 'error');
-                return;
-            }
-
-            window.azureConfig.saveToLocalStorage(config);
-            updateAzureStatus();
-            mostrarNotificacionAzure('✅ Configuración Azure guardada correctamente', 'success');
-        }
-
-        async function testAzureConnection() {
-            if (!window.cosmosService || !window.oneDriveService) {
-                mostrarNotificacionAzure('❌ Servicios Azure no disponibles', 'error');
-                return;
-            }
-
-            const statusElement = document.getElementById('azureStatus');
-            const detailsElement = document.getElementById('azureDetails');
-            
-            statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></div><span class="text-blue-400">🔄 Probando conexión...</span>';
-            detailsElement.classList.remove('hidden');
-            
-            try {
-                const cosmosConnected = await window.cosmosService.connect();
-                const graphConnected = await window.oneDriveService.authenticate();
-                
-                document.getElementById('cosmosStatus').textContent = cosmosConnected ? '✅ Conectado' : '❌ Error';
-                document.getElementById('onedriveStatus').textContent = graphConnected ? '✅ Conectado' : '❌ Error';
-                
-                if (cosmosConnected && graphConnected) {
-                    statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-green-500"></div><span class="text-green-400">✅ Conectado a Azure</span>';
-                    mostrarNotificacionAzure('✅ Conexión Azure exitosa', 'success');
-                } else if (cosmosConnected) {
-                    statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-yellow-500"></div><span class="text-yellow-400">⚠️ Solo Cosmos DB</span>';
-                    mostrarNotificacionAzure('⚠️ Solo Cosmos DB conectado', 'warning');
-                } else if (graphConnected) {
-                    statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-yellow-500"></div><span class="text-yellow-400">⚠️ Solo OneDrive</span>';
-                    mostrarNotificacionAzure('⚠️ Solo OneDrive conectado', 'warning');
-                } else {
-                    statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-red-500"></div><span class="text-red-400">❌ Error de conexión</span>';
-                    mostrarNotificacionAzure('❌ Error conectando a Azure', 'error');
-                }
-            } catch (error) {
-                statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-red-500"></div><span class="text-red-400">❌ Error de conexión</span>';
-                detailsElement.innerHTML += `<div class="text-red-400 text-xs mt-2">Error: ${error.message}</div>`;
-                mostrarNotificacionAzure('❌ Error en conexión Azure', 'error');
-            }
-        }
-
-        function updateAzureStatus() {
-            const statusElement = document.getElementById('azureStatus');
-            if (!window.azureConfig) {
-                statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-red-500"></div><span class="text-red-400">❌ No disponible</span>';
-                return;
-            }
-            
-            const isConfigured = window.azureConfig.isAzureConfigured();
-            
-            if (isConfigured) {
-                statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-green-500"></div><span class="text-green-400">✅ Configurado</span>';
-            } else {
-                statusElement.innerHTML = '<div class="w-3 h-3 rounded-full bg-orange-500 animate-pulse"></div><span class="text-orange-400">⏳ No configurado</span>';
-            }
-        }
-
-        async function crearBackupAzure() {
-            if (!window.cosmosService) {
-                mostrarNotificacionAzure('❌ Servicio Cosmos no disponible', 'error');
-                return;
-            }
-            
-            try {
-                mostrarNotificacionAzure('🔄 Creando backup en Azure...', 'info');
-                await window.cosmosService.backupToCloud();
-                mostrarNotificacionAzure('✅ Backup creado exitosamente en Azure', 'success');
-            } catch (error) {
-                console.error('Error en backup:', error);
-                mostrarNotificacionAzure('❌ Error creando backup: ' + error.message, 'error');
-            }
-        }
-
-        async function sincronizarDesdeAzure() {
-            if (!window.cosmosService) {
-                mostrarNotificacionAzure('❌ Servicio Cosmos no disponible', 'error');
-                return;
-            }
-            
-            try {
-                mostrarNotificacionAzure('🔄 Sincronizando desde Azure...', 'info');
-                const success = await window.cosmosService.syncFromCloud();
-                if (success) {
-                    mostrarNotificacionAzure('✅ Sincronización completada', 'success');
-                    // Recargar datos si es necesario
-                    if (window.configuracionManager) {
-                        window.configuracionManager.cargarClientes();
-                        window.configuracionManager.cargarUsuarios();
-                    }
-                } else {
-                    mostrarNotificacionAzure('ℹ️ No hay datos para sincronizar', 'info');
-                }
-            } catch (error) {
-                console.error('Error en sincronización:', error);
-                mostrarNotificacionAzure('❌ Error sincronizando: ' + error.message, 'error');
-            }
-        }
-
-        function mostrarNotificacionAzure(mensaje, tipo = 'info') {
-            const notificacion = document.createElement('div');
-            
-            const colors = {
-                success: '#28CA42',
-                error: '#FF5F57', 
-                warning: '#FFBD2E',
-                info: '#0D6EFD'
-            };
-            
-            const icons = {
-                success: 'bi-check-circle',
-                error: 'bi-exclamation-triangle',
-                warning: 'bi-exclamation-circle',
-                info: 'bi-info-circle'
-            };
-            
-            notificacion.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="bi ${icons[tipo]}" style="color: ${colors[tipo]}; font-size: 18px;"></i>
-                    <span>${mensaje}</span>
-                </div>
-            `;
-            
-            // Aplicar estilos Ubuntu
-            Object.assign(notificacion.style, {
-                position: 'fixed',
-                top: '20px',
-                right: '20px',
-                background: 'rgba(51, 51, 51, 0.9)',
-                backdropFilter: 'blur(20px)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                borderRadius: '12px',
-                padding: '15px 20px',
-                color: 'white',
-                zIndex: '10000',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-                animation: 'slideInRight 0.3s ease',
-                fontFamily: 'Outfit, sans-serif'
-            });
-            
-            document.body.appendChild(notificacion);
-            
-            setTimeout(() => {
-                notificacion.style.opacity = '0';
-                notificacion.style.transition = 'opacity 0.5s ease';
-                setTimeout(() => notificacion.remove(), 500);
-            }, 4000);
-        }
-
-        // Agregar keyframes para la animación de notificación
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideInRight {
-                from {
-                    opacity: 0;
-                    transform: translateX(100%);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
 </body>
 </html>

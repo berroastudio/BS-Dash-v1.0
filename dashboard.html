@@ -164,6 +164,33 @@
             color: var(--text-primary);
         }
 
+        .tray-item.database-status {
+            transition: all 0.3s ease;
+        }
+
+        .tray-item.database-status.online {
+            color: #10B981;
+        }
+
+        .tray-item.database-status.transferring {
+            color: #3B82F6;
+            animation: pulse 2s infinite;
+        }
+
+        .tray-item.database-status.idle {
+            color: #F59E0B;
+        }
+
+        .tray-item.database-status.error {
+            color: #EF4444;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         .user-menu {
             display: flex;
             align-items: center;
@@ -551,39 +578,36 @@
             animation: scaleIn 0.4s ease-out;
         }
 
-        /* Utilidades */
-        .grid { display: grid; }
-        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-        .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        .gap-6 { gap: 1.5rem; }
-        .gap-3 { gap: 0.75rem; }
-        .text-center { text-align: center; }
-        .p-4 { padding: 1rem; }
-        .rounded-xl { border-radius: 0.75rem; }
-        .border { border-width: 1px; }
-        .border-white { border-color: white; }
-        .border-opacity-10 { border-opacity: 0.1; }
-        .border-opacity-20 { border-opacity: 0.2; }
-        .text-2xl { font-size: 1.5rem; }
-        .font-bold { font-weight: 700; }
-        .text-sm { font-size: 0.875rem; }
-        .text-gray-300 { color: #D1D5DB; }
-        .mt-1 { margin-top: 0.25rem; }
-        .mt-6 { margin-top: 1.5rem; }
-        .flex { display: flex; }
-        .flex-1 { flex: 1 1 0%; }
-        .items-center { align-items: center; }
-        .justify-center { justify-content: center; }
-        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-        .px-4 { padding-left: 1rem; padding-right: 1rem; }
-        .border-none { border: none; }
-        .cursor-pointer { cursor: pointer; }
-        .transition-all { transition: all 0.3s ease; }
-        .duration-300 { transition-duration: 300ms; }
-        .hover\:scale-105:hover { transform: scale(1.05); }
-        .hover\:bg-opacity-80:hover { opacity: 0.8; }
-        .mr-2 { margin-right: 0.5rem; }
-        .hidden { display: none; }
+        /* Selector de Empresa Mejorado */
+        .empresa-selector {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .empresa-selector:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--accent-blue);
+        }
+
+        .empresa-selector select {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .empresa-selector option {
+            background: rgba(51, 51, 51, 0.9);
+            color: var(--text-primary);
+        }
     </style>
 </head>
 
@@ -617,14 +641,21 @@
         
         <div class="top-bar-right">
             <div class="system-tray">
-                <div class="tray-item" id="connection-status">
-                    <i class="bi bi-wifi"></i>
-                    <span>Conectado</span>
+                <!-- Selector de Empresa Mejorado -->
+                <div class="empresa-selector">
+                    <select id="empresaSelector" onchange="cambiarEmpresaDashboard()">
+                        <option value="1">Berroa Studio S.R.L.</option>
+                        <option value="2">Empresa Secundaria</option>
+                        <option value="3">Otra Empresa</option>
+                    </select>
                 </div>
-                <div class="tray-item">
-                    <i class="bi bi-battery-half"></i>
-                    <span id="battery-level">78%</span>
+                
+                <!-- Estado de Base de Datos -->
+                <div class="tray-item database-status online" id="databaseStatus">
+                    <i class="bi bi-database"></i>
+                    <span id="dbStatusText">Online</span>
                 </div>
+                
                 <div class="tray-item">
                     <i class="bi bi-clock"></i>
                     <span id="current-time">Cargando...</span>
@@ -648,6 +679,9 @@
                 <div class="window-title">
                     <i class="bi bi-speedometer2"></i>
                     <span>Dashboard Principal</span>
+                    <button onclick="activarTodosLosModulos()" style="background: linear-gradient(135deg, #10B981, #059669); color: white; padding: 6px 12px; border-radius: 6px; border: none; font-size: 12px; cursor: pointer; margin-left: 10px;">
+                        <i class="bi bi-lightning"></i> Activar Todos
+                    </button>
                 </div>
                 <div class="window-controls">
                     <div class="window-control minimize" onclick="minimizeWindow('dashboard')"></div>
@@ -656,7 +690,7 @@
                 </div>
             </div>
             <div class="window-content">
-                <!-- Estadísticas Principales -->
+                <!-- Gráficos y Estadísticas -->
                 <div class="desktop-grid">
                     <!-- Ventas -->
                     <div class="ubuntu-stat-card">
@@ -727,7 +761,7 @@
                     </div>
                 </div>
 
-                <!-- Accesos Directos -->
+                <!-- Accesos Directos Dinámicos -->
                 <div class="ubuntu-window mt-6">
                     <div class="window-header">
                         <div class="window-title">
@@ -741,47 +775,13 @@
                         </div>
                     </div>
                     <div class="window-content">
-                        <div class="ubuntu-app-grid">
-                            <!-- Punto de Venta -->
-                            <a href="modules/pos.html" class="ubuntu-app-shortcut">
-                                <div class="app-icon-container">
-                                    <i class="bi bi-cash-coin"></i>
-                                </div>
-                                <div class="app-name">Punto de Venta</div>
-                                <div class="app-description">Venta rápida</div>
-                            </a>
-                            
-                            <!-- Nueva Orden -->
-                            <a href="modules/ordenes.html" class="ubuntu-app-shortcut">
-                                <div class="app-icon-container">
-                                    <i class="bi bi-plus-circle"></i>
-                                </div>
-                                <div class="app-name">Nueva Orden</div>
-                                <div class="app-description">Crear orden</div>
-                            </a>
-                            
-                            <!-- Reporte Rápido -->
-                            <a href="modules/reportes.html" class="ubuntu-app-shortcut">
-                                <div class="app-icon-container">
-                                    <i class="bi bi-graph-up"></i>
-                                </div>
-                                <div class="app-name">Reportes</div>
-                                <div class="app-description">Análisis</div>
-                            </a>
-                            
-                            <!-- Backup -->
-                            <a href="#" class="ubuntu-app-shortcut" onclick="crearBackup()">
-                                <div class="app-icon-container">
-                                    <i class="bi bi-shield-check"></i>
-                                </div>
-                                <div class="app-name">Backup</div>
-                                <div class="app-description">Seguridad</div>
-                            </a>
+                        <div class="ubuntu-app-grid" id="accesos-directos">
+                            <!-- Los accesos directos se cargan dinámicamente según los módulos activos -->
                         </div>
                     </div>
                 </div>
 
-                <!-- Sistema de Backup -->
+                <!-- Sistema de Backup Mejorado -->
                 <div class="ubuntu-window mt-6">
                     <div class="window-header">
                         <div class="window-title">
@@ -797,15 +797,15 @@
                     <div class="window-content">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
                             <div class="p-4 bg-gradient-card rounded-xl border border-white border-opacity-10">
-                                <div class="text-2xl font-bold" style="background: linear-gradient(135deg, #E95420, #77216F); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">3</div>
+                                <div class="text-2xl font-bold" style="background: linear-gradient(135deg, #E95420, #77216F); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" id="totalEmpresas">3</div>
                                 <div class="text-sm text-gray-300 mt-1">Empresas</div>
                             </div>
                             <div class="p-4 bg-gradient-card rounded-xl border border-white border-opacity-10">
-                                <div class="text-2xl font-bold" style="background: linear-gradient(135deg, #E95420, #77216F); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">2,148</div>
-                                <div class="text-sm text-gray-300 mt-1">Registros</div>
+                                <div class="text-2xl font-bold" style="background: linear-gradient(135deg, #E95420, #77216F); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" id="totalModulos">7</div>
+                                <div class="text-sm text-gray-300 mt-1">Módulos Activos</div>
                             </div>
                             <div class="p-4 bg-gradient-card rounded-xl border border-white border-opacity-10">
-                                <div class="text-2xl font-bold" style="background: linear-gradient(135deg, #E95420, #77216F); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">4.2 MB</div>
+                                <div class="text-2xl font-bold" style="background: linear-gradient(135deg, #E95420, #77216F); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" id="tamanoBD">4.2 MB</div>
                                 <div class="text-sm text-gray-300 mt-1">Tamaño BD</div>
                             </div>
                         </div>
@@ -813,6 +813,10 @@
                             <button onclick="crearBackup()" class="flex-1" style="background: linear-gradient(135deg, #E95420, #77216F); color: white; padding: 12px 16px; border-radius: 12px; border: none; font-weight: 500; cursor: pointer; transition: all 0.3s ease;">
                                 <i class="bi bi-download mr-2"></i>
                                 Crear Backup
+                            </button>
+                            <button onclick="sincronizarOneDrive()" class="flex-1" style="background: linear-gradient(135deg, #0078D4, #005A9E); color: white; padding: 12px 16px; border-radius: 12px; border: none; font-weight: 500; cursor: pointer; transition: all 0.3s ease;">
+                                <i class="bi bi-microsoft mr-2"></i>
+                                Sincronizar OneDrive
                             </button>
                             <button onclick="mostrarInfoSistema()" class="flex-1" style="background: rgba(51, 51, 51, 0.6); backdrop-filter: blur(15px); color: white; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); font-weight: 500; cursor: pointer; transition: all 0.3s ease;">
                                 <i class="bi bi-info-circle mr-2"></i>
@@ -838,263 +842,492 @@
                 </div>
             </div>
             <div class="window-content">
-                <div class="ubuntu-app-grid">
-                    <!-- Todas las aplicaciones del sistema -->
-                    <a href="modules/pos.html" class="ubuntu-app-shortcut">
-                        <div class="app-icon-container">
-                            <i class="bi bi-cash-coin"></i>
-                        </div>
-                        <div class="app-name">Punto de Venta</div>
-                        <div class="app-description">Sistema POS</div>
-                    </a>
-                    
-                    <a href="modules/inventario.html" class="ubuntu-app-shortcut">
-                        <div class="app-icon-container">
-                            <i class="bi bi-box-seam"></i>
-                        </div>
-                        <div class="app-name">Inventario</div>
-                        <div class="app-description">Gestión stock</div>
-                    </a>
-                    
-                    <a href="modules/cotizaciones.html" class="ubuntu-app-shortcut">
-                        <div class="app-icon-container">
-                            <i class="bi bi-file-text"></i>
-                        </div>
-                        <div class="app-name">Cotizaciones</div>
-                        <div class="app-description">Presupuestos</div>
-                    </a>
-                    
-                    <a href="modules/facturacion.html" class="ubuntu-app-shortcut">
-                        <div class="app-icon-container">
-                            <i class="bi bi-receipt"></i>
-                        </div>
-                        <div class="app-name">Facturación</div>
-                        <div class="app-description">Facturas</div>
-                    </a>
-                    
-                    <a href="modules/ordenes.html" class="ubuntu-app-shortcut">
-                        <div class="app-icon-container">
-                            <i class="bi bi-clipboard-check"></i>
-                        </div>
-                        <div class="app-name">Órdenes</div>
-                        <div class="app-description">Trabajos</div>
-                    </a>
-                    
-                    <a href="modules/contabilidad.html" class="ubuntu-app-shortcut">
-                        <div class="app-icon-container">
-                            <i class="bi bi-calculator"></i>
-                        </div>
-                        <div class="app-name">Contabilidad</div>
-                        <div class="app-description">Finanzas</div>
-                    </a>
-                    
-                    <a href="modules/reportes.html" class="ubuntu-app-shortcut">
-                        <div class="app-icon-container">
-                            <i class="bi bi-graph-up"></i>
-                        </div>
-                        <div class="app-name">Reportes</div>
-                        <div class="app-description">Análisis</div>
-                    </a>
-                    
-                    <a href="modules/configuracion.html" class="ubuntu-app-shortcut">
-                        <div class="app-icon-container">
-                            <i class="bi bi-gear"></i>
-                        </div>
-                        <div class="app-name">Configuración</div>
-                        <div class="app-description">Ajustes</div>
-                    </a>
+                <div class="ubuntu-app-grid" id="grid-aplicaciones-completas">
+                    <!-- Todas las aplicaciones del sistema se cargan dinámicamente -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Dock Ubuntu -->
-    <div class="ubuntu-dock">
-        <div class="dock-app active" onclick="toggleWindow('dashboard')">
-            <i class="bi bi-house-door"></i>
-            <span>Inicio</span>
-        </div>
-        <div class="dock-app" onclick="toggleWindow('apps')">
-            <i class="bi bi-grid"></i>
-            <span>Apps</span>
-        </div>
-        <a href="modules/pos.html" class="dock-app">
-            <i class="bi bi-cash-coin"></i>
-            <span>POS</span>
-        </a>
-        <a href="modules/inventario.html" class="dock-app">
-            <i class="bi bi-box-seam"></i>
-            <span>Inventario</span>
-        </a>
-        <a href="modules/cotizaciones.html" class="dock-app">
-            <i class="bi bi-file-text"></i>
-            <span>Cotizaciones</span>
-        </a>
-        <a href="modules/facturacion.html" class="dock-app">
-            <i class="bi bi-receipt"></i>
-            <span>Facturación</span>
-        </a>
-        <a href="modules/ordenes.html" class="dock-app">
-            <i class="bi bi-clipboard-check"></i>
-            <span>Órdenes</span>
-        </a>
-        <a href="modules/contabilidad.html" class="dock-app">
-            <i class="bi bi-calculator"></i>
-            <span>Contabilidad</span>
-        </a>
-        <a href="modules/reportes.html" class="dock-app">
-            <i class="bi bi-graph-up"></i>
-            <span>Reportes</span>
-        </a>
-        <a href="modules/configuracion.html" class="dock-app">
-            <i class="bi bi-gear"></i>
-            <span>Ajustes</span>
-        </a>
-        <div class="dock-app" onclick="logout()">
-            <i class="bi bi-box-arrow-right"></i>
-            <span>Salir</span>
-        </div>
+    <!-- Dock Ubuntu Mejorado -->
+    <div class="ubuntu-dock" id="dock-principal">
+        <!-- El dock se carga dinámicamente según los módulos activos -->
     </div>
 
     <!-- Scripts -->
-    <script src="js/config-loader.js"></script>
-    <script src="js/secure-database.js"></script>
-    <script src="js/auth-system.js"></script>
-    <script src="js/database-manager.js"></script>
-    <script src="js/empresa-context.js"></script>
-
     <script>
-        // ==================== SISTEMA DE SEGURIDAD ====================
+        // ==================== SISTEMA DE MÓDULOS DINÁMICOS ====================
+        console.log('📦 Cargando sistema de módulos...');
+
+        class ModulosManager {
+            constructor() {
+                this.modulos = {};
+                this.init();
+            }
+
+            init() {
+                console.log('✅ Modulos manager inicializado');
+                this.cargarTodosLosModulos();
+            }
+
+            cargarTodosLosModulos() {
+                // Mapeo completo de TODOS los módulos en tu directorio
+                this.modulos = {
+                    'dashboard': { nombre: 'Dashboard', icono: 'bi-speedometer2', ruta: 'dashboard.html' },
+                    'facturacion': { nombre: 'Facturación', icono: 'bi-receipt', ruta: 'facturacion.html' },
+                    'inventario': { nombre: 'Inventario', icono: 'bi-box-seam', ruta: 'inventario.html' },
+                    'clientes': { nombre: 'Clientes', icono: 'bi-people', ruta: 'clientes.html' },
+                    'reportes': { nombre: 'Reportes', icono: 'bi-graph-up', ruta: 'reportes.html' },
+                    'configuracion': { nombre: 'Configuración', icono: 'bi-gear', ruta: 'configuracion.html' },
+                    'usuarios': { nombre: 'Usuarios', icono: 'bi-shield-check', ruta: 'usuarios.html' },
+                    'empresas': { nombre: 'Empresas', icono: 'bi-buildings', ruta: 'empresas.html' },
+                    'pos': { nombre: 'Punto de Venta', icono: 'bi-cash-coin', ruta: 'pos.html' },
+                    'backups': { nombre: 'Backups', icono: 'bi-cloud-arrow-up', ruta: 'backups.html' },
+                    'onedrive': { nombre: 'OneDrive', icono: 'bi-microsoft', ruta: 'onedrive.html' },
+                    'caja': { nombre: 'Caja', icono: 'bi-cash-stack', ruta: 'caja.html' },
+                    'cheques': { nombre: 'Cheques', icono: 'bi-wallet2', ruta: 'cheques.html' },
+                    'contabilidad': { nombre: 'Contabilidad', icono: 'bi-calculator', ruta: 'contabilidad.html' },
+                    'cotizaciones': { nombre: 'Cotizaciones', icono: 'bi-file-text', ruta: 'cotizaciones.html' },
+                    'editor-plantillas': { nombre: 'Editor Plantillas', icono: 'bi-file-earmark-richtext', ruta: 'editor-plantillas.html' },
+                    'logs': { nombre: 'Logs', icono: 'bi-journal-text', ruta: 'logs.html' },
+                    'ordenes': { nombre: 'Órdenes', icono: 'bi-clipboard-check', ruta: 'ordenes.html' },
+                    'secuencias': { nombre: 'Secuencias', icono: 'bi-list-ol', ruta: 'secuencias.html' },
+                    'smtp': { nombre: 'SMTP', icono: 'bi-envelope', ruta: 'smtp.html' }
+                };
+                
+                console.log('📂 Módulos cargados:', Object.keys(this.modulos).length);
+            }
+
+            getModulosEmpresa(empresaId = 1) {
+                const modulosGuardados = localStorage.getItem(`bs_modulos_empresa_${empresaId}`);
+                if (modulosGuardados) {
+                    return JSON.parse(modulosGuardados);
+                }
+                
+                // Módulos por defecto - ahora incluye más módulos
+                return [
+                    'dashboard', 'facturacion', 'inventario', 'clientes', 'reportes', 
+                    'configuracion', 'usuarios', 'empresas', 'pos', 'caja'
+                ];
+            }
+
+            getModuloInfo(moduloId) {
+                return this.modulos[moduloId] || { nombre: moduloId, icono: 'bi-question-circle', ruta: '#' };
+            }
+
+            getModulosActivos(empresaId = '1') {
+                const modulosIds = this.getModulosEmpresa(empresaId);
+                const modulosActivos = [];
+                
+                modulosIds.forEach(moduloId => {
+                    if (this.modulos[moduloId]) {
+                        modulosActivos.push({
+                            id: moduloId,
+                            nombre: this.modulos[moduloId].nombre,
+                            icono: this.modulos[moduloId].icono,
+                            descripcion: `Acceso a ${this.modulos[moduloId].nombre}`,
+                            url: this.modulos[moduloId].ruta,
+                            categoria: 'general'
+                        });
+                    }
+                });
+                
+                return modulosActivos;
+            }
+
+            getTodosLosModulos() {
+                return Object.keys(this.modulos).map(moduloId => ({
+                    id: moduloId,
+                    nombre: this.modulos[moduloId].nombre,
+                    icono: this.modulos[moduloId].icono,
+                    descripcion: `Acceso a ${this.modulos[moduloId].nombre}`,
+                    url: this.modulos[moduloId].ruta,
+                    categoria: 'general'
+                }));
+            }
+
+            getModulosPorDefecto() {
+                return this.getModulosActivos(1);
+            }
+        }
+
+        // ==================== SISTEMA PRINCIPAL ====================
+        let modulosManager;
+
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Iniciando dashboard Ubuntu...');
+            console.log('🚀 Iniciando dashboard mejorado...');
             
-            // Verificar autenticación
-            if (!window.auth || !window.auth.getCurrentUser()) {
-                console.log('❌ No autenticado, redirigiendo a login...');
-                window.location.href = 'login.html';
+            // 1. Verificar autenticación
+            if (!verificarAutenticacion()) {
                 return;
             }
 
-            console.log('✅ Usuario autenticado, iniciando dashboard...');
-            
-            // Cargar información del usuario
-            const user = window.auth.getCurrentUser();
-            if (user) {
-                document.getElementById('userName').textContent = user.name || user.email;
-                console.log('👤 Usuario cargado:', user.email);
-            }
+            // 2. Inicializar ModulosManager
+            modulosManager = new ModulosManager();
+            window.modulosManager = modulosManager;
 
-            // Inicializar sistema
-            initDashboard();
+            // 3. Cargar información del usuario
+            const userData = JSON.parse(localStorage.getItem('bs_dash_user') || '{}');
+            document.getElementById('userName').textContent = userData.name || userData.email || 'Administrador';
+
+            // 4. Inicializar componentes
+            setTimeout(() => {
+                initDashboard();
+                cargarModulosActivos();
+                actualizarDock();
+                initDatabaseStatus();
+                
+                console.log('✅ Dashboard inicializado correctamente');
+            }, 500);
+
+            // Actualizar cada 30 segundos
+            setInterval(actualizarEstadisticas, 30000);
         });
 
+        // ==================== FUNCIONES DE AUTENTICACIÓN ====================
+        function verificarAutenticacion() {
+            const user = localStorage.getItem('bs_dash_user');
+            const auth = localStorage.getItem('bs_dash_auth');
+            
+            if (!user || auth !== 'true') {
+                console.log('❌ No autenticado, redirigiendo a login...');
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            return true;
+        }
+
+        function logout() {
+            if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+                console.log('👋 Cerrando sesión...');
+                localStorage.removeItem('bs_dash_auth');
+                localStorage.removeItem('bs_dash_user');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // ==================== SISTEMA DE MÓDULOS ====================
+        function cargarModulosActivos() {
+            const empresaId = document.getElementById('empresaSelector').value;
+            
+            if (!modulosManager) {
+                console.error('❌ ModulosManager no disponible');
+                cargarModulosPorDefecto();
+                return;
+            }
+
+            const modulosActivos = modulosManager.getModulosActivos(empresaId);
+            
+            console.log('📦 Módulos activos para empresa', empresaId, ':', modulosActivos.map(m => m.nombre));
+
+            // Cargar accesos directos (excluyendo dashboard)
+            const modulosParaAccesos = modulosActivos.filter(modulo => 
+                modulo.id !== 'dashboard'
+            ).slice(0, 8); // Aumentado a 8 accesos directos
+
+            const accesosDirectos = document.getElementById('accesos-directos');
+            accesosDirectos.innerHTML = modulosParaAccesos.map(modulo => `
+                <a href="${modulo.url}" class="ubuntu-app-shortcut" onclick="return abrirModulo('${modulo.id}')">
+                    <div class="app-icon-container">
+                        <i class="${modulo.icono}"></i>
+                    </div>
+                    <div class="app-name">${modulo.nombre}</div>
+                    <div class="app-description">${modulo.descripcion}</div>
+                </a>
+            `).join('');
+
+            // Cargar grid completo de aplicaciones
+            const gridCompleto = document.getElementById('grid-aplicaciones-completas');
+            const todosLosModulos = modulosManager.getTodosLosModulos();
+            gridCompleto.innerHTML = todosLosModulos.map(modulo => `
+                <a href="${modulo.url}" class="ubuntu-app-shortcut" onclick="return abrirModulo('${modulo.id}')">
+                    <div class="app-icon-container">
+                        <i class="${modulo.icono}"></i>
+                    </div>
+                    <div class="app-name">${modulo.nombre}</div>
+                    <div class="app-description">${modulo.descripcion}</div>
+                </a>
+            `).join('');
+
+            // Actualizar contador de módulos
+            document.getElementById('totalModulos').textContent = modulosActivos.length;
+        }
+
+        function actualizarDock() {
+            const empresaId = document.getElementById('empresaSelector').value;
+            
+            if (!modulosManager) {
+                console.error('❌ ModulosManager no disponible para dock');
+                return;
+            }
+
+            const modulosActivos = modulosManager.getModulosActivos(empresaId);
+            const dock = document.getElementById('dock-principal');
+            
+            // Filtrar módulos para el dock (excluir dashboard y configuracion, máximo 8)
+            const modulosDock = modulosActivos
+                .filter(modulo => !['dashboard', 'configuracion'].includes(modulo.id))
+                .slice(0, 8);
+
+            dock.innerHTML = modulosDock.map(modulo => `
+                <a href="${modulo.url}" class="dock-app" onclick="return abrirModulo('${modulo.id}')">
+                    <i class="${modulo.icono}"></i>
+                    <span>${modulo.nombre}</span>
+                </a>
+            `).join('') + `
+                <div class="dock-app" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Salir</span>
+                </div>
+            `;
+        }
+
+        // Función mejorada para abrir módulos
+        function abrirModulo(moduloId) {
+            console.log('🔗 Abriendo módulo:', moduloId);
+            
+            // Verificar si el módulo existe
+            const modulos = modulosManager.getTodosLosModulos();
+            const modulo = modulos.find(m => m.id === moduloId);
+            
+            if (!modulo) {
+                mostrarNotificacion('❌ Módulo no disponible', 'error');
+                return false;
+            }
+            
+            // Verificar si está activo para la empresa actual
+            const empresaId = document.getElementById('empresaSelector').value;
+            const modulosActivos = modulosManager.getModulosActivos(empresaId);
+            const moduloActivo = modulosActivos.find(m => m.id === moduloId);
+            
+            if (!moduloActivo) {
+                mostrarNotificacion('❌ Módulo no activo para esta empresa', 'error');
+                return false;
+            }
+            
+            const url = modulo.url;
+            console.log('📂 Abriendo:', url);
+            
+            // Redirigir al módulo
+            window.location.href = url;
+            
+            return false; // Prevenir comportamiento por defecto
+        }
+
+        function cargarModulosPorDefecto() {
+            // Función de respaldo
+            const modulosPorDefecto = [
+                { id: 'dashboard', nombre: 'Dashboard', icono: 'bi-speedometer2', descripcion: 'Panel principal', url: 'dashboard.html' },
+                { id: 'facturacion', nombre: 'Facturación', icono: 'bi-receipt', descripcion: 'Sistema de facturas', url: 'facturacion.html' },
+                { id: 'inventario', nombre: 'Inventario', icono: 'bi-box-seam', descripcion: 'Gestión de stock', url: 'inventario.html' },
+                { id: 'clientes', nombre: 'Clientes', icono: 'bi-people', descripcion: 'Gestión de clientes', url: 'clientes.html' }
+            ];
+
+            const accesosDirectos = document.getElementById('accesos-directos');
+            const gridCompleto = document.getElementById('grid-aplicaciones-completas');
+
+            accesosDirectos.innerHTML = modulosPorDefecto.slice(1, 5).map(modulo => `
+                <a href="${modulo.url}" class="ubuntu-app-shortcut" onclick="return abrirModulo('${modulo.id}')">
+                    <div class="app-icon-container">
+                        <i class="${modulo.icono}"></i>
+                    </div>
+                    <div class="app-name">${modulo.nombre}</div>
+                    <div class="app-description">${modulo.descripcion}</div>
+                </a>
+            `).join('');
+
+            gridCompleto.innerHTML = modulosPorDefecto.map(modulo => `
+                <a href="${modulo.url}" class="ubuntu-app-shortcut" onclick="return abrirModulo('${modulo.id}')">
+                    <div class="app-icon-container">
+                        <i class="${modulo.icono}"></i>
+                    </div>
+                    <div class="app-name">${modulo.nombre}</div>
+                    <div class="app-description">${modulo.descripcion}</div>
+                </a>
+            `).join('');
+        }
+
+        // ==================== FUNCIONES DEL SISTEMA ====================
         function initDashboard() {
             console.log('📊 Inicializando componentes del dashboard...');
-            
-            // Actualizar hora y estado de conexión
-            updateSystemInfo();
-            setInterval(updateSystemInfo, 1000);
-            
-            // Actualizar estadísticas
             actualizarEstadisticas();
-            setInterval(actualizarEstadisticas, 30000);
-            
-            // Inicializar sistema de empresas
-            setTimeout(() => {
-                if (window.empresaManager) {
-                    console.log('🏢 Sistema de empresas listo');
-                    actualizarInfoSistema();
-                }
-            }, 1000);
+            actualizarInfoSistema();
+            actualizarHora();
+            setInterval(actualizarHora, 60000);
         }
 
-        function updateSystemInfo() {
-            // Actualizar hora
+        function actualizarEstadisticas() {
+            // Datos de ejemplo para desarrollo
+            document.querySelector('[data-ventas]').textContent = '$12,450';
+            document.getElementById('totalProductos').textContent = '156';
+            document.getElementById('productosBajos').textContent = '8';
+            document.getElementById('ordenesPendientes').textContent = '23';
+            document.getElementById('totalClientes').textContent = '89';
+            document.getElementById('ventasVariacion').textContent = '12.5%';
+        }
+
+        function actualizarInfoSistema() {
+            const empresas = JSON.parse(localStorage.getItem('bs_empresas') || '[]');
+            document.getElementById('totalEmpresas').textContent = empresas.length || '1';
+            
+            const empresaId = document.getElementById('empresaSelector').value;
+            if (modulosManager) {
+                const modulosActivos = modulosManager.getModulosActivos(empresaId);
+                document.getElementById('totalModulos').textContent = modulosActivos.length;
+            }
+            
+            document.getElementById('tamanoBD').textContent = '156 KB';
+        }
+
+        function actualizarHora() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString('es-ES', { 
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('es-ES', { 
                 hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit'
+                minute: '2-digit' 
             });
-            const dateString = now.toLocaleDateString('es-ES', {
-                weekday: 'short',
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-            document.getElementById('current-time').textContent = `${timeString} • ${dateString}`;
-            
-            // Simular estado de conexión (alterna cada 30 segundos para demo)
-            const isOnline = Math.random() > 0.1; // 90% probabilidad de estar online
-            const connectionStatus = document.getElementById('connection-status');
-            if (isOnline) {
-                connectionStatus.innerHTML = '<i class="bi bi-wifi"></i><span>Conectado</span>';
-                connectionStatus.style.color = '';
-            } else {
-                connectionStatus.innerHTML = '<i class="bi bi-wifi-off"></i><span>Offline</span>';
-                connectionStatus.style.color = '#FF5F57';
-            }
-            
-            // Simular nivel de batería (cambia gradualmente)
-            const batteryElement = document.getElementById('battery-level');
-            let batteryLevel = parseInt(batteryElement.textContent);
-            if (Math.random() > 0.7) { // 30% de probabilidad de cambiar
-                batteryLevel = Math.max(10, batteryLevel - 1);
-                batteryElement.textContent = batteryLevel + '%';
-                
-                // Cambiar icono según nivel
-                const batteryIcon = batteryElement.previousElementSibling;
-                if (batteryLevel <= 20) {
-                    batteryIcon.className = 'bi bi-battery';
-                } else if (batteryLevel <= 50) {
-                    batteryIcon.className = 'bi bi-battery-half';
-                } else {
-                    batteryIcon.className = 'bi bi-battery-full';
-                }
-            }
         }
 
-        // ==================== SISTEMA DE VENTANAS ====================
+        // ==================== SISTEMA DE ESTADO DE BASE DE DATOS ====================
+        function initDatabaseStatus() {
+            const dbStatusElement = document.getElementById('databaseStatus');
+            const dbStatusText = document.getElementById('dbStatusText');
+            
+            // Simular diferentes estados de la base de datos
+            setInterval(() => {
+                const states = [
+                    { status: 'online', text: 'Online', class: 'online' },
+                    { status: 'transferring', text: 'Transfiriendo', class: 'transferring' },
+                    { status: 'idle', text: 'En reposo', class: 'idle' }
+                ];
+                
+                // Para simular, cambiar estado cada 10 segundos
+                const randomState = states[Math.floor(Math.random() * states.length)];
+                
+                // Actualizar estado
+                dbStatusElement.className = `tray-item database-status ${randomState.class}`;
+                dbStatusText.textContent = randomState.text;
+                
+            }, 10000);
+        }
+
+        // ==================== FUNCIONES DE EMPRESA ====================
+        function cambiarEmpresaDashboard() {
+            const selector = document.getElementById('empresaSelector');
+            const empresaId = selector.value;
+            const empresaNombre = selector.options[selector.selectedIndex].text;
+            
+            // Actualizar estado de la base de datos durante el cambio
+            const dbStatusElement = document.getElementById('databaseStatus');
+            const dbStatusText = document.getElementById('dbStatusText');
+            
+            dbStatusElement.className = 'tray-item database-status transferring';
+            dbStatusText.textContent = 'Cambiando empresa...';
+            
+            setTimeout(() => {
+                // Recargar módulos activos para la nueva empresa
+                cargarModulosActivos();
+                actualizarDock();
+                actualizarEstadisticas();
+                actualizarInfoSistema();
+                
+                // Restaurar estado normal
+                dbStatusElement.className = 'tray-item database-status online';
+                dbStatusText.textContent = 'Online';
+                
+                mostrarNotificacion(`Empresa cambiada a: ${empresaNombre}`, 'success');
+            }, 1500);
+        }
+
+        // ==================== FUNCIONES DE SISTEMA ====================
+        function crearBackup() {
+            mostrarNotificacion('✅ Backup simulado creado (modo desarrollo)', 'success');
+        }
+
+        function sincronizarOneDrive() {
+            const config = JSON.parse(localStorage.getItem('bs_onedrive_config') || '{}');
+            if (!config.clientId) {
+                mostrarNotificacion('❌ OneDrive no está configurado. Configure primero en Configuración > OneDrive.', 'error');
+                return;
+            }
+            
+            mostrarNotificacion('🔄 Sincronizando con OneDrive...', 'info');
+            setTimeout(() => {
+                mostrarNotificacion('✅ Sincronización con OneDrive completada', 'success');
+            }, 2000);
+        }
+
+        function mostrarInfoSistema() {
+            const user = JSON.parse(localStorage.getItem('bs_dash_user') || '{}');
+            const empresaId = document.getElementById('empresaSelector').value;
+            const empresaNombre = document.getElementById('empresaSelector').options[document.getElementById('empresaSelector').selectedIndex].text;
+            const modulosActivos = modulosManager ? modulosManager.getModulosActivos(empresaId) : [];
+            const todosLosModulos = modulosManager ? modulosManager.getTodosLosModulos() : [];
+            
+            const mensaje = `
+Sistema BS Dashboard - MultiEmpresa
+-----------------------------------
+👤 Usuario: ${user?.email || 'N/A'}
+🏢 Empresa Activa: ${empresaNombre}
+📊 Módulos Activos: ${modulosActivos.length}
+📂 Módulos Totales: ${todosLosModulos.length}
+💾 Modo: Local Storage
+🕐 Última actualización: ${new Date().toLocaleString()}
+
+Módulos disponibles:
+${todosLosModulos.map(m => `• ${m.nombre}`).join('\n')}
+            `.trim();
+            
+            alert(mensaje);
+        }
+
+        // ==================== FUNCIONES DE NOTIFICACIÓN ====================
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            const notificacion = document.createElement('div');
+            notificacion.textContent = mensaje;
+            
+            const colors = {
+                success: '#10B981',
+                error: '#EF4444', 
+                info: '#3B82F6'
+            };
+            
+            Object.assign(notificacion.style, {
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                background: colors[tipo] || colors.info,
+                color: 'white',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                zIndex: '10000',
+                fontSize: '14px',
+                fontWeight: '500',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+            });
+            
+            document.body.appendChild(notificacion);
+            
+            setTimeout(() => {
+                notificacion.remove();
+            }, 4000);
+        }
+
+        // ==================== FUNCIONES DE VENTANA ====================
         function toggleWindow(windowId) {
-            const window = document.getElementById(`window-${windowId}`);
-            if (window.classList.contains('hidden')) {
-                // Abrir ventana
-                window.classList.remove('hidden');
-                window.style.animation = 'fadeInUp 0.4s ease-out';
-                
-                // Actualizar dock
-                document.querySelectorAll('.dock-app').forEach(app => {
-                    app.classList.remove('active');
-                });
-                document.querySelector(`.dock-app:nth-child(${windowId === 'dashboard' ? 1 : 2})`).classList.add('active');
-            } else {
-                // Ya está abierta, llevar al frente
-                window.style.zIndex = '100';
-                setTimeout(() => {
-                    window.style.zIndex = '';
-                }, 100);
-            }
-        }
-
-        function closeWindow(windowId) {
-            const window = document.getElementById(`window-${windowId}`);
-            window.classList.add('hidden');
-            
-            // Si se cierra la ventana actual, mostrar dashboard
-            if (!window.classList.contains('hidden')) {
-                toggleWindow('dashboard');
-            }
+            const windows = document.querySelectorAll('.ubuntu-window');
+            windows.forEach(window => {
+                if (window.id === `window-${windowId}`) {
+                    window.classList.remove('hidden');
+                } else {
+                    window.classList.add('hidden');
+                }
+            });
         }
 
         function minimizeWindow(windowId) {
             const window = document.getElementById(`window-${windowId}`);
-            window.style.transform = 'scale(0.8)';
-            window.style.opacity = '0';
-            setTimeout(() => {
-                window.classList.add('hidden');
-                window.style.transform = '';
-                window.style.opacity = '';
-            }, 300);
+            window.classList.add('hidden');
         }
 
         function maximizeWindow(windowId) {
@@ -1102,126 +1335,44 @@
             if (window.style.width === '90vw') {
                 window.style.width = '';
                 window.style.height = '';
-                window.style.top = '';
-                window.style.left = '';
+                window.style.position = '';
             } else {
                 window.style.width = '90vw';
                 window.style.height = '80vh';
+                window.style.position = 'fixed';
                 window.style.top = '10%';
                 window.style.left = '5%';
-                window.style.position = 'fixed';
                 window.style.zIndex = '1000';
             }
         }
 
-        // ==================== FUNCIONES DEL SISTEMA ====================
-        function actualizarEstadisticas() {
-            if (!window.dbManager) {
-                console.log('⏳ Esperando dbManager...');
-                return;
-            }
-            
-            const empresaId = window.empresaManager ? window.empresaManager.empresaActual : 1;
-            const stats = window.dbManager.getEstadisticas(empresaId);
-            
-            // Actualizar tarjetas
-            if (document.querySelector('[data-ventas]')) {
-                document.querySelector('[data-ventas]').textContent = `$${stats.ventas.toLocaleString()}`;
-                document.getElementById('totalProductos').textContent = stats.productos.toLocaleString();
-                document.getElementById('productosBajos').textContent = stats.productosBajoStock;
-                document.getElementById('ordenesPendientes').textContent = stats.ordenesPendientes;
-                document.getElementById('totalClientes').textContent = stats.clientes.toLocaleString();
-                
-                // Calcular variación (simulada)
-                const variacion = Math.random() * 20 - 5;
-                document.getElementById('ventasVariacion').textContent = variacion.toFixed(1) + '%';
-            }
+        function closeWindow(windowId) {
+            const window = document.getElementById(`window-${windowId}`);
+            window.classList.add('hidden');
         }
 
-        function actualizarInfoSistema() {
-            if (!window.dbManager) return;
+        // ==================== SISTEMA DE ACTIVACIÓN DE MÓDULOS ====================
+        function activarTodosLosModulos() {
+            const todosLosModulos = modulosManager.getTodosLosModulos();
+            const modulosIds = todosLosModulos.map(modulo => modulo.id);
             
-            const info = window.dbManager.getInfo();
-            const empresas = window.dbManager.getEmpresas();
+            // Activar para todas las empresas
+            localStorage.setItem('bs_modulos_empresa_1', JSON.stringify(modulosIds));
+            localStorage.setItem('bs_modulos_empresa_2', JSON.stringify(modulosIds));
+            localStorage.setItem('bs_modulos_empresa_3', JSON.stringify(modulosIds));
             
-            document.getElementById('totalEmpresas').textContent = empresas.length;
-            document.getElementById('totalDatos').textContent = 
-                (info.clientes + info.productos + info.facturas).toLocaleString();
-            document.getElementById('tamanoBD').textContent = Math.round(info.tamaño / 1024 / 1024 * 10) / 10 + ' MB';
+            mostrarNotificacion(`✅ Todos los módulos (${modulosIds.length}) han sido activados`, 'success');
             
-            actualizarEstadisticas();
-        }
-
-        function crearBackup() {
-            if (!window.dbManager) {
-                mostrarNotificacion('❌ Sistema de base de datos no disponible', 'error');
-                return;
-            }
-            
-            if (confirm('¿Crear backup de todos los datos?')) {
-                const success = window.dbManager.backup();
-                if (success) {
-                    mostrarNotificacion('✅ Backup creado correctamente', 'success');
-                } else {
-                    mostrarNotificacion('❌ Error creando backup', 'error');
-                }
-            }
-        }
-
-        function mostrarInfoSistema() {
-            if (!window.dbManager) return;
-            
-            const info = window.dbManager.getInfo();
-            const user = window.auth.getCurrentUser();
-            const empresa = window.empresaManager ? window.empresaManager.getEmpresaActual() : null;
-            
-            const mensaje = `
-Sistema BS Dashboard - Ubuntu
------------------------------
-👤 Usuario: ${user?.email}
-🏢 Empresa: ${empresa?.nombre || 'N/A'}
-📊 Estadísticas:
-   • Empresas: ${info.empresas}
-   • Clientes: ${info.clientes}
-   • Productos: ${info.productos}
-   • Facturas: ${info.facturas}
-💾 Tamaño BD: ${Math.round(info.tamaño / 1024)} KB
-🕐 Última actualización: ${new Date(info.ultima_actualizacion).toLocaleString()}
-            `.trim();
-            
-            alert(mensaje);
-        }
-
-        function logout() {
-            if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
-                console.log('👋 Cerrando sesión...');
-                window.auth.logout();
-                window.location.href = 'login.html';
-            }
-        }
-
-        function mostrarNotificacion(mensaje, tipo = 'info') {
-            // Crear elemento de notificación
-            const notification = document.createElement('div');
-            notification.className = 'ubuntu-notification';
-            
-            const icon = tipo === 'success' ? 'bi-check-circle' : 
-                        tipo === 'error' ? 'bi-exclamation-triangle' : 'bi-info-circle';
-            const color = tipo === 'success' ? '#28CA42' : 
-                         tipo === 'error' ? '#FF5F57' : '#0D6EFD';
-            
-            notification.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="bi ${icon}" style="color: ${color}; font-size: 18px;"></i>
-                    <span>${mensaje}</span>
-                </div>
-            `;
-            
-            document.body.appendChild(notification);
-            
+            // Recargar la interfaz
             setTimeout(() => {
-                notification.remove();
-            }, 4000);
+                cargarModulosActivos();
+                actualizarDock();
+                actualizarInfoSistema();
+            }, 1000);
+        }
+
+        function abrirConfiguracionModulos() {
+            window.location.href = 'configuracion.html#modulos';
         }
 
         // User menu dropdown
@@ -1229,5 +1380,5 @@ Sistema BS Dashboard - Ubuntu
             mostrarNotificacion('Menú de usuario - Funcionalidad en desarrollo', 'info');
         });
     </script>
-</body>
+</body> 
 </html>

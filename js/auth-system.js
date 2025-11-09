@@ -1,273 +1,148 @@
-// js/auth-system.js - Sistema de autenticación mejorado
-console.log('🔐 Cargando auth-system.js...');
-
+// js/auth-system.js - Sistema de autenticación unificado y estable
 class AuthSystem {
     constructor() {
+        this.db = new SecureDatabase();
         this.currentUser = null;
-        this.storageKey = 'bs_dash_auth';
-        this.usersKey = 'bs_dash_usuarios';
-        this.sessionTimeout = 24 * 60 * 60 * 1000; // 24 horas
-        console.log('✅ Auth system inicializado');
-        this.checkAuth(); // Verificar sesión existente
-        this.inicializarUsuariosPorDefecto();
+        this.init();
     }
 
-    inicializarUsuariosPorDefecto() {
-        const usuarios = this.getUsers();
-        
-        if (usuarios.length === 0) {
-            const usuarioAdmin = {
-                id: 1,
-                nombre: 'Administrador',
-                email: 'admin@berroa.com',
-                password: '809415',
-                username: 'admin',
-                rol: 'admin',
-                activo: true,
-                fecha_creacion: new Date().toISOString(),
-                ultimo_acceso: null
+    init() {
+        this.checkExistingSession();
+    }
+
+    /**
+     * Verifica si existe una sesión activa y la mantiene
+     */
+    checkExistingSession() {
+        try {
+            const session = localStorage.getItem('bs_dash_session');
+            if (session) {
+                const sessionData = JSON.parse(session);
+
+                // Verificar si la sesión no ha expirado (24 horas)
+                if (sessionData.expiresAt > Date.now() && sessionData.user) {
+                    this.currentUser = sessionData.user;
+
+                    // Sincronizar compatibilidad con config-manager
+                    localStorage.setItem('bs_dash_user', JSON.stringify(this.currentUser));
+
+                    console.log('✅ Sesión activa encontrada:', this.currentUser.email);
+                    return { active: true, user: this.currentUser };
+                } else {
+                    this.logout();
+                }
+            }
+        } catch (error) {
+            console.error('⚠️ Error verificando sesión:', error);
+            this.logout();
+        }
+        return { active: false };
+    }
+
+    /**
+     * Inicia sesión con email o usuario
+     */
+    async login(identifier, password) {
+        try {
+            console.log('🔐 Intentando login con:', identifier);
+
+            // Buscar usuario por email o username
+            let usuario = this.db.getUsuarioByEmail(identifier);
+            if (!usuario) {
+                usuario = this.db.getUsuarioByUsername(identifier);
+            }
+
+            if (!usuario) throw new Error('Usuario no encontrado');
+            if (!usuario.activo) throw new Error('Usuario desactivado');
+
+            // Verificar contraseña
+            if (!this.db.verifyPassword(password, usuario.password)) {
+                throw new Error('Contraseña incorrecta');
+            }
+
+            // Crear sesión válida por 24 horas
+            const sessionData = {
+                user: {
+                    id: usuario.id,
+                    nombre: usuario.nombre,
+                    email: usuario.email,
+                    username: usuario.username,
+                    rol: usuario.rol,
+                    empresa_id: usuario.empresa_id,
+                    permisos: usuario.permisos || []
+                },
+                loginTime: Date.now(),
+                expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 horas
             };
-            
-            usuarios.push(usuarioAdmin);
-            this.saveUsers(usuarios);
-            console.log('👤 Usuario administrador creado por defecto');
-        }
-    }
 
-    async login(email, password) {
-        console.log('🔐 Intentando login:', email);
-        
-        try {
-            const usuarios = this.getUsers();
-            const user = usuarios.find(u => 
-                u.email === email && u.password === password && u.activo !== false
-            );
-            
-            if (user) {
-                this.currentUser = {
-                    id: user.id,
-                    email: user.email,
-                    name: user.nombre,
-                    username: user.username,
-                    role: user.rol,
-                    empresa_id: 1,
-                    permisos: this.obtenerPermisosPorRol(user.rol)
-                };
-                
-                // Actualizar último acceso
-                user.ultimo_acceso = new Date().toISOString();
-                this.saveUsers(usuarios);
-                
-                // Guardar sesión
-                this.saveSession();
-                console.log('✅ Login exitoso:', user.email);
-                return true;
-            } else {
-                console.log('❌ Credenciales incorrectas o usuario inactivo');
-                return false;
-            }
-        } catch (error) {
-            console.error('💥 Error en login:', error);
-            return false;
-        }
-    }
-
-    obtenerPermisosPorRol(rol) {
-        const permisos = {
-            'admin': ['dashboard', 'ventas', 'inventario', 'clientes', 'reportes', 'configuracion', 'backup'],
-            'vendedor': ['dashboard', 'ventas', 'clientes'],
-            'inventario': ['dashboard', 'inventario', 'reportes'],
-            'reportes': ['dashboard', 'reportes']
-        };
-        
-        return permisos[rol] || ['dashboard'];
-    }
-
-    saveSession() {
-        const sessionData = {
-            user: this.currentUser,
-            loginTime: new Date().getTime(),
-            expiresAt: new Date().getTime() + this.sessionTimeout
-        };
-        
-        localStorage.setItem(this.storageKey, JSON.stringify(sessionData));
-        console.log('💾 Sesión guardada para:', this.currentUser.email);
-    }
-
-    checkAuth() {
-        try {
-            const session = localStorage.getItem(this.storageKey);
-            if (!session) {
-                console.log('🔐 No hay sesión activa');
-                return false;
-            }
-
-            const sessionData = JSON.parse(session);
-            const now = new Date().getTime();
-
-            // Verificar si la sesión expiró
-            if (now > sessionData.expiresAt) {
-                console.log('⏰ Sesión expirada');
-                this.logout();
-                return false;
-            }
-
+            // Guardar sesión
+            localStorage.setItem('bs_dash_session', JSON.stringify(sessionData));
+            localStorage.setItem('bs_dash_user', JSON.stringify(sessionData.user)); // compatibilidad
             this.currentUser = sessionData.user;
-            console.log('✅ Sesión recuperada:', this.currentUser.email);
-            return true;
+
+            console.log('✅ Login exitoso:', usuario.email);
+            return { success: true, user: this.currentUser };
+
         } catch (error) {
-            console.error('❌ Error verificando sesión:', error);
-            return false;
+            console.error('❌ Error en login:', error);
+            return { success: false, error: error.message };
         }
     }
 
+    /**
+     * Cierra sesión y limpia almacenamiento
+     */
+    logout() {
+        localStorage.removeItem('bs_dash_session');
+        localStorage.removeItem('bs_dash_user');
+        this.currentUser = null;
+        console.log('👋 Sesión cerrada');
+    }
+
+    /**
+     * Verifica si hay usuario autenticado en memoria
+     */
+    checkAuth() {
+        return this.currentUser !== null;
+    }
+
+    /**
+     * Devuelve el usuario actual
+     */
     getCurrentUser() {
         return this.currentUser;
     }
 
-    logout() {
-        console.log('👋 Cerrando sesión:', this.currentUser?.email);
-        this.currentUser = null;
-        localStorage.removeItem(this.storageKey);
-        
-        // Redirigir al login
-        if (!window.location.pathname.includes('index.html') && 
-            !window.location.pathname.includes('login.html')) {
-            window.location.href = 'index.html';
-        }
-    }
+    // ============ Gestión de usuarios ============
 
-    // Gestión de usuarios
     getUsers() {
-        return JSON.parse(localStorage.getItem(this.usersKey) || '[]');
+        return this.db.getUsuarios();
     }
 
-    saveUsers(users) {
-        localStorage.setItem(this.usersKey, JSON.stringify(users));
-    }
+    crearUsuario(datos) {
+        if (!datos.password) throw new Error('La contraseña es requerida');
 
-    crearUsuario(usuarioData) {
-        const usuarios = this.getUsers();
-        const nuevoUsuario = {
-            id: Date.now(),
-            ...usuarioData,
-            fecha_creacion: new Date().toISOString(),
-            activo: true,
-            ultimo_acceso: null
+        const usuarioData = {
+            ...datos,
+            password: this.db.hashPassword(datos.password)
         };
-        
-        usuarios.push(nuevoUsuario);
-        this.saveUsers(usuarios);
-        console.log('👤 Nuevo usuario creado:', nuevoUsuario.email);
-        return nuevoUsuario;
+
+        return this.db.crearUsuario(usuarioData);
     }
 
-    actualizarUsuario(id, usuarioData) {
-        const usuarios = this.getUsers();
-        const index = usuarios.findIndex(u => u.id === id);
-        
-        if (index !== -1) {
-            usuarios[index] = { ...usuarios[index], ...usuarioData };
-            this.saveUsers(usuarios);
-            console.log('✏️ Usuario actualizado:', usuarios[index].email);
-            return usuarios[index];
+    actualizarUsuario(id, datos) {
+        if (datos.password) {
+            datos.password = this.db.hashPassword(datos.password);
         }
-        
-        return null;
+        return this.db.actualizarUsuario(id, datos);
     }
 
     eliminarUsuario(id) {
-        const usuarios = this.getUsers();
-        const nuevosUsuarios = usuarios.filter(u => u.id !== id);
-        this.saveUsers(nuevosUsuarios);
-        console.log('🗑️ Usuario eliminado:', id);
-        return true;
-    }
-
-    // Verificación de permisos
-    tienePermiso(permiso) {
-        if (!this.currentUser) return false;
-        if (this.currentUser.role === 'admin') return true;
-        
-        return this.currentUser.permisos.includes(permiso);
-    }
-
-    // Cambio de contraseña
-    cambiarPassword(usuarioId, nuevaPassword) {
-        const usuarios = this.getUsers();
-        const usuario = usuarios.find(u => u.id === usuarioId);
-        
-        if (usuario) {
-            usuario.password = nuevaPassword;
-            this.saveUsers(usuarios);
-            console.log('🔑 Contraseña actualizada para:', usuario.email);
-            return true;
+        if (id === 1) {
+            throw new Error('No se puede eliminar el usuario administrador principal');
         }
-        
-        return false;
-    }
-
-    // Verificación de seguridad
-    validarFortalezaPassword(password) {
-        const criterios = {
-            longitud: password.length >= 8,
-            mayuscula: /[A-Z]/.test(password),
-            minuscula: /[a-z]/.test(password),
-            numero: /[0-9]/.test(password),
-            especial: /[!@#$%^&*(),.?":{}|<>]/.test(password)
-        };
-        
-        return {
-            valida: Object.values(criterios).every(c => c),
-            criterios: criterios
-        };
+        return this.actualizarUsuario(id, { activo: false });
     }
 }
 
-// Inicializar sistema de autenticación
-window.auth = new AuthSystem();
-
-// Protección de rutas
-window.protectarRuta = function(permisosRequeridos = []) {
-    if (!window.auth || !window.auth.checkAuth()) {
-        console.log('🚫 Acceso no autorizado - Redirigiendo a login');
-        window.location.href = 'index.html';
-        return false;
-    }
-
-    const usuario = window.auth.getCurrentUser();
-    
-    // Admin tiene acceso total
-    if (usuario.role === 'admin') {
-        return true;
-    }
-
-    // Verificar permisos específicos
-    const tienePermiso = permisosRequeridos.some(permiso => 
-        window.auth.tienePermiso(permiso)
-    );
-
-    if (!tienePermiso && permisosRequeridos.length > 0) {
-        console.log('🚫 Permisos insuficientes');
-        alert('No tiene permisos para acceder a esta sección');
-        window.location.href = 'dashboard.html';
-        return false;
-    }
-
-    return true;
-};
-
-// Middleware para páginas protegidas
-document.addEventListener('DOMContentLoaded', function() {
-    // No proteger páginas de login
-    if (window.location.pathname.includes('index.html') || 
-        window.location.pathname.includes('login.html')) {
-        return;
-    }
-
-    // Verificar autenticación en otras páginas
-    if (!window.auth || !window.auth.checkAuth()) {
-        console.log('🔐 Redirigiendo al login...');
-        window.location.href = 'index.html';
-    }
-});
+window.AuthSystem = AuthSystem;
