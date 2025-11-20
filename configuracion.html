@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BS Dash - Configuración</title>
+    
+    <!-- CARGAR SUPABASE PRIMERO - VERSIÓN CORREGIDA -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-simple.js"></script>
+    <!-- SOLO UNA VEZ el archivo -->
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* ✅ MANTENIENDO EXACTAMENTE EL MISMO DISEÑO VISUAL */
+        :root {
+            --bg-primary: #2D0922;
+            --bg-secondary: #1a0a15;
+            --accent-orange: #E95420;
+            --accent-purple: #77216F;
+            --gradient-primary: linear-gradient(135deg, #E95420, #77216F);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(rgba(45, 9, 34, 0.9), rgba(26, 10, 21, 0.9));
+            color: white;
+            min-height: 100vh;
+        }
+
+        .ubuntu-glass {
+            backdrop-filter: blur(20px) saturate(180%);
+            background: rgba(45, 20, 44, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+        }
+
+        .config-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .config-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(233, 84, 32, 0.2);
+        }
+
+        .config-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(233, 84, 32, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(45, 20, 44, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #ef4444;
+            border-radius: 8px;
+            padding: 16px 20px;
+            color: white;
+            z-index: 10000;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .notification.success {
+            border-left-color: #10b981;
+        }
+
+        .notification.error {
+            border-left-color: #ef4444;
+        }
+
+        .notification.info {
+            border-left-color: #3b82f6;
+        }
+
+        .loading-spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--accent-orange);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: var(--gradient-primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex">
+        <!-- Sidebar - Mismo diseño -->
+        <div class="w-80 ubuntu-glass m-4">
+            <div class="p-6 border-b border-gray-700">
+                <div class="flex items-center gap-3">
+                    <i class="bi bi-gear text-2xl text-white"></i>
+                    <h1 class="text-xl font-bold text-white">Configuración</h1>
+                </div>
+            </div>
+            
+            <div class="p-4">
+                <div class="space-y-2">
+                    <div class="nav-item active" onclick="mostrarSeccion('empresa')">
+                        <i class="bi bi-building"></i>
+                        <span>Empresa</span>
+                    </div>
+                    <div class="nav-item" onclick="mostrarSeccion('supabase')">
+                        <i class="bi bi-database"></i>
+                        <span>Supabase</span>
+                    </div>
+                    <div class="nav-item" onclick="mostrarSeccion('modulos')">
+                        <i class="bi bi-puzzle"></i>
+                        <span>Módulos</span>
+                    </div>
+                    <div class="nav-item" onclick="mostrarSeccion('backup')">
+                        <i class="bi bi-cloud-arrow-down"></i>
+                        <span>Backup</span>
+                    </div>
+                </div>
+
+                <!-- Botón Volver -->
+                <div class="mt-8">
+                    <a href="dashboard.html" class="btn btn-outline w-full justify-center">
+                        <i class="bi bi-arrow-left"></i>
+                        Volver al Dashboard
+                    </a>
+                </div>
+
+                <!-- Estado del Sistema -->
+                <div class="mt-8 p-4 bg-gray-800 rounded-lg">
+                    <h3 class="text-sm font-semibold text-gray-400 mb-2">ESTADO SUPABASE</h3>
+                    <div id="estadoSupabase" class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
+                        <span class="text-sm text-gray-400">Cargando...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido Principal - Mismo diseño -->
+        <div class="flex-1 p-6">
+            <!-- Sección Empresa -->
+            <div id="seccion-empresa" class="seccion-config">
+                <div class="ubuntu-glass p-6 mb-6">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <i class="bi bi-building"></i>
+                        Información de la Empresa
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Nombre de la Empresa</label>
+                            <input type="text" id="empresaNombre" class="config-input" placeholder="Ej: Berroa Studio S.R.L.">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">RNC/RIF</label>
+                            <input type="text" id="empresaRNC" class="config-input" placeholder="Ej: 131456789">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Teléfono</label>
+                            <input type="text" id="empresaTelefono" class="config-input" placeholder="Ej: (809) 123-4567">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                            <input type="email" id="empresaEmail" class="config-input" placeholder="Ej: info@empresa.com">
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Dirección</label>
+                            <input type="text" id="empresaDireccion" class="config-input" placeholder="Ej: Santo Domingo, República Dominicana">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Sitio Web</label>
+                            <input type="url" id="empresaWebsite" class="config-input" placeholder="Ej: https://empresa.com">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Eslogan</label>
+                            <input type="text" id="empresaEslogan" class="config-input" placeholder="Ej: Soluciones digitales innovadoras">
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 mt-8">
+                        <button onclick="guardarEmpresa()" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i>
+                            Guardar Cambios
+                        </button>
+                        <button onclick="cargarEmpresa()" class="btn btn-outline">
+                            <i class="bi bi-arrow-clockwise"></i>
+                            Recargar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección Supabase -->
+            <div id="seccion-supabase" class="seccion-config hidden">
+                <div class="ubuntu-glass p-6 mb-6">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <i class="bi bi-database"></i>
+                        Configuración de Supabase
+                    </h2>
+
+                    <div class="space-y-6">
+                        <!-- URL de Supabase -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">URL de Supabase</label>
+                            <input type="url" id="supabaseUrl" class="config-input" placeholder="https://tu-proyecto.supabase.co">
+                            <p class="text-xs text-gray-400 mt-1">Puedes encontrar esto en la configuración de tu proyecto de Supabase</p>
+                        </div>
+
+                        <!-- API Key -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">API Key (anon/public)</label>
+                            <input type="text" id="supabaseKey" class="config-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                            <p class="text-xs text-gray-400 mt-1">Usa la API Key pública/anónima de tu proyecto</p>
+                        </div>
+
+                        <!-- Habilitar Supabase -->
+                        <div class="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                            <div>
+                                <div class="font-semibold">Habilitar Supabase</div>
+                                <div class="text-sm text-gray-400">Conectar con la base de datos en la nube</div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="supabaseEnabled">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Estado de Conexión -->
+                        <div class="p-4 bg-gray-800 rounded-lg">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="font-semibold">Estado de la Conexión</div>
+                                <div id="estadoConexion" class="flex items-center gap-2">
+                                    <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
+                                    <span class="text-sm">Desconocido</span>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <button onclick="guardarSupabase()" class="btn btn-primary">
+                                    <i class="bi bi-save"></i>
+                                    Guardar
+                                </button>
+                                <button onclick="probarConexion()" class="btn btn-outline">
+                                    <i class="bi bi-plug"></i>
+                                    Probar Conexión
+                                </button>
+                                <button onclick="inicializarDatos()" class="btn btn-outline">
+                                    <i class="bi bi-database-add"></i>
+                                    Inicializar Datos
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Información de Debug -->
+                        <div class="p-4 bg-gray-800 rounded-lg">
+                            <h4 class="font-semibold mb-3">Información Técnica</h4>
+                            <div id="debugInfo" class="text-sm text-gray-300 font-mono bg-black bg-opacity-50 p-3 rounded">
+                                Cargando información del sistema...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección Módulos -->
+            <div id="seccion-modulos" class="seccion-config hidden">
+                <div class="ubuntu-glass p-6">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <i class="bi bi-puzzle"></i>
+                        Gestión de Módulos
+                    </h2>
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="bi bi-puzzle text-4xl mb-4"></i>
+                        <div class="text-lg">Gestión de Módulos</div>
+                        <div class="text-sm mt-2">Aquí podrás activar/desactivar módulos del sistema</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección Backup -->
+            <div id="seccion-backup" class="seccion-config hidden">
+                <div class="ubuntu-glass p-6">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                        <i class="bi bi-cloud-arrow-down"></i>
+                        Sistema de Backup
+                    </h2>
+                    <div class="text-center py-12 text-gray-400">
+                        <i class="bi bi-database text-4xl mb-4"></i>
+                        <div class="text-lg">Sistema de Backup</div>
+                        <div class="text-sm mt-2">Aquí podrás gestionar backups y restauraciones</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== SISTEMA DE CONFIGURACIÓN CORREGIDO ====================
+        console.log('⚙️ Iniciando sistema de configuración CORREGIDO...');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar autenticación
+            if (!verificarAutenticacion()) {
+                return;
+            }
+
+            // Cargar configuración
+            cargarConfiguracion();
+            
+            // Actualizar estado de conexión
+            actualizarEstadoConexion();
+            
+            console.log('✅ Sistema de configuración listo');
+        });
+
+        function verificarAutenticacion() {
+            const auth = localStorage.getItem('bs_dash_auth');
+            const user = localStorage.getItem('bs_dash_user');
+            
+            if (auth !== 'true' || !user) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            return true;
+        }
+
+        // ==================== NAVEGACIÓN ====================
+        function mostrarSeccion(seccion) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.seccion-config').forEach(sec => {
+                sec.classList.add('hidden');
+            });
+            
+            // Mostrar sección seleccionada
+            document.getElementById(`seccion-${seccion}`).classList.remove('hidden');
+            
+            // Actualizar navegación
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            event.currentTarget.classList.add('active');
+        }
+
+        // ==================== CONFIGURACIÓN EMPRESA ====================
+        function cargarEmpresa() {
+            // Por ahora, cargamos datos de ejemplo
+            document.getElementById('empresaNombre').value = 'Berroa Studio S.R.L.';
+            document.getElementById('empresaRNC').value = '131456789';
+            document.getElementById('empresaTelefono').value = '(809) 123-4567';
+            document.getElementById('empresaEmail').value = 'info@berroastudio.com';
+            document.getElementById('empresaDireccion').value = 'Santo Domingo, República Dominicana';
+            document.getElementById('empresaWebsite').value = 'https://berroastudio.com';
+            document.getElementById('empresaEslogan').value = 'Soluciones digitales innovadoras';
+            
+            mostrarNotificacion('✅ Datos de empresa cargados', 'success');
+        }
+
+        function guardarEmpresa() {
+            const datos = {
+                nombre: document.getElementById('empresaNombre').value,
+                rnc: document.getElementById('empresaRNC').value,
+                telefono: document.getElementById('empresaTelefono').value,
+                email: document.getElementById('empresaEmail').value,
+                direccion: document.getElementById('empresaDireccion').value,
+                website: document.getElementById('empresaWebsite').value,
+                eslogan: document.getElementById('empresaEslogan').value
+            };
+
+            // Guardar en localStorage por ahora
+            localStorage.setItem('bs_empresa_config', JSON.stringify(datos));
+            mostrarNotificacion('✅ Información de empresa guardada', 'success');
+        }
+
+        // ==================== CONFIGURACIÓN SUPABASE CORREGIDA ====================
+        function cargarConfiguracion() {
+            const config = JSON.parse(localStorage.getItem('bs_supabase_config') || '{}');
+            
+            document.getElementById('supabaseUrl').value = config.url || '';
+            document.getElementById('supabaseKey').value = config.key || '';
+            document.getElementById('supabaseEnabled').checked = config.enabled || false;
+            
+            // Cargar empresa si existe
+            const empresaConfig = JSON.parse(localStorage.getItem('bs_empresa_config') || '{}');
+            if (empresaConfig.nombre) {
+                document.getElementById('empresaNombre').value = empresaConfig.nombre || '';
+                document.getElementById('empresaRNC').value = empresaConfig.rnc || '';
+                document.getElementById('empresaTelefono').value = empresaConfig.telefono || '';
+                document.getElementById('empresaEmail').value = empresaConfig.email || '';
+                document.getElementById('empresaDireccion').value = empresaConfig.direccion || '';
+                document.getElementById('empresaWebsite').value = empresaConfig.website || '';
+                document.getElementById('empresaEslogan').value = empresaConfig.eslogan || '';
+            } else {
+                // Cargar datos por defecto
+                cargarEmpresa();
+            }
+            
+            // Actualizar estado inmediatamente
+            actualizarEstadoConexion();
+            actualizarDebugInfo();
+        }
+
+        function guardarSupabase() {
+            const url = document.getElementById('supabaseUrl').value.trim();
+            const key = document.getElementById('supabaseKey').value.trim();
+            const enabled = document.getElementById('supabaseEnabled').checked;
+
+            console.log('💾 Guardando configuración Supabase:', { url, key, enabled });
+
+            if (enabled && (!url || !key)) {
+                mostrarNotificacion('❌ URL y API Key son requeridos para habilitar Supabase', 'error');
+                return;
+            }
+
+            // Guardar configuración
+            const config = { url, key, enabled };
+            localStorage.setItem('bs_supabase_config', JSON.stringify(config));
+
+            // Forzar recarga de la configuración en supabaseSimple
+            if (window.supabaseSimple) {
+                console.log('🔄 Recargando configuración en SupabaseSimple...');
+                window.supabaseSimple.loadConfig();
+                
+                if (enabled) {
+                    mostrarNotificacion('🔌 Conectando con Supabase...', 'info');
+                    
+                    const success = window.supabaseSimple.initializeClient();
+                    if (success) {
+                        mostrarNotificacion('✅ Supabase conectado correctamente', 'success');
+                        
+                        // Probar conexión automáticamente
+                        setTimeout(() => {
+                            probarConexion();
+                        }, 1000);
+                    } else {
+                        mostrarNotificacion('❌ Error conectando con Supabase', 'error');
+                    }
+                } else {
+                    window.supabaseSimple.isConnected = false;
+                    window.supabaseSimple.supabase = null;
+                    mostrarNotificacion('🔌 Supabase desconectado', 'info');
+                }
+            } else {
+                console.error('❌ SupabaseSimple no disponible');
+                mostrarNotificacion('❌ Error: SupabaseSimple no disponible', 'error');
+            }
+            
+            // Actualizar estado después de un breve delay
+            setTimeout(() => {
+                actualizarEstadoConexion();
+                actualizarDebugInfo();
+            }, 1000);
+        }
+
+        async function probarConexion() {
+            console.log('🔌 Iniciando prueba de conexión...');
+            
+            if (!window.supabaseSimple) {
+                console.error('❌ SupabaseSimple no disponible');
+                mostrarNotificacion('❌ SupabaseSimple no disponible', 'error');
+                return;
+            }
+
+            mostrarNotificacion('🔌 Probando conexión con Supabase...', 'info');
+
+            try {
+                const result = await window.supabaseSimple.testConnection();
+                
+                console.log('📊 Resultado del test:', result);
+                
+                if (result.success) {
+                    mostrarNotificacion('✅ ' + result.message, 'success');
+                } else {
+                    mostrarNotificacion('❌ ' + result.message, 'error');
+                    
+                    // Mostrar detalles del error en consola
+                    if (result.error) {
+                        console.error('🔧 Detalles del error:', result.error);
+                    }
+                }
+            } catch (error) {
+                console.error('💥 Error en test de conexión:', error);
+                mostrarNotificacion('❌ Error: ' + error.message, 'error');
+            }
+            
+            actualizarEstadoConexion();
+            actualizarDebugInfo();
+        }
+
+        async function inicializarDatos() {
+            console.log('🏗️ Iniciando inicialización de datos...');
+            
+            if (!window.supabaseSimple) {
+                mostrarNotificacion('❌ SupabaseSimple no disponible', 'error');
+                return;
+            }
+
+            // Verificar que esté conectado primero
+            const status = window.supabaseSimple.getStatus();
+            if (!status.isConnected) {
+                mostrarNotificacion('❌ Primero debes conectar con Supabase', 'error');
+                return;
+            }
+
+            mostrarNotificacion('🏗️ Inicializando datos en Supabase...', 'info');
+
+            try {
+                const result = await window.supabaseSimple.inicializarDatosSistema();
+                
+                if (result.success) {
+                    mostrarNotificacion('✅ ' + result.message, 'success');
+                } else {
+                    mostrarNotificacion('❌ ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error inicializando datos:', error);
+                mostrarNotificacion('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        function actualizarEstadoConexion() {
+            const estadoElement = document.getElementById('estadoConexion');
+            const estadoGlobal = document.getElementById('estadoSupabase');
+
+            if (window.supabaseSimple) {
+                const status = window.supabaseSimple.getStatus();
+                
+                console.log('📊 Estado actual de Supabase:', status);
+                
+                if (status.isConnected && status.hasClient) {
+                    estadoElement.innerHTML = '<div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div><span class="text-green-400 text-sm">Conectado</span>';
+                    estadoGlobal.innerHTML = '<div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div><span class="text-green-400 text-sm">Conectado</span>';
+                } else if (status.configEnabled && status.projectUrl) {
+                    estadoElement.innerHTML = '<div class="w-2 h-2 bg-yellow-500 rounded-full"></div><span class="text-yellow-400 text-sm">Configurado</span>';
+                    estadoGlobal.innerHTML = '<div class="w-2 h-2 bg-yellow-500 rounded-full"></div><span class="text-yellow-400 text-sm">Configurado</span>';
+                } else {
+                    estadoElement.innerHTML = '<div class="w-2 h-2 bg-red-500 rounded-full"></div><span class="text-red-400 text-sm">No configurado</span>';
+                    estadoGlobal.innerHTML = '<div class="w-2 h-2 bg-red-500 rounded-full"></div><span class="text-red-400 text-sm">No configurado</span>';
+                }
+            } else {
+                estadoElement.innerHTML = '<div class="w-2 h-2 bg-gray-500 rounded-full"></div><span class="text-gray-400 text-sm">No disponible</span>';
+                estadoGlobal.innerHTML = '<div class="w-2 h-2 bg-gray-500 rounded-full"></div><span class="text-gray-400 text-sm">No disponible</span>';
+            }
+        }
+
+        function actualizarDebugInfo() {
+            const debugElement = document.getElementById('debugInfo');
+            
+            if (window.supabaseSimple) {
+                const status = window.supabaseSimple.getStatus();
+                
+                let info = '';
+                if (status.isConnected && status.hasClient) {
+                    info = `✅ CONECTADO A SUPABASE\n`;
+                    info += `🌐 URL: ${status.projectUrl}\n`;
+                    info += `🔑 API Key: ${status.hasApiKey ? '✅ PRESENTE' : '❌ FALTANTE'}\n`;
+                    info += `🛠️ Cliente: ${status.hasClient ? '✅ INICIALIZADO' : '❌ NO INICIALIZADO'}\n`;
+                    info += `📊 Estado: CONECTADO Y FUNCIONAL`;
+                } else if (status.configEnabled && status.projectUrl) {
+                    info = `⚠️ CONFIGURADO PERO NO CONECTADO\n`;
+                    info += `🌐 URL: ${status.projectUrl}\n`;
+                    info += `🔑 API Key: ${status.hasApiKey ? '✅ PRESENTE' : '❌ FALTANTE'}\n`;
+                    info += `💡 Activa la conexión en el interruptor superior`;
+                } else {
+                    info = `❌ SUPABASE NO CONFIGURADO\n`;
+                    info += `⚙️ Completa la URL y API Key de tu proyecto Supabase\n`;
+                    info += `🔗 Ve a: project.supabase.com > Settings > API`;
+                }
+                
+                debugElement.textContent = info;
+            } else {
+                debugElement.textContent = '❌ SUPABASE SIMPLE NO DISPONIBLE\nRecarga la página o verifica la consola para más detalles';
+            }
+        }
+
+        // ==================== NOTIFICACIONES ====================
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            // Eliminar notificaciones existentes
+            const existentes = document.querySelectorAll('.notification');
+            existentes.forEach(n => n.remove());
+            
+            const notificacion = document.createElement('div');
+            notificacion.className = `notification ${tipo}`;
+            notificacion.innerHTML = `
+                <i class="bi ${tipo === 'success' ? 'bi-check-circle' : tipo === 'error' ? 'bi-exclamation-triangle' : 'bi-info-circle'}"></i>
+                <span>${mensaje}</span>
+            `;
+
+            document.body.appendChild(notificacion);
+
+            setTimeout(() => {
+                if (notificacion.parentNode) {
+                    notificacion.remove();
+                }
+            }, 5000);
+        }
+
+        // Actualizar estado cada 3 segundos
+        setInterval(() => {
+            actualizarEstadoConexion();
+            actualizarDebugInfo();
+        }, 3000);
+
+        // Cargar estado inicial
+        setTimeout(() => {
+            actualizarEstadoConexion();
+            actualizarDebugInfo();
+        }, 1000);
+    </script>
+</body>
+</html>

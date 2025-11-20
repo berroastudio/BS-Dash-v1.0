@@ -1,77 +1,57 @@
-// js/supabase-config.js - Configuración corregida de Supabase
-console.log('🔧 Cargando supabase-config.js...');
+// js/supabase-config.js - Configuración simplificada de Supabase
+console.log('⚙️ Supabase Config cargado');
 
 class SupabaseConfig {
     constructor() {
-        this.supabase = null;
-        this.isInitialized = false;
-        this.init();
+        this.config = this.loadConfig();
     }
 
-    init() {
+    loadConfig() {
         try {
-            // Configuración de Supabase - REEMPLAZA CON TUS DATOS REALES
-            const supabaseConfig = {
-                url: 'https://tu-proyecto.supabase.co',
-                anonKey: 'tu-anon-key-aqui'
-            };
-
-            // Verificar configuración mínima
-            if (!supabaseConfig.url || !supabaseConfig.anonKey || 
-                supabaseConfig.url.includes('tu-proyecto') || 
-                supabaseConfig.anonKey.includes('tu-anon-key')) {
-                console.warn('⚠️ Configuración de Supabase no completada');
-                this.createFallbackSystem();
-                return;
-            }
-
-            // Inicializar Supabase
-            this.supabase = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
-            this.isInitialized = true;
-            
-            console.log('✅ Supabase configurado correctamente');
-            this.testConnection();
-            
+            return JSON.parse(localStorage.getItem('bs_supabase_config') || '{}');
         } catch (error) {
-            console.error('❌ Error inicializando Supabase:', error);
-            this.createFallbackSystem();
+            console.error('Error cargando configuración:', error);
+            return {};
         }
     }
 
-    async testConnection() {
-        if (!this.isInitialized) return;
+    saveConfig(url, key) {
+        const config = {
+            url: url,
+            key: key,
+            enabled: true,
+            lastUpdate: new Date().toISOString()
+        };
         
-        try {
-            const { data, error } = await this.supabase
-                .from('empresas')
-                .select('count')
-                .limit(1);
-            
-            if (error) throw error;
-            
-            console.log('✅ Conexión a Supabase verificada');
-            return true;
-        } catch (error) {
-            console.error('❌ Error conectando a Supabase:', error);
-            this.createFallbackSystem();
-            return false;
-        }
+        localStorage.setItem('bs_supabase_config', JSON.stringify(config));
+        console.log('✅ Configuración Supabase guardada');
+        return config;
     }
 
-    createFallbackSystem() {
-        console.log('🔄 Usando sistema de respaldo con localStorage');
-        // El sistema funcionará con localStorage como respaldo
-        this.isInitialized = false;
+    validateConfig(url, key) {
+        const errors = [];
+        
+        if (!url) errors.push('URL de Supabase es requerida');
+        if (!key) errors.push('API Key es requerida');
+        if (url && !url.includes('supabase.co')) errors.push('URL de Supabase inválida');
+        if (key && key.length < 20) errors.push('API Key parece inválida');
+        
+        return {
+            isValid: errors.length === 0,
+            errors: errors
+        };
     }
 
-    getClient() {
-        return this.supabase;
+    getConfig() {
+        return this.config;
     }
 
-    isReady() {
-        return this.isInitialized;
+    resetConfig() {
+        localStorage.removeItem('bs_supabase_config');
+        this.config = {};
+        console.log('🔄 Configuración Supabase reseteada');
     }
 }
 
-// Inicializar y hacer global
+// Inicializar globalmente
 window.supabaseConfig = new SupabaseConfig();

@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BS Tail - Clientes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --header-height: 64px;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            transition: transform var(--transition-speed) ease;
+            z-index: 50;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .sidebar-logo {
+            font-weight: 700;
+            font-size: 20px;
+            color: #3b82f6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-content {
+            padding: 24px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 32px;
+        }
+
+        .sidebar-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-item {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .sidebar-link:hover {
+            background-color: #f1f5f9;
+            color: #334155;
+        }
+
+        .sidebar-link.active {
+            background-color: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .sidebar-link i {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: margin-left var(--transition-speed) ease;
+        }
+
+        /* Header */
+        .header {
+            height: var(--header-height);
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .header-search {
+            position: relative;
+            width: 320px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-action {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .header-action:hover {
+            background-color: #f1f5f9;
+            color: #334155;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ef4444;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .user-menu:hover {
+            background-color: #f1f5f9;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 200px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            z-index: 50;
+            display: none;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 5px 0;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 24px;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .trend-up {
+            color: #10b981;
+        }
+
+        .trend-down {
+            color: #ef4444;
+        }
+
+        /* Widgets */
+        .widgets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .widget {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+        }
+
+        .widget-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .widget-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .widget-content {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* Empresa Selector */
+        .empresa-selector {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: #334155;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .empresa-selector:hover {
+            border-color: #3b82f6;
+        }
+
+        .empresa-selector select {
+            background: transparent;
+            border: none;
+            color: #334155;
+            outline: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px 20px;
+            color: #334155;
+            z-index: 10000;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            animation: slideInRight 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 400px;
+        }
+
+        .notification.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .notification.info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header-search {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .widgets-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-search {
+                display: none;
+            }
+
+            .user-info {
+                display: none;
+            }
+        }
+
+        /* Toggle Button */
+        .sidebar-toggle {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-toggle:hover {
+            background-color: #f1f5f9;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar-toggle {
+                display: flex;
+            }
+        }
+
+        /* Tablas */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+        }
+
+        .table-header {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
+        }
+
+        .table-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #1e293b;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background-color: #f8fafc;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-info {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* Botones */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+
+        .btn-outline:hover {
+            background-color: #f9fafb;
+        }
+
+        /* Tarjetas de Clientes */
+        .cliente-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .cliente-card:hover {
+            background-color: #f8fafc;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        /* Estados Microsoft */
+        .microsoft-connected {
+            background-color: #f0f9ff;
+            border: 1px solid #bae6fd;
+        }
+
+        .microsoft-disconnected {
+            background-color: #fef2f2;
+            border: 1px solid #fecaca;
+        }
+
+        /* Panel de Navegación */
+        .nav-panel {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .nav-item:hover {
+            background-color: #f1f5f9;
+            transform: translateY(-3px);
+        }
+
+        .nav-item.active {
+            background-color: #eff6ff;
+            transform: translateY(-3px);
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #64748b;
+        }
+
+        .nav-item.active i {
+            color: #3b82f6;
+        }
+
+        .nav-item span {
+            font-size: 12px;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .nav-item.active span {
+            color: #3b82f6;
+        }
+
+        /* Ventanas */
+        .window {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .window-header {
+            background-color: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .window-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .window-content {
+            padding: 24px;
+        }
+
+        .window.hidden {
+            display: none;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 0;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="bi bi-speedometer2"></i>
+                <span>BS Tail</span>
+            </div>
+        </div>
+        <div class="sidebar-content">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Principal</h3>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item">
+                        <a href="dashboard.html" class="sidebar-link">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Módulos</h3>
+                <ul class="sidebar-menu" id="sidebar-modules">
+                    <!-- Los módulos se cargan dinámicamente aquí -->
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">Sistema</h3>
+                <ul class="sidebar-menu">
+                    <li class="sidebar-item">
+                        <a href="configuracion.html" class="sidebar-link">
+                            <i class="bi bi-gear"></i>
+                            <span>Configuración</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link" onclick="mostrarInfoSistema()">
+                            <i class="bi bi-info-circle"></i>
+                            <span>Información</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link" onclick="logout()">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Cerrar Sesión</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <div class="sidebar-toggle" id="sidebar-toggle">
+                    <i class="bi bi-list"></i>
+                </div>
+                <h1 class="header-title" id="page-title">Clientes</h1>
+            </div>
+
+            <div class="header-search">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Buscar clientes..." id="globalSearch" onkeyup="buscarClientes(this.value)">
+            </div>
+
+            <div class="header-right">
+                <!-- Selector de Empresa -->
+                <div class="empresa-selector">
+                    <i class="bi bi-buildings"></i>
+                    <select id="empresaSwitcher" onchange="cambiarEmpresa()">
+                        <option value="1">Berroa Studio S.R.L.</option>
+                        <option value="2">Empresa Secundaria</option>
+                        <option value="3">Otra Empresa</option>
+                    </select>
+                </div>
+
+                <!-- Notificaciones -->
+                <div class="header-action" id="notifications-btn">
+                    <i class="bi bi-bell"></i>
+                    <div class="notification-badge"></div>
+                </div>
+
+                <!-- Usuario -->
+                <div class="user-menu" id="user-menu">
+                    <div class="user-avatar" id="user-avatar">
+                        <span id="user-initials">U</span>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name" id="user-name">Usuario</div>
+                        <div class="user-role">Administrador</div>
+                    </div>
+                    <i class="bi bi-chevron-down"></i>
+
+                    <!-- Menú desplegable de usuario -->
+                    <div class="user-dropdown" id="user-dropdown">
+                        <div class="dropdown-item">
+                            <i class="bi bi-person"></i>
+                            <span>Mi Perfil</span>
+                        </div>
+                        <div class="dropdown-item">
+                            <i class="bi bi-gear"></i>
+                            <span>Configuración</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" onclick="logout()">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Cerrar Sesión</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Panel de Navegación -->
+            <div class="nav-panel">
+                <div class="nav-item active" onclick="abrirVentana('clientes')">
+                    <i class="bi bi-people"></i>
+                    <span>Mis Clientes</span>
+                </div>
+                <div class="nav-item" onclick="abrirVentana('conexion')">
+                    <i class="bi bi-microsoft"></i>
+                    <span>Conexión 365</span>
+                </div>
+                <div class="nav-item" onclick="abrirVentana('categorias')">
+                    <i class="bi bi-tags"></i>
+                    <span>Categorías</span>
+                </div>
+                <div class="nav-item" onclick="abrirVentana('actividad')">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Actividad</span>
+                </div>
+                <div class="nav-item" onclick="abrirVentana('importar')">
+                    <i class="bi bi-cloud-download"></i>
+                    <span>Sincronizar</span>
+                </div>
+            </div>
+
+            <!-- Ventana: Lista de Clientes desde Microsoft 365 -->
+            <div id="ventana-clientes" class="window">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-people"></i>
+                        <span>Mis Clientes (Microsoft 365)</span>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <!-- Estadísticas Rápidas -->
+                    <div class="dashboard-grid mb-6">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="totalClientes">0</div>
+                                    <div class="stat-label">Total Clientes</div>
+                                </div>
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #3B82F6, #1D4ED8);">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="clientesActivos">0</div>
+                                    <div class="stat-label">Activos</div>
+                                </div>
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #10B981, #059669);">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="empresasCount">0</div>
+                                    <div class="stat-label">Empresas</div>
+                                </div>
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #8B5CF6, #7C3AED);">
+                                    <i class="bi bi-buildings"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="ultimaSincronizacion">-</div>
+                                    <div class="stat-label">Última Sinc.</div>
+                                </div>
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+                                    <i class="bi bi-clock"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Clientes desde Microsoft 365 -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Lista de Clientes</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>Empresa</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaClientes">
+                                    <!-- Los clientes se cargan aquí dinámicamente desde Microsoft 365 -->
+                                    <tr>
+                                        <td colspan="6" class="text-center py-8 text-gray-500">
+                                            <i class="bi bi-cloud-slash text-4xl mb-4 block"></i>
+                                            <p class="text-lg mb-2">No hay clientes cargados</p>
+                                            <p class="text-sm mb-4">Conecta con Microsoft 365 para ver tus clientes</p>
+                                            <button onclick="abrirVentana('conexion')" class="btn btn-primary">
+                                                <i class="bi bi-plug"></i> Conectar Microsoft 365
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Conexión Microsoft 365 -->
+            <div id="ventana-conexion" class="window hidden">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-microsoft"></i>
+                        <span>Conexión Microsoft 365</span>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <!-- Estado de Conexión -->
+                    <div class="widget mb-6" id="conexionStatus">
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <i class="bi bi-info-circle"></i>
+                                <span>Estado de Conexión</span>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                                <span class="text-red-600">⏳ No conectado a Microsoft 365</span>
+                            </div>
+                            <p class="text-sm text-gray-600">
+                                Conecta tu cuenta de Microsoft 365 Business para acceder a tus clientes.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Información del Usuario (cuando esté conectado) -->
+                    <div class="widget mb-6 hidden" id="userInfoSection">
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <i class="bi bi-person-circle"></i>
+                                <span>Cuenta Conectada</span>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="flex items-center gap-3 mb-2">
+                                <i class="bi bi-person-circle text-blue-600 text-xl"></i>
+                                <div>
+                                    <div class="font-medium" id="userDisplayName">-</div>
+                                    <div class="text-sm text-gray-600" id="userEmail">-</div>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600 mt-2">
+                                <strong>Última sincronización:</strong> <span id="lastSyncTime">Nunca</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estadísticas de Sincronización -->
+                    <div class="dashboard-grid mb-6 hidden" id="statsSection">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="contactosCount">0</div>
+                                    <div class="stat-label">Contactos en 365</div>
+                                </div>
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #10B981, #059669);">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div>
+                                    <div class="stat-value" id="categoriasCount">0</div>
+                                    <div class="stat-label">Categorías</div>
+                                </div>
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #8B5CF6, #7C3AED);">
+                                    <i class="bi bi-tags"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div class="flex gap-3 flex-wrap mb-6">
+                        <button onclick="conectarMicrosoft365()" class="btn btn-primary" id="btnConectar">
+                            <i class="bi bi-plug"></i> Conectar Microsoft 365
+                        </button>
+                        <button onclick="sincronizarClientes()" class="btn btn-success" id="btnSincronizar" disabled>
+                            <i class="bi bi-arrow-repeat"></i> Sincronizar Clientes
+                        </button>
+                        <button onclick="actualizarEstadisticas()" class="btn btn-outline" id="btnActualizar" disabled>
+                            <i class="bi bi-graph-up"></i> Actualizar Stats
+                        </button>
+                        <button onclick="cerrarSesionMicrosoft()" class="btn btn-danger hidden" id="btnDesconectar">
+                            <i class="bi bi-plug"></i> Desconectar
+                        </button>
+                    </div>
+
+                    <!-- Información de Sincronización -->
+                    <div class="widget hidden" id="syncInfo">
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <i class="bi bi-info-circle"></i>
+                                <span>Información de Sincronización</span>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Clientes sincronizados:</span>
+                                    <span class="font-medium" id="syncClientesCount">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Empresas detectadas:</span>
+                                    <span class="font-medium" id="syncEmpresasCount">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Última actualización:</span>
+                                    <span class="font-medium" id="syncLastUpdate">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Categorías de Clientes -->
+            <div id="ventana-categorias" class="window hidden">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-tags"></i>
+                        <span>Categorías de Clientes</span>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="bi bi-tags text-4xl mb-4 block"></i>
+                        <p class="text-lg mb-2">Categorías de Clientes</p>
+                        <p class="text-sm mb-4">Organiza tus clientes en categorías para mejor gestión</p>
+                        <button onclick="crearNuevaCategoria()" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Nueva Categoría
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Actividad de Clientes -->
+            <div id="ventana-actividad" class="window hidden">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Actividad de Clientes</span>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="bi bi-graph-up text-4xl mb-4 block"></i>
+                        <p class="text-lg mb-2">Actividad de Clientes</p>
+                        <p class="text-sm">Visualiza la actividad y engagement de tus clientes</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventana: Sincronización Avanzada -->
+            <div id="ventana-importar" class="window hidden">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-cloud-download"></i>
+                        <span>Sincronización Avanzada</span>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="text-center py-12 text-gray-500">
+                        <i class="bi bi-cloud-download text-4xl mb-4 block"></i>
+                        <p class="text-lg mb-2">Sincronización Avanzada</p>
+                        <p class="text-sm">Configura sincronizaciones automáticas y reglas de importación</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Detalles de Cliente -->
+    <div id="clienteModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="window-header">
+                <div class="window-title">
+                    <i class="bi bi-person"></i>
+                    <span>Detalles del Cliente</span>
+                </div>
+                <button class="header-action" onclick="cerrarModalCliente()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="window-content" id="clienteModalContent">
+                <!-- Contenido dinámico -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // js/config-manager.js - Gestor completo de configuración
+        console.log('🎛️ Cargando config-manager.js...');
+
+        class ConfiguracionManager {
+            constructor() {
+                this.ventanaActual = 'empresa';
+                this.empresaActual = window.CONFIG?.DEFAULT_EMPRESA?.toString() || '1';
+                this.supabase = window.supabaseManager?.supabase || null;
+                this.secuenciaEditando = null;
+                this.plantillaEditando = null;
+                this.oneDriveManager = null;
+                this.init();
+            }
+
+            async init() {
+                console.log('🎯 Inicializando sistema de configuración mejorado...');
+                
+                // Verificar autenticación
+                if (!this.verificarAutenticacion()) {
+                    return;
+                }
+
+                // Inicializar managers
+                await this.inicializarManagers();
+                
+                // Cargar configuración
+                await this.cargarTodaConfiguracion();
+                
+                // Inicializar sistema de módulos
+                this.inicializarSistemaModulos();
+                
+                // Configurar eventos
+                this.configurarEventosGlobales();
+                
+                console.log('✅ Sistema de configuración mejorado listo');
+            }
+
+            async inicializarManagers() {
+                // Inicializar OneDrive Manager si hay configuración
+                const oneDriveConfig = JSON.parse(localStorage.getItem('bs_onedrive_config') || '{}');
+                if (oneDriveConfig.clientId) {
+                    this.oneDriveManager = new OneDriveManager(oneDriveConfig.clientId, oneDriveConfig.tenantId);
+                    this.oneDriveManager.loadAuthData();
+                }
+                
+                // Inicializar Supabase si está disponible
+                if (window.supabaseManager) {
+                    this.supabase = window.supabaseManager.supabase;
+                }
+            }
+
+            verificarAutenticacion() {
+                try {
+                    const user = localStorage.getItem('bs_dash_user');
+                    if (!user) {
+                        window.location.href = '../index.html';
+                        return false;
+                    }
+                    
+                    const userData = JSON.parse(user);
+                    const userNameElement = document.getElementById('user-name');
+                    if (userNameElement) {
+                        userNameElement.textContent = userData.name || userData.email || 'Usuario';
+                    }
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Error verificando autenticación:', error);
+                    window.location.href = '../index.html';
+                    return false;
+                }
+            }
+
+            // ==================== SISTEMA DE VENTANAS ====================
+            abrirVentana(ventanaId) {
+                // Ocultar ventana actual
+                const ventanaActual = document.getElementById(`ventana-${this.ventanaActual}`);
+                if (ventanaActual) {
+                    ventanaActual.classList.add('hidden');
+                }
+                
+                const navItemActual = document.querySelector(`.nav-item[onclick="abrirVentana('${this.ventanaActual}')"]`);
+                if (navItemActual) {
+                    navItemActual.classList.remove('active');
+                }
+
+                // Mostrar nueva ventana
+                const ventana = document.getElementById(`ventana-${ventanaId}`);
+                if (ventana) {
+                    ventana.classList.remove('hidden');
+                    ventana.style.animation = 'none';
+                    setTimeout(() => {
+                        ventana.style.animation = 'windowOpen 0.3s ease-out';
+                    }, 10);
+                }
+
+                // Actualizar nav
+                const nuevoNavItem = document.querySelector(`.nav-item[onclick="abrirVentana('${ventanaId}')"]`);
+                if (nuevoNavItem) {
+                    nuevoNavItem.classList.add('active');
+                }
+                
+                this.ventanaActual = ventanaId;
+
+                // Cargar datos específicos
+                this.cargarDatosVentana(ventanaId);
+            }
+
+            cargarDatosVentana(ventanaId) {
+                console.log(`📂 Cargando datos para ventana: ${ventanaId}`);
+                
+                switch(ventanaId) {
+                    case 'clientes':
+                        this.cargarClientes();
+                        break;
+                    case 'conexion':
+                        this.cargarEstadoConexion();
+                        break;
+                    case 'categorias':
+                        this.cargarCategorias();
+                        break;
+                    case 'actividad':
+                        this.cargarActividad();
+                        break;
+                    case 'importar':
+                        this.cargarImportar();
+                        break;
+                }
+            }
+
+            cargarClientes() {
+                // Cargar clientes desde Microsoft 365 o localStorage
+                const clientes = JSON.parse(localStorage.getItem('bs_clientes') || '[]');
+                const listaClientes = document.getElementById('listaClientes');
+                
+                if (clientes.length === 0) {
+                    listaClientes.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center py-8 text-gray-500">
+                                <i class="bi bi-cloud-slash text-4xl mb-4 block"></i>
+                                <p class="text-lg mb-2">No hay clientes cargados</p>
+                                <p class="text-sm mb-4">Conecta con Microsoft 365 para ver tus clientes</p>
+                                <button onclick="abrirVentana('conexion')" class="btn btn-primary">
+                                    <i class="bi bi-plug"></i> Conectar Microsoft 365
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    listaClientes.innerHTML = clientes.map(cliente => `
+                        <tr>
+                            <td>
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="bi bi-person text-blue-600"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">${cliente.nombre || 'Sin nombre'}</div>
+                                        <div class="text-sm text-gray-500">${cliente.empresa || 'Sin empresa'}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-sm text-gray-900">${cliente.email || 'Sin email'}</td>
+                            <td class="text-sm text-gray-900">${cliente.telefono || 'Sin teléfono'}</td>
+                            <td class="text-sm text-gray-900">${cliente.empresa || 'Sin empresa'}</td>
+                            <td>
+                                <span class="badge badge-success">Activo</span>
+                            </td>
+                            <td>
+                                <button onclick="verDetallesCliente('${cliente.id}')" class="btn btn-outline btn-sm">
+                                    <i class="bi bi-eye"></i> Ver
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+                
+                // Actualizar estadísticas
+                document.getElementById('totalClientes').textContent = clientes.length;
+                document.getElementById('clientesActivos').textContent = clientes.length;
+                document.getElementById('empresasCount').textContent = [...new Set(clientes.map(c => c.empresa))].length;
+            }
+
+            cargarEstadoConexion() {
+                const estado = JSON.parse(localStorage.getItem('bs_microsoft_estado') || '{"conectado": false}');
+                
+                if (estado.conectado) {
+                    document.getElementById('conexionStatus').innerHTML = `
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <i class="bi bi-info-circle"></i>
+                                <span>Estado de Conexión</span>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                <span class="text-green-600">✅ Conectado a Microsoft 365</span>
+                            </div>
+                            <p class="text-sm text-gray-600">
+                                Tu cuenta de Microsoft 365 Business está conectada correctamente.
+                            </p>
+                        </div>
+                    `;
+                    
+                    document.getElementById('userInfoSection').classList.remove('hidden');
+                    document.getElementById('userDisplayName').textContent = estado.displayName || 'Usuario';
+                    document.getElementById('userEmail').textContent = estado.email || 'usuario@empresa.com';
+                    document.getElementById('lastSyncTime').textContent = estado.lastSync || 'Nunca';
+                    
+                    document.getElementById('statsSection').classList.remove('hidden');
+                    document.getElementById('contactosCount').textContent = estado.contactos || 0;
+                    document.getElementById('categoriasCount').textContent = estado.categorias || 0;
+                    
+                    document.getElementById('btnConectar').classList.add('hidden');
+                    document.getElementById('btnSincronizar').disabled = false;
+                    document.getElementById('btnActualizar').disabled = false;
+                    document.getElementById('btnDesconectar').classList.remove('hidden');
+                    
+                    document.getElementById('syncInfo').classList.remove('hidden');
+                    document.getElementById('syncClientesCount').textContent = estado.clientesSincronizados || 0;
+                    document.getElementById('syncEmpresasCount').textContent = estado.empresasDetectadas || 0;
+                    document.getElementById('syncLastUpdate').textContent = estado.lastUpdate || 'Nunca';
+                } else {
+                    document.getElementById('conexionStatus').innerHTML = `
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <i class="bi bi-info-circle"></i>
+                                <span>Estado de Conexión</span>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                                <span class="text-red-600">⏳ No conectado a Microsoft 365</span>
+                            </div>
+                            <p class="text-sm text-gray-600">
+                                Conecta tu cuenta de Microsoft 365 Business para acceder a tus clientes.
+                            </p>
+                        </div>
+                    `;
+                    
+                    document.getElementById('userInfoSection').classList.add('hidden');
+                    document.getElementById('statsSection').classList.add('hidden');
+                    document.getElementById('btnConectar').classList.remove('hidden');
+                    document.getElementById('btnSincronizar').disabled = true;
+                    document.getElementById('btnActualizar').disabled = true;
+                    document.getElementById('btnDesconectar').classList.add('hidden');
+                    document.getElementById('syncInfo').classList.add('hidden');
+                }
+            }
+
+            cargarCategorias() {
+                // Implementar carga de categorías
+            }
+
+            cargarActividad() {
+                // Implementar carga de actividad
+            }
+
+            cargarImportar() {
+                // Implementar carga de importar
+            }
+
+            // ==================== FUNCIONES DE UTILIDAD ====================
+            mostrarNotificacion(mensaje, tipo = 'info') {
+                const tipos = {
+                    success: { bg: 'bg-green-500', icon: 'bi-check-circle' },
+                    error: { bg: 'bg-red-500', icon: 'bi-exclamation-triangle' },
+                    warning: { bg: 'bg-yellow-500', icon: 'bi-exclamation-circle' },
+                    info: { bg: 'bg-blue-500', icon: 'bi-info-circle' }
+                };
+
+                const config = tipos[tipo] || tipos.info;
+                
+                // Eliminar notificaciones existentes
+                const notificacionesExistentes = document.querySelectorAll('.notification');
+                notificacionesExistentes.forEach(n => n.remove());
+                
+                const notificacion = document.createElement('div');
+                notificacion.className = `notification ${tipo}`;
+                notificacion.innerHTML = `
+                    <i class="bi ${config.icon}"></i>
+                    <span>${mensaje}</span>
+                `;
+
+                document.body.appendChild(notificacion);
+
+                // Auto-eliminar después de 5 segundos
+                setTimeout(() => {
+                    if (notificacion.parentNode) {
+                        notificacion.remove();
+                    }
+                }, 5000);
+            }
+
+            async cargarTodaConfiguracion() {
+                console.log('🔄 Cargando toda la configuración...');
+                // Las configuraciones específicas se cargan cuando se abren las ventanas
+            }
+
+            configurarEventosGlobales() {
+                // Cargar selector de empresa
+                this.cargarSelectorEmpresa();
+                
+                // Configurar búsqueda global
+                const searchInput = document.getElementById('globalSearch');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        this.buscarClientes(e.target.value);
+                    });
+                }
+                
+                // Configurar menú de usuario
+                const userMenu = document.getElementById('user-menu');
+                const userDropdown = document.getElementById('user-dropdown');
+                
+                if (userMenu && userDropdown) {
+                    userMenu.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        userDropdown.classList.toggle('show');
+                    });
+                    
+                    // Cerrar menú al hacer clic fuera
+                    document.addEventListener('click', function() {
+                        userDropdown.classList.remove('show');
+                    });
+                }
+                
+                // Configurar toggle del sidebar
+                const sidebarToggle = document.getElementById('sidebar-toggle');
+                const sidebar = document.getElementById('sidebar');
+                
+                if (sidebarToggle && sidebar) {
+                    sidebarToggle.addEventListener('click', function() {
+                        sidebar.classList.toggle('open');
+                    });
+                }
+            }
+
+            cargarSelectorEmpresa() {
+                const selector = document.getElementById('empresaSwitcher');
+                if (!selector) return;
+
+                // Simulación de empresas
+                const empresas = [
+                    { id: '1', nombre: 'Berroa Studio S.R.L.' },
+                    { id: '2', nombre: 'Empresa Secundaria' },
+                    { id: '3', nombre: 'Otra Empresa' }
+                ];
+                
+                selector.innerHTML = empresas.map(empresa => 
+                    `<option value="${empresa.id}" ${empresa.id.toString() === this.empresaActual ? 'selected' : ''}>${empresa.nombre}</option>`
+                ).join('');
+            }
+
+            buscarClientes(termino) {
+                const clientes = JSON.parse(localStorage.getItem('bs_clientes') || '[]');
+                const listaClientes = document.getElementById('listaClientes');
+                
+                if (!termino) {
+                    this.cargarClientes();
+                    return;
+                }
+                
+                const clientesFiltrados = clientes.filter(cliente => 
+                    cliente.nombre?.toLowerCase().includes(termino.toLowerCase()) ||
+                    cliente.email?.toLowerCase().includes(termino.toLowerCase()) ||
+                    cliente.empresa?.toLowerCase().includes(termino.toLowerCase())
+                );
+                
+                if (clientesFiltrados.length === 0) {
+                    listaClientes.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center py-8 text-gray-500">
+                                <i class="bi bi-search text-4xl mb-4 block"></i>
+                                <p class="text-lg mb-2">No se encontraron clientes</p>
+                                <p class="text-sm">Intenta con otros términos de búsqueda</p>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    listaClientes.innerHTML = clientesFiltrados.map(cliente => `
+                        <tr>
+                            <td>
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="bi bi-person text-blue-600"></i>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">${cliente.nombre || 'Sin nombre'}</div>
+                                        <div class="text-sm text-gray-500">${cliente.empresa || 'Sin empresa'}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-sm text-gray-900">${cliente.email || 'Sin email'}</td>
+                            <td class="text-sm text-gray-900">${cliente.telefono || 'Sin teléfono'}</td>
+                            <td class="text-sm text-gray-900">${cliente.empresa || 'Sin empresa'}</td>
+                            <td>
+                                <span class="badge badge-success">Activo</span>
+                            </td>
+                            <td>
+                                <button onclick="verDetallesCliente('${cliente.id}')" class="btn btn-outline btn-sm">
+                                    <i class="bi bi-eye"></i> Ver
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            inicializarSistemaModulos() {
+                this.modulosDisponibles = [
+                    { id: 'clientes', nombre: 'Clientes', icono: 'bi-people', descripcion: 'Gestión de clientes' },
+                    { id: 'conexion', nombre: 'Conexión 365', icono: 'bi-microsoft', descripcion: 'Conexión Microsoft 365' },
+                    { id: 'categorias', nombre: 'Categorías', icono: 'bi-tags', descripcion: 'Categorías de clientes' },
+                    { id: 'actividad', nombre: 'Actividad', icono: 'bi-graph-up', descripcion: 'Actividad de clientes' },
+                    { id: 'importar', nombre: 'Sincronizar', icono: 'bi-cloud-download', descripcion: 'Sincronización avanzada' }
+                ];
+            }
+        }
+
+        // ==================== SISTEMA DE MÓDULOS DINÁMICOS ====================
+        console.log('📦 Cargando sistema de módulos...');
+
+        class ModulosManager {
+            constructor() {
+                this.modulos = {};
+                this.moduloActual = null;
+                this.init();
+            }
+
+            init() {
+                console.log('✅ Modulos manager inicializado');
+                this.cargarTodosLosModulos();
+            }
+
+            cargarTodosLosModulos() {
+                // Mapeo completo de TODOS los módulos en la carpeta modules
+                this.modulos = {
+                    'dashboard': { nombre: 'Dashboard', icono: 'bi-speedometer2', ruta: 'dashboard.html' },
+                    'facturacion': { nombre: 'Facturación', icono: 'bi-receipt', ruta: 'modules/facturacion.html' },
+                    'inventario': { nombre: 'Inventario', icono: 'bi-box-seam', ruta: 'modules/inventario.html' },
+                    'clientes': { nombre: 'Clientes', icono: 'bi-people', ruta: 'modules/clientes.html' },
+                    'reportes': { nombre: 'Reportes', icono: 'bi-graph-up', ruta: 'modules/reportes.html' },
+                    'configuracion': { nombre: 'Configuración', icono: 'bi-gear', ruta: 'configuracion.html' },
+                    'usuarios': { nombre: 'Usuarios', icono: 'bi-shield-check', ruta: 'modules/usuarios.html' },
+                    'empresas': { nombre: 'Empresas', icono: 'bi-buildings', ruta: 'modules/empresas.html' },
+                    'pos': { nombre: 'Punto de Venta', icono: 'bi-cash-coin', ruta: 'modules/pos.html' },
+                    'caja': { nombre: 'Caja', icono: 'bi-cash-stack', ruta: 'modules/caja.html' },
+                    'cheques': { nombre: 'Cheques', icono: 'bi-wallet2', ruta: 'modules/cheques.html' },
+                    'contabilidad': { nombre: 'Contabilidad', icono: 'bi-calculator', ruta: 'modules/contabilidad.html' },
+                    'cotizaciones': { nombre: 'Cotizaciones', icono: 'bi-file-text', ruta: 'modules/cotizaciones.html' },
+                    'editor-plantillas': { nombre: 'Editor Plantillas', icono: 'bi-file-earmark-richtext', ruta: 'modules/editor-plantillas.html' },
+                    'ordenes': { nombre: 'Órdenes', icono: 'bi-clipboard-check', ruta: 'modules/ordenes.html' },
+                    'backups': { nombre: 'Backups', icono: 'bi-cloud-arrow-up', ruta: 'modules/backups.html' },
+                    'onedrive': { nombre: 'OneDrive', icono: 'bi-microsoft', ruta: 'modules/onedrive.html' },
+                    'smtp': { nombre: 'SMTP', icono: 'bi-envelope', ruta: 'modules/smtp.html' }
+                };
+                
+                console.log('📂 Módulos cargados:', Object.keys(this.modulos).length);
+            }
+
+            getModulosEmpresa(empresaId = 1) {
+                const modulosGuardados = localStorage.getItem(`bs_modulos_empresa_${empresaId}`);
+                if (modulosGuardados) {
+                    return JSON.parse(modulosGuardados);
+                }
+                
+                // Módulos por defecto
+                return [
+                    'dashboard', 'facturacion', 'inventario', 'clientes', 'reportes', 
+                    'configuracion', 'usuarios', 'empresas', 'pos', 'caja'
+                ];
+            }
+
+            getModuloInfo(moduloId) {
+                return this.modulos[moduloId] || { nombre: moduloId, icono: 'bi-question-circle', ruta: '#' };
+            }
+
+            getModulosActivos(empresaId = '1') {
+                const modulosIds = this.getModulosEmpresa(empresaId);
+                const modulosActivos = [];
+                
+                modulosIds.forEach(moduloId => {
+                    if (this.modulos[moduloId]) {
+                        modulosActivos.push({
+                            id: moduloId,
+                            nombre: this.modulos[moduloId].nombre,
+                            icono: this.modulos[moduloId].icono,
+                            descripcion: `Acceso a ${this.modulos[moduloId].nombre}`,
+                            url: this.modulos[moduloId].ruta,
+                            categoria: 'general'
+                        });
+                    }
+                });
+                
+                return modulosActivos;
+            }
+
+            getTodosLosModulos() {
+                return Object.keys(this.modulos).map(moduloId => ({
+                    id: moduloId,
+                    nombre: this.modulos[moduloId].nombre,
+                    icono: this.modulos[moduloId].icono,
+                    descripcion: `Acceso a ${this.modulos[moduloId].nombre}`,
+                    url: this.modulos[moduloId].ruta,
+                    categoria: 'general'
+                }));
+            }
+
+            abrirModulo(moduloId) {
+                const modulo = this.getModuloInfo(moduloId);
+                if (!modulo || modulo.ruta === '#') {
+                    mostrarNotificacion('❌ Módulo no disponible', 'error');
+                    return false;
+                }
+
+                // Verificar si está activo para la empresa actual
+                const empresaId = document.getElementById('empresaSwitcher').value;
+                const modulosActivos = this.getModulosActivos(empresaId);
+                const moduloActivo = modulosActivos.find(m => m.id === moduloId);
+                
+                if (!moduloActivo && moduloId !== 'configuracion') {
+                    mostrarNotificacion('❌ Módulo no activo para esta empresa', 'error');
+                    return false;
+                }
+
+                // Redirigir directamente al módulo en lugar de abrirlo en iframe
+                window.location.href = modulo.ruta;
+                
+                return true;
+            }
+        }
+
+        // ==================== SISTEMA PRINCIPAL ====================
+        let modulosManager;
+        let configManager;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Iniciando módulo de clientes...');
+            
+            // 1. Verificar autenticación
+            if (!verificarAutenticacion()) {
+                return;
+            }
+
+            // 2. Inicializar ModulosManager
+            modulosManager = new ModulosManager();
+            window.modulosManager = modulosManager;
+
+            // 3. Inicializar ConfigManager
+            configManager = new ConfiguracionManager();
+            window.configManager = configManager;
+
+            // 4. Cargar información del usuario
+            const userData = JSON.parse(localStorage.getItem('bs_dash_user') || '{}');
+            document.getElementById('user-name').textContent = userData.name || userData.email || 'Administrador';
+            
+            // Iniciales del usuario para el avatar
+            const userName = userData.name || userData.email || 'Usuario';
+            const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            document.getElementById('user-initials').textContent = initials;
+
+            // 5. Inicializar componentes
+            setTimeout(() => {
+                actualizarSidebar();
+                initEventListeners();
+                
+                console.log('✅ Módulo de clientes inicializado correctamente');
+            }, 500);
+        });
+
+        // ==================== FUNCIONES DE AUTENTICACIÓN ====================
+        function verificarAutenticacion() {
+            const user = localStorage.getItem('bs_dash_user');
+            const auth = localStorage.getItem('bs_dash_auth');
+            
+            if (!user || auth !== 'true') {
+                console.log('❌ No autenticado, redirigiendo a login...');
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            return true;
+        }
+
+        function logout() {
+            if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+                console.log('👋 Cerrando sesión...');
+                localStorage.removeItem('bs_dash_auth');
+                localStorage.removeItem('bs_dash_user');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // ==================== SISTEMA DE MÓDULOS ====================
+        function actualizarSidebar() {
+            const empresaId = document.getElementById('empresaSwitcher').value;
+            
+            if (!modulosManager) {
+                console.error('❌ ModulosManager no disponible para sidebar');
+                return;
+            }
+
+            const modulosActivos = modulosManager.getModulosActivos(empresaId);
+            const sidebarModules = document.getElementById('sidebar-modules');
+            
+            // Filtrar módulos para el sidebar (excluir clientes)
+            const modulosSidebar = modulosActivos.filter(modulo => modulo.id !== 'clientes');
+
+            sidebarModules.innerHTML = modulosSidebar.map(modulo => `
+                <li class="sidebar-item">
+                    <a href="${modulo.url}" class="sidebar-link">
+                        <i class="${modulo.icono}"></i>
+                        <span>${modulo.nombre}</span>
+                    </a>
+                </li>
+            `).join('');
+        }
+
+        function abrirModulo(moduloId) {
+            if (modulosManager) {
+                modulosManager.abrirModulo(moduloId);
+            }
+        }
+
+        // ==================== FUNCIONES DEL SISTEMA ====================
+        function initEventListeners() {
+            // Toggle sidebar en móviles
+            document.getElementById('sidebar-toggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('open');
+            });
+            
+            // Menú de usuario
+            document.getElementById('user-menu').addEventListener('click', function(e) {
+                e.stopPropagation();
+                document.getElementById('user-dropdown').classList.toggle('show');
+            });
+            
+            // Cerrar menús al hacer clic fuera
+            document.addEventListener('click', function() {
+                document.getElementById('user-dropdown').classList.remove('show');
+            });
+        }
+
+        // ==================== FUNCIONES DE EMPRESA ====================
+        function cambiarEmpresa() {
+            const selector = document.getElementById('empresaSwitcher');
+            const empresaId = selector.value;
+            const empresaNombre = selector.options[selector.selectedIndex].text;
+            
+            // Recargar módulos activos para la nueva empresa
+            actualizarSidebar();
+            
+            mostrarNotificacion(`Empresa cambiada a: ${empresaNombre}`, 'success');
+        }
+
+        // ==================== FUNCIONES DE VENTANAS ====================
+        function abrirVentana(ventanaId) {
+            if (configManager) {
+                configManager.abrirVentana(ventanaId);
+            }
+        }
+
+        // ==================== FUNCIONES DE MICROSOFT 365 ====================
+        function conectarMicrosoft365() {
+            mostrarNotificacion('🔌 Conectando con Microsoft 365...', 'info');
+            
+            // Simulación de conexión
+            setTimeout(() => {
+                const estado = {
+                    conectado: true,
+                    displayName: 'Usuario Demo',
+                    email: 'usuario@empresa.com',
+                    lastSync: new Date().toLocaleString(),
+                    contactos: 45,
+                    categorias: 3,
+                    clientesSincronizados: 23,
+                    empresasDetectadas: 15,
+                    lastUpdate: new Date().toLocaleString()
+                };
+                
+                localStorage.setItem('bs_microsoft_estado', JSON.stringify(estado));
+                
+                // Simular clientes de ejemplo
+                const clientesEjemplo = [
+                    { id: '1', nombre: 'Juan Pérez', email: 'juan@empresa.com', telefono: '809-123-4567', empresa: 'Empresa A' },
+                    { id: '2', nombre: 'María García', email: 'maria@empresa.com', telefono: '809-234-5678', empresa: 'Empresa B' },
+                    { id: '3', nombre: 'Carlos Rodríguez', email: 'carlos@empresa.com', telefono: '809-345-6789', empresa: 'Empresa C' },
+                    { id: '4', nombre: 'Ana Martínez', email: 'ana@empresa.com', telefono: '809-456-7890', empresa: 'Empresa A' },
+                    { id: '5', nombre: 'Luis Hernández', email: 'luis@empresa.com', telefono: '809-567-8901', empresa: 'Empresa D' }
+                ];
+                
+                localStorage.setItem('bs_clientes', JSON.stringify(clientesEjemplo));
+                
+                mostrarNotificacion('✅ Conectado a Microsoft 365 correctamente', 'success');
+                
+                // Recargar estado de conexión
+                if (configManager) {
+                    configManager.cargarEstadoConexion();
+                    configManager.cargarClientes();
+                }
+            }, 2000);
+        }
+
+        function sincronizarClientes() {
+            mostrarNotificacion('🔄 Sincronizando clientes...', 'info');
+            
+            // Simulación de sincronización
+            setTimeout(() => {
+                mostrarNotificacion('✅ Clientes sincronizados correctamente', 'success');
+                
+                // Actualizar última sincronización
+                const estado = JSON.parse(localStorage.getItem('bs_microsoft_estado') || '{}');
+                estado.lastSync = new Date().toLocaleString();
+                localStorage.setItem('bs_microsoft_estado', JSON.stringify(estado));
+                
+                // Recargar estado de conexión
+                if (configManager) {
+                    configManager.cargarEstadoConexion();
+                }
+            }, 1500);
+        }
+
+        function actualizarEstadisticas() {
+            mostrarNotificacion('📊 Actualizando estadísticas...', 'info');
+            
+            // Simulación de actualización de estadísticas
+            setTimeout(() => {
+                mostrarNotificacion('✅ Estadísticas actualizadas', 'success');
+            }, 1000);
+        }
+
+        function cerrarSesionMicrosoft() {
+            if (confirm('¿Estás seguro de que deseas desconectar Microsoft 365?')) {
+                localStorage.removeItem('bs_microsoft_estado');
+                localStorage.removeItem('bs_clientes');
+                
+                mostrarNotificacion('✅ Microsoft 365 desconectado', 'info');
+                
+                // Recargar estado de conexión
+                if (configManager) {
+                    configManager.cargarEstadoConexion();
+                    configManager.cargarClientes();
+                }
+            }
+        }
+
+        // ==================== FUNCIONES DE CLIENTES ====================
+        function buscarClientes(termino) {
+            if (configManager) {
+                configManager.buscarClientes(termino);
+            }
+        }
+
+        function verDetallesCliente(clienteId) {
+            const clientes = JSON.parse(localStorage.getItem('bs_clientes') || '[]');
+            const cliente = clientes.find(c => c.id === clienteId);
+            
+            if (!cliente) {
+                mostrarNotificacion('❌ Cliente no encontrado', 'error');
+                return;
+            }
+            
+            const modalContent = document.getElementById('clienteModalContent');
+            modalContent.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="bi bi-person text-blue-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold">${cliente.nombre || 'Sin nombre'}</h3>
+                            <p class="text-gray-600">${cliente.empresa || 'Sin empresa'}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Email</label>
+                            <p class="text-gray-900">${cliente.email || 'Sin email'}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Teléfono</label>
+                            <p class="text-gray-900">${cliente.telefono || 'Sin teléfono'}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Empresa</label>
+                            <p class="text-gray-900">${cliente.empresa || 'Sin empresa'}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Estado</label>
+                            <span class="badge badge-success">Activo</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 mt-6">
+                        <button class="btn btn-primary">
+                            <i class="bi bi-pencil"></i> Editar
+                        </button>
+                        <button class="btn btn-outline">
+                            <i class="bi bi-envelope"></i> Enviar Email
+                        </button>
+                        <button class="btn btn-outline">
+                            <i class="bi bi-telephone"></i> Llamar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('clienteModal').classList.remove('hidden');
+        }
+
+        function cerrarModalCliente() {
+            document.getElementById('clienteModal').classList.add('hidden');
+        }
+
+        function crearNuevaCategoria() {
+            mostrarNotificacion('📝 Creando nueva categoría...', 'info');
+        }
+
+        // ==================== FUNCIONES DE NOTIFICACIÓN ====================
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            if (configManager) {
+                configManager.mostrarNotificacion(mensaje, tipo);
+            }
+        }
+
+        function mostrarInfoSistema() {
+            const user = JSON.parse(localStorage.getItem('bs_dash_user') || '{}');
+            const empresaId = document.getElementById('empresaSwitcher').value;
+            const empresaNombre = document.getElementById('empresaSwitcher').options[document.getElementById('empresaSwitcher').selectedIndex].text;
+            const modulosActivos = modulosManager ? modulosManager.getModulosActivos(empresaId) : [];
+            const todosLosModulos = modulosManager ? modulosManager.getTodosLosModulos() : [];
+            
+            const mensaje = `
+Sistema BS Dashboard - Módulo de Clientes
+-----------------------------------------
+👤 Usuario: ${user?.email || 'N/A'}
+🏢 Empresa Activa: ${empresaNombre}
+📊 Módulos Activos: ${modulosActivos.length}
+📂 Módulos Totales: ${todosLosModulos.length}
+💾 Modo: Local Storage
+🕐 Última actualización: ${new Date().toLocaleString()}
+
+Módulos disponibles:
+${todosLosModulos.map(m => `• ${m.nombre}`).join('\n')}
+            `.trim();
+            
+            alert(mensaje);
+        }
+    </script>
+</body>
+</html>

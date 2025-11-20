@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Microsoft OAuth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-bold mb-4">Test Microsoft OAuth</h1>
+        
+        <div class="mb-4 p-4 bg-yellow-100 rounded">
+            <strong>Client ID:</strong> 1cef536e-cba9-48f3-b65b-ea7d49b0215a<br>
+            <strong>Redirect URI:</strong> http://127.0.0.1:5500/auth-callback.html
+        </div>
+
+        <button onclick="testOAuth()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold">
+            🔗 Probar OAuth Microsoft
+        </button>
+
+        <div id="debug" class="mt-4 p-4 bg-gray-100 rounded text-sm hidden"></div>
+    </div>
+
+    <script>
+        function testOAuth() {
+            const clientId = '1cef536e-cba9-48f3-b65b-ea7d49b0215a';
+            const redirectUri = 'http://127.0.0.1:5500/auth-callback.html';
+            const tenantId = 'common';
+            
+            const scopes = [
+                'openid',
+                'profile', 
+                'User.Read',
+                'Contacts.ReadWrite'
+            ].join(' ');
+
+            const authUrl = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/authorize?` +
+                `client_id=${clientId}` +
+                `&response_type=token` +
+                `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+                `&scope=${encodeURIComponent(scopes)}` +
+                `&response_mode=fragment` +
+                `&state=test_${Date.now()}`;
+
+            document.getElementById('debug').classList.remove('hidden');
+            document.getElementById('debug').innerHTML = `
+                <strong>URL de Autenticación:</strong><br>
+                <textarea class="w-full h-32 text-xs mt-2 p-2 border rounded">${authUrl}</textarea><br>
+                <strong>Redirigiendo a Microsoft...</strong>
+            `;
+
+            console.log('🌐 Redirigiendo a:', authUrl);
+            window.location.href = authUrl;
+        }
+    </script>
+</body>
+</html>

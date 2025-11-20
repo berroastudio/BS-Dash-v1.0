@@ -3,445 +3,917 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BS Dash - Configuración</title>
+    <title>Facturación - BS Dash</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ====== ESTILOS UBUNTU GLASS MEJORADOS ====== */
+        :root {
+            --bg-primary: #2D0922;
+            --bg-secondary: #1a0a15;
+            --bg-card: rgba(45, 20, 44, 0.75);
+            --bg-hover: rgba(85, 40, 80, 0.8);
+            --border-light: rgba(255, 255, 255, 0.15);
+            --border-hover: rgba(233, 84, 32, 0.6);
+            --text-primary: #FFFFFF;
+            --text-secondary: #E8E8E8;
+            --text-muted: #AAAAAA;
+            --accent-orange: #E95420;
+            --accent-purple: #77216F;
+            --gradient-primary: linear-gradient(135deg, #E95420, #77216F);
+            --gradient-card: linear-gradient(135deg, rgba(65, 25, 60, 0.9), rgba(40, 15, 35, 0.9));
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(rgba(38, 1, 83, 0.16), rgba(21, 0, 48, 0.046)), 
+                        url('https://plus.unsplash.com/premium_photo-1685793804465-b12bbd8b7281?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .ubuntu-glass {
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: var(--gradient-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .ubuntu-window {
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: var(--gradient-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .window-header {
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--border-light);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .window-title {
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .window-control {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .window-control.close { background: #FF5F57; }
+        .window-control.minimize { background: #FFBD2E; }
+        .window-control.maximize { background: #28CA42; }
+
+        .window-control:hover {
+            transform: scale(1.1);
+        }
+
+        .window-content {
+            padding: 25px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .ubuntu-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .ubuntu-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(233, 84, 32, 0.2);
+        }
+
+        .ubuntu-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .ubuntu-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 20px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .ubuntu-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .ubuntu-btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+        }
+
+        .ubuntu-btn-primary:hover {
+            background: linear-gradient(135deg, #77216F, #E95420);
+            transform: translateY(-2px);
+        }
+
+        /* Dock Interno */
+        .internal-dock {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(45, 20, 44, 0.5);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .dock-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .dock-item.active {
+            background: var(--gradient-primary);
+            transform: translateY(-3px);
+        }
+
+        .dock-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .dock-item span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Contenedor de Ventanas */
+        .windows-container {
+            min-height: 600px;
+            position: relative;
+        }
+
+        .window {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        .window.hidden {
+            display: none;
+        }
+
+        /* Búsqueda */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 25px;
+            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* Estados */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(32, 201, 151, 0.2);
+            color: #20C997;
+        }
+
+        .status-inactive {
+            background: rgba(255, 107, 107, 0.2);
+            color: #FF6B6B;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes windowOpen {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-window-open {
+            animation: windowOpen 0.3s ease-out;
+        }
+
+        /* Scrollbar personalizado */
+        .window-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .window-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .window-content::-webkit-scrollbar-thumb {
+            background: var(--accent-orange);
+            border-radius: 3px;
+        }
+
+        .window-content::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-purple);
+        }
+
+        /* Checkbox personalizado */
+        .ubuntu-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 2px solid var(--border-light);
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .ubuntu-checkbox:checked {
+            background: var(--accent-orange);
+            border-color: var(--accent-orange);
+        }
+
+        .ubuntu-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Estilos específicos para facturación */
+        .factura-card {
+            transition: all 0.3s ease;
+        }
+
+        .factura-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .estado-pendiente {
+            background: rgba(254, 243, 199, 0.2);
+            border-left: 4px solid #f59e0b;
+        }
+
+        .estado-pagada {
+            background: rgba(198, 246, 213, 0.2);
+            border-left: 4px solid #10b981;
+        }
+
+        .estado-anulada {
+            background: rgba(254, 202, 202, 0.2);
+            border-left: 4px solid #dc2626;
+        }
+
+        .tipo-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            background: rgba(119, 33, 111, 0.2);
+            color: var(--text-primary);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(45, 9, 34, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--gradient-card);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-light);
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .tabla-fila:hover {
+            background: rgba(119, 33, 111, 0.1);
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .filtro-avanzado {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-light);
+        }
+
+        .reporte-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .reporte-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Estilos para tabla de productos en factura */
+        .producto-fila {
+            transition: all 0.3s ease;
+        }
+
+        .producto-fila:hover {
+            background: rgba(119, 33, 111, 0.1);
+        }
+
+        .total-factura {
+            background: rgba(233, 84, 32, 0.2);
+            border-top: 2px solid var(--accent-orange);
+        }
+    </style>
 </head>
-<body class="bg-[#fbfbfb] min-h-screen">
-    <header class="bs-card mx-4 mt-4 mb-6">
-        <div class="flex items-center justify-between p-4">
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="ubuntu-glass mx-4 mt-4 mb-6">
+        <div class="flex items-center justify-between p-6">
             <div class="flex items-center gap-4">
-                <a href="../dashboard.html" class="bs-btn">
-                    <i class="bi bi-arrow-left"></i> Volver
+                <a href="../dashboard.html" class="ubuntu-btn">
+                    <i class="bi bi-arrow-left"></i> Volver al Dashboard
                 </a>
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center border border-purple-200">
-                        <i class="bi bi-gear text-purple-600"></i>
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#E95420] to-[#77216F]">
+                        <i class="bi bi-receipt text-white text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold text-gray-800">Configuración del Sistema</h1>
-                        <p class="text-sm text-gray-600">Ajustes generales y administración</p>
+                        <h1 class="text-xl font-bold">Sistema de Facturación</h1>
+                        <p class="text-sm text-gray-300">Facturas, cotizaciones y gestión comercial</p>
                     </div>
                 </div>
             </div>
             
             <div class="flex items-center gap-4">
-                <span class="text-gray-700" id="userName">Cargando...</span>
-                <button onclick="logout()" class="bs-btn bg-red-50 text-red-600 border-red-200">
+                <!-- Selector de Empresa -->
+                <div class="flex items-center gap-2 bg-gray-800 bg-opacity-50 px-3 py-2 rounded-lg border border-gray-700">
+                    <label class="text-sm font-medium">Empresa:</label>
+                    <select id="empresaSwitcher" class="bg-transparent border-none outline-none text-sm text-white" onchange="cambiarEmpresa()">
+                        <option value="1">Berroa Studio S.R.L.</option>
+                        <option value="2">Empresa Secundaria</option>
+                        <option value="3">Otra Empresa</option>
+                    </select>
+                </div>
+
+                <span class="text-gray-300" id="userName">Cargando...</span>
+                <button onclick="logout()" class="ubuntu-btn bg-red-500 bg-opacity-20 text-red-400 border-red-500 border-opacity-30">
                     <i class="bi bi-box-arrow-right"></i> Salir
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4">
-        <!-- Información de la Empresa -->
-        <div class="bs-card p-6 mb-6">
-            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                <i class="bi bi-building text-blue-600"></i>
-                Información de la Empresa
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre de la Empresa *</label>
-                    <input type="text" id="empresaNombre" class="bs-input w-full" placeholder="Berroa Studio S.R.L.">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">RNC *</label>
-                    <input type="text" id="empresaRNC" class="bs-input w-full" placeholder="123456789">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
-                    <input type="text" id="empresaTelefono" class="bs-input w-full" placeholder="(809) 123-4567">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input type="email" id="empresaEmail" class="bs-input w-full" placeholder="info@berroastudio.com">
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
-                    <textarea id="empresaDireccion" class="bs-input w-full" rows="2" placeholder="Av. Principal #123, Santo Domingo"></textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Sitio Web</label>
-                    <input type="url" id="empresaWebsite" class="bs-input w-full" placeholder="https://berroastudio.com">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Eslogan</label>
-                    <input type="text" id="empresaEslogan" class="bs-input w-full" placeholder="Soluciones digitales innovadoras">
-                </div>
+    <main class="max-w-7xl mx-auto px-4 pb-8">
+        <!-- Barra de Búsqueda Global -->
+        <div class="search-container">
+            <input type="text" id="globalSearch" class="search-input" placeholder="Buscar facturas, clientes, productos...">
+            <i class="bi bi-search search-icon"></i>
+        </div>
+
+        <!-- Dock Interno de Módulos -->
+        <div class="internal-dock">
+            <div class="dock-item active" onclick="abrirVentana('facturas')">
+                <i class="bi bi-receipt"></i>
+                <span>Facturas</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('cotizaciones')">
+                <i class="bi bi-file-text"></i>
+                <span>Cotizaciones</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('clientes')">
+                <i class="bi bi-people"></i>
+                <span>Clientes</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('productos')">
+                <i class="bi bi-box-seam"></i>
+                <span>Productos</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('reportes')">
+                <i class="bi bi-graph-up"></i>
+                <span>Reportes</span>
+            </div>
+            <div class="dock-item" onclick="abrirVentana('configuracion')">
+                <i class="bi bi-gear"></i>
+                <span>Configuración</span>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Configuración Punto de Venta -->
-            <div class="bs-card p-6">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                    <i class="bi bi-cash-coin text-green-600"></i>
-                    Punto de Venta
-                </h2>
-                
-                <div class="space-y-6">
-                    <div>
-                        <h3 class="font-medium text-gray-800 mb-3">Métodos de Pago</h3>
-                        <div class="space-y-2" id="metodosPagoContainer"></div>
-                        <button onclick="agregarMetodoPago()" class="bs-btn mt-3 w-full">
-                            <i class="bi bi-plus"></i> Agregar Método de Pago
-                        </button>
+        <!-- Contenedor de Ventanas -->
+        <div class="windows-container">
+            <!-- Ventana: Facturas -->
+            <div id="ventana-facturas" class="ubuntu-window window animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-receipt"></i>
+                        <span>Gestión de Facturas</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('facturas')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('facturas')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('facturas')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <!-- Estadísticas Rápidas -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="ubuntu-glass p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-300">Total Facturas</p>
+                                    <h3 class="text-2xl font-bold" id="totalFacturas">0</h3>
+                                </div>
+                                <i class="bi bi-receipt text-purple-400 text-2xl"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="ubuntu-glass p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-300">Hoy</p>
+                                    <h3 class="text-2xl font-bold" id="facturasHoy">0</h3>
+                                </div>
+                                <i class="bi bi-calendar-check text-green-400 text-2xl"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="ubuntu-glass p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-300">Pendientes</p>
+                                    <h3 class="text-2xl font-bold" id="facturasPendientes">0</h3>
+                                </div>
+                                <i class="bi bi-clock text-yellow-400 text-2xl"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="ubuntu-glass p-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-300">Total Facturado</p>
+                                    <h3 class="text-2xl font-bold" id="totalFacturado">RD$0</h3>
+                                </div>
+                                <i class="bi bi-currency-dollar text-blue-400 text-2xl"></i>
+                            </div>
+                        </div>
                     </div>
 
-                    <div>
-                        <h3 class="font-medium text-gray-800 mb-3">Configuración General</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <label class="text-gray-700 font-medium">Habilitar descuentos</label>
-                                    <p class="text-xs text-gray-500">Permitir aplicar descuentos en ventas</p>
-                                </div>
-                                <input type="checkbox" id="habilitarDescuentos" class="w-5 h-5">
+                    <!-- Barra de Herramientas -->
+                    <div class="ubuntu-glass p-4 mb-6">
+                        <div class="flex flex-wrap gap-4 justify-between items-center">
+                            <div class="flex flex-wrap gap-3">
+                                <button onclick="nuevaFactura()" class="ubuntu-btn ubuntu-btn-primary">
+                                    <i class="bi bi-plus-lg"></i> Nueva Factura
+                                </button>
+                                <button onclick="abrirBusquedaAvanzada()" class="ubuntu-btn">
+                                    <i class="bi bi-search"></i> Búsqueda Avanzada
+                                </button>
+                                <button onclick="exportarFacturas()" class="ubuntu-btn">
+                                    <i class="bi bi-download"></i> Exportar
+                                </button>
                             </div>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <label class="text-gray-700 font-medium">Solicitar cliente obligatorio</label>
-                                    <p class="text-xs text-gray-500">Requerir selección de cliente en ventas</p>
-                                </div>
-                                <input type="checkbox" id="solicitarCliente" class="w-5 h-5">
+                            
+                            <div class="flex gap-3">
+                                <select id="filtroEstado" class="ubuntu-input" onchange="filtrarFacturas()">
+                                    <option value="">Todos los estados</option>
+                                    <option value="pendiente">Pendiente</option>
+                                    <option value="pagada">Pagada</option>
+                                    <option value="anulada">Anulada</option>
+                                </select>
+                                <input type="date" id="filtroFecha" class="ubuntu-input" onchange="filtrarFacturas()">
                             </div>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <label class="text-gray-700 font-medium">Imprimir automáticamente</label>
-                                    <p class="text-xs text-gray-500">Imprimir ticket al finalizar venta</p>
-                                </div>
-                                <input type="checkbox" id="imprimirAutomatico" class="w-5 h-5">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">IVA por defecto (%)</label>
-                                <input type="number" id="ivaPorDefecto" class="bs-input w-full" value="18" min="0" max="100" step="0.1">
-                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Facturas -->
+                    <div class="ubuntu-glass p-6">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-600">
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-300">Número</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-300">Cliente</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-300">Fecha</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-300">Total</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-300">Estado</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-300">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaFacturas">
+                                    <!-- Las facturas se cargan aquí -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div id="loadingFacturas" class="text-center py-8">
+                            <p class="text-gray-400">Cargando facturas...</p>
+                        </div>
+                        
+                        <div id="noFacturas" class="text-center py-8 hidden">
+                            <p class="text-gray-400">No hay facturas registradas</p>
+                            <button onclick="nuevaFactura()" class="ubuntu-btn ubuntu-btn-primary mt-4">
+                                <i class="bi bi-plus"></i> Crear Primera Factura
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Secuencias y Numeración -->
-            <div class="bs-card p-6">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                    <i class="bi bi-123 text-purple-600"></i>
-                    Secuencias y Numeración
-                </h2>
-                
-                <div class="space-y-4">
-                    <div class="grid grid-cols-1 gap-3">
-                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                            <div>
-                                <span class="font-medium text-gray-800">Facturas</span>
-                                <p class="text-sm text-gray-500">Próximo número: <span id="secuenciaFacturas">FACT-001</span></p>
-                            </div>
-                            <button onclick="editarSecuencia('facturas')" class="bs-btn text-sm">
-                                <i class="bi bi-pencil"></i> Editar
-                            </button>
-                        </div>
-                        
-                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                            <div>
-                                <span class="font-medium text-gray-800">Cotizaciones</span>
-                                <p class="text-sm text-gray-500">Próximo número: <span id="secuenciaCotizaciones">COT-001</span></p>
-                            </div>
-                            <button onclick="editarSecuencia('cotizaciones')" class="bs-btn text-sm">
-                                <i class="bi bi-pencil"></i> Editar
-                            </button>
-                        </div>
-                        
-                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                            <div>
-                                <span class="font-medium text-gray-800">Órdenes</span>
-                                <p class="text-sm text-gray-500">Próximo número: <span id="secuenciaOrdenes">ORD-001</span></p>
-                            </div>
-                            <button onclick="editarSecuencia('ordenes')" class="bs-btn text-sm">
-                                <i class="bi bi-pencil"></i> Editar
-                            </button>
-                        </div>
-                        
-                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
-                            <div>
-                                <span class="font-medium text-gray-800">Reportes</span>
-                                <p class="text-sm text-gray-500">Próximo número: <span id="secuenciaReportes">REP-001</span></p>
-                            </div>
-                            <button onclick="editarSecuencia('reportes')" class="bs-btn text-sm">
-                                <i class="bi bi-pencil"></i> Editar
-                            </button>
-                        </div>
+            <!-- Ventana: Nueva Factura -->
+            <div id="ventana-nueva-factura" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-plus-lg"></i>
+                        <span>Nueva Factura</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('nueva-factura')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('nueva-factura')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('nueva-factura')"></div>
                     </div>
                 </div>
-            </div>
-        </div>
+                <div class="window-content">
+                    <form id="formFactura" class="space-y-6">
+                        <!-- Información de la Factura -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Número de Factura</label>
+                                <input type="text" id="facturaNumero" class="ubuntu-input" value="FACT-001" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Fecha</label>
+                                <input type="date" id="facturaFecha" class="ubuntu-input" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Vencimiento</label>
+                                <input type="date" id="facturaVencimiento" class="ubuntu-input">
+                            </div>
+                        </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <!-- Gestión de Usuarios y Permisos -->
-            <div class="bs-card p-6">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                    <i class="bi bi-shield-check text-orange-600"></i>
-                    Usuarios y Permisos
-                </h2>
-                
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-medium text-gray-800">Usuarios del Sistema</h3>
-                        <button onclick="abrirModalUsuario()" class="bs-btn bs-btn-primary text-sm">
-                            <i class="bi bi-person-plus"></i> Nuevo Usuario
+                        <!-- Información del Cliente -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Cliente *</label>
+                                <select id="facturaCliente" class="ubuntu-input w-full" required onchange="cargarDatosCliente()">
+                                    <option value="">Seleccionar cliente...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">RNC/Cédula</label>
+                                <input type="text" id="clienteIdentificacion" class="ubuntu-input" readonly>
+                            </div>
+                        </div>
+
+                        <!-- Productos -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-3">Productos/Servicios</label>
+                            <div class="space-y-3">
+                                <div class="grid grid-cols-12 gap-2 text-sm text-gray-400 font-medium mb-2">
+                                    <div class="col-span-5">Producto</div>
+                                    <div class="col-span-2">Cantidad</div>
+                                    <div class="col-span-2">Precio</div>
+                                    <div class="col-span-2">Total</div>
+                                    <div class="col-span-1"></div>
+                                </div>
+                                
+                                <div id="productosContainer">
+                                    <!-- Los productos se agregan aquí dinámicamente -->
+                                </div>
+                                
+                                <button type="button" onclick="agregarProducto()" class="ubuntu-btn w-full">
+                                    <i class="bi bi-plus"></i> Agregar Producto
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Totales -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-600">
+                            <div class="md:col-span-2"></div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-300">Subtotal:</span>
+                                    <span id="subtotalFactura" class="font-semibold">RD$0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-300">ITBIS (18%):</span>
+                                    <span id="itbisFactura" class="font-semibold">RD$0.00</span>
+                                </div>
+                                <div class="flex justify-between text-lg font-bold border-t border-gray-600 pt-2">
+                                    <span class="text-gray-300">Total:</span>
+                                    <span id="totalFactura" class="text-green-400">RD$0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="flex gap-3 justify-end pt-4">
+                            <button type="button" onclick="cancelarFactura()" class="ubuntu-btn">
+                                Cancelar
+                            </button>
+                            <button type="button" onclick="guardarBorrador()" class="ubuntu-btn">
+                                Guardar Borrador
+                            </button>
+                            <button type="submit" class="ubuntu-btn ubuntu-btn-primary">
+                                <i class="bi bi-check-lg"></i> Generar Factura
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Ventana: Clientes -->
+            <div id="ventana-clientes" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-people"></i>
+                        <span>Gestión de Clientes</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('clientes')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('clientes')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('clientes')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold">Lista de Clientes</h3>
+                        <button onclick="abrirModalCliente()" class="ubuntu-btn ubuntu-btn-primary">
+                            <i class="bi bi-person-plus"></i> Nuevo Cliente
                         </button>
                     </div>
                     
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
-                                <tr class="border-b border-gray-200">
-                                    <th class="text-left py-3 px-4">Usuario</th>
-                                    <th class="text-left py-3 px-4">Rol</th>
-                                    <th class="text-left py-3 px-4">Estado</th>
-                                    <th class="text-left py-3 px-4">Acciones</th>
+                                <tr class="border-b border-gray-600">
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-300">Código</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-300">Nombre</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-300">Identificación</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-300">Teléfono</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-300">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="tablaUsuarios"></tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="border-t pt-4">
-                        <h3 class="font-medium text-gray-800 mb-3">Perfiles de Permisos</h3>
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
-                                <span class="text-gray-700">Administrador</span>
-                                <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">Acceso total</span>
-                            </div>
-                            <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
-                                <span class="text-gray-700">Vendedor</span>
-                                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Solo ventas</span>
-                            </div>
-                            <div class="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
-                                <span class="text-gray-700">Inventario</span>
-                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Solo inventario</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Gestión de Clientes -->
-            <div class="bs-card p-6">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                    <i class="bi bi-people text-cyan-600"></i>
-                    Gestión de Clientes
-                </h2>
-                
-                <div class="space-y-4">
-                    <button onclick="abrirModalCliente()" class="bs-btn bs-btn-primary w-full">
-                        <i class="bi bi-person-plus"></i> Agregar Cliente
-                    </button>
-                    
-                    <div class="overflow-x-auto max-h-80">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-gray-200">
-                                    <th class="text-left py-3 px-4">Código</th>
-                                    <th class="text-left py-3 px-4">Nombre</th>
-                                    <th class="text-left py-3 px-4">Identificación</th>
-                                    <th class="text-left py-3 px-4">Teléfono</th>
-                                    <th class="text-left py-3 px-4">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaClientes"></tbody>
+                            <tbody id="tablaClientes">
+                                <!-- Los clientes se cargan aquí -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Plantillas y Personalización -->
-        <div class="bs-card p-6 mb-6">
-            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                <i class="bi bi-palette text-pink-600"></i>
-                Plantillas y Personalización
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3 border border-blue-200">
-                        <i class="bi bi-file-earmark-text text-blue-600 text-2xl"></i>
+            <!-- Otras ventanas (cotizaciones, productos, reportes, configuración) -->
+            <div id="ventana-cotizaciones" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-file-text"></i>
+                        <span>Gestión de Cotizaciones</span>
                     </div>
-                    <h3 class="font-medium text-gray-800 mb-2">Facturas</h3>
-                    <p class="text-sm text-gray-500 mb-3">Personalizar plantilla de facturas</p>
-                    <button onclick="personalizarPlantilla('facturas')" class="bs-btn bs-btn-primary w-full text-sm">
-                        <i class="bi bi-pencil"></i> Personalizar
-                    </button>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('cotizaciones')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('cotizaciones')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('cotizaciones')"></div>
+                    </div>
                 </div>
-                
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3 border border-green-200">
-                        <i class="bi bi-receipt text-green-600 text-2xl"></i>
-                    </div>
-                    <h3 class="font-medium text-gray-800 mb-2">Cotizaciones</h3>
-                    <p class="text-sm text-gray-500 mb-3">Personalizar plantilla de cotizaciones</p>
-                    <button onclick="personalizarPlantilla('cotizaciones')" class="bs-btn bs-btn-primary w-full text-sm">
-                        <i class="bi bi-pencil"></i> Personalizar
-                    </button>
-                </div>
-                
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-3 border border-purple-200">
-                        <i class="bi bi-printer text-purple-600 text-2xl"></i>
-                    </div>
-                    <h3 class="font-medium text-gray-800 mb-2">Tickets</h3>
-                    <p class="text-sm text-gray-500 mb-3">Personalizar plantilla de tickets</p>
-                    <button onclick="personalizarPlantilla('tickets')" class="bs-btn bs-btn-primary w-full text-sm">
-                        <i class="bi bi-pencil"></i> Personalizar
-                    </button>
+                <div class="window-content">
+                    <p class="text-gray-400">Módulo de cotizaciones en desarrollo...</p>
                 </div>
             </div>
-        </div>
 
-        <!-- Botones de Acción -->
-        <div class="flex gap-4 justify-end">
-            <button onclick="restablecerConfiguracion()" class="bs-btn bg-gray-100 text-gray-700 border-gray-300">
-                <i class="bi bi-arrow-clockwise"></i> Restablecer
-            </button>
-            <button onclick="guardarTodaConfiguracion()" class="bs-btn bs-btn-primary">
-                <i class="bi bi-check-lg"></i> Guardar Todo
-            </button>
+            <div id="ventana-productos" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-box-seam"></i>
+                        <span>Productos y Servicios</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('productos')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('productos')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('productos')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <p class="text-gray-400">Módulo de productos en desarrollo...</p>
+                </div>
+            </div>
+
+            <div id="ventana-reportes" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Reportes y Estadísticas</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('reportes')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('reportes')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('reportes')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <p class="text-gray-400">Módulo de reportes en desarrollo...</p>
+                </div>
+            </div>
+
+            <div id="ventana-configuracion" class="ubuntu-window window hidden animate-window-open">
+                <div class="window-header">
+                    <div class="window-title">
+                        <i class="bi bi-gear"></i>
+                        <span>Configuración de Facturación</span>
+                    </div>
+                    <div class="window-controls">
+                        <div class="window-control minimize" onclick="minimizarVentana('configuracion')"></div>
+                        <div class="window-control maximize" onclick="maximizarVentana('configuracion')"></div>
+                        <div class="window-control close" onclick="cerrarVentana('configuracion')"></div>
+                    </div>
+                </div>
+                <div class="window-content">
+                    <p class="text-gray-400">Configuración de facturación en desarrollo...</p>
+                </div>
+            </div>
         </div>
     </main>
 
     <!-- Modal Cliente -->
-    <div id="modalCliente" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bs-card p-6 w-full max-w-md mx-4">
+    <div id="modalCliente" class="modal-overlay">
+        <div class="modal-content p-6 w-full max-w-md">
             <h3 class="text-xl font-bold mb-4" id="tituloModalCliente">Nuevo Cliente</h3>
             
             <form id="formCliente" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Código *</label>
-                    <input type="text" id="clienteCodigo" class="bs-input w-full" required>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Código *</label>
+                    <input type="text" id="clienteCodigo" class="ubuntu-input w-full" required>
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre *</label>
-                    <input type="text" id="clienteNombre" class="bs-input w-full" required>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Nombre *</label>
+                    <input type="text" id="clienteNombre" class="ubuntu-input w-full" required>
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">RUC/Cédula *</label>
-                    <input type="text" id="clienteIdentificacion" class="bs-input w-full" required>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">RNC/Cédula *</label>
+                    <input type="text" id="clienteIdentificacion" class="ubuntu-input w-full" required>
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
-                    <input type="text" id="clienteTelefono" class="bs-input w-full">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Teléfono</label>
+                    <input type="text" id="clienteTelefono" class="ubuntu-input w-full">
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input type="email" id="clienteEmail" class="bs-input w-full">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <input type="email" id="clienteEmail" class="ubuntu-input w-full">
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
-                    <textarea id="clienteDireccion" class="bs-input w-full" rows="2"></textarea>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Dirección</label>
+                    <textarea id="clienteDireccion" class="ubuntu-input w-full" rows="2"></textarea>
                 </div>
                 
                 <div class="flex justify-end gap-3 pt-4">
-                    <button type="button" onclick="cerrarModalCliente()" class="bs-btn">Cancelar</button>
-                    <button type="submit" class="bs-btn bs-btn-primary">Guardar</button>
+                    <button type="button" onclick="cerrarModalCliente()" class="ubuntu-btn">Cancelar</button>
+                    <button type="submit" class="ubuntu-btn ubuntu-btn-primary">Guardar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Usuario -->
-    <div id="modalUsuario" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bs-card p-6 w-full max-w-md mx-4">
-            <h3 class="text-xl font-bold mb-4" id="tituloModalUsuario">Nuevo Usuario</h3>
-            
-            <form id="formUsuario" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
-                    <input type="text" id="usuarioNombre" class="bs-input w-full" required>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                    <input type="email" id="usuarioEmail" class="bs-input w-full" required>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuario *</label>
-                    <input type="text" id="usuarioUsername" class="bs-input w-full" required>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña *</label>
-                    <input type="password" id="usuarioPassword" class="bs-input w-full" required>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Rol *</label>
-                    <select id="usuarioRol" class="bs-input w-full" required>
-                        <option value="admin">Administrador</option>
-                        <option value="vendedor">Vendedor</option>
-                        <option value="inventario">Inventario</option>
-                        <option value="reportes">Solo Reportes</option>
-                    </select>
-                </div>
-                
-                <div class="flex justify-end gap-3 pt-4">
-                    <button type="button" onclick="cerrarModalUsuario()" class="bs-btn">Cancelar</button>
-                    <button type="submit" class="bs-btn bs-btn-primary">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Secuencia -->
-    <div id="modalSecuencia" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bs-card p-6 w-full max-w-md mx-4">
-            <h3 class="text-xl font-bold mb-4" id="tituloModalSecuencia">Editar Secuencia</h3>
-            
-            <form id="formSecuencia" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Prefijo *</label>
-                    <input type="text" id="secuenciaPrefijo" class="bs-input w-full" required>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Próximo Número *</label>
-                    <input type="number" id="secuenciaNumero" class="bs-input w-full" required min="1">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Longitud de ceros</label>
-                    <input type="number" id="secuenciaCeros" class="bs-input w-full" value="3" min="1" max="6">
-                </div>
-                
-                <div class="flex justify-end gap-3 pt-4">
-                    <button type="button" onclick="cerrarModalSecuencia()" class="bs-btn">Cancelar</button>
-                    <button type="submit" class="bs-btn bs-btn-primary">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Scripts en ORDEN CORRECTO -->
+    <!-- Scripts -->
     <script src="../js/config-loader.js"></script>
     <script src="../js/secure-database.js"></script>
     <script src="../js/auth-system.js"></script>
     <script src="../js/database-manager.js"></script>
     <script src="../js/empresa-context.js"></script>
-    <script src="../js/configuracion.js"></script>
+    <script src="../js/supabase-config.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            console.log("⚙️ Módulo de configuración cargando...");
+        // Variables globales
+        let facturas = [];
+        let clientes = [];
+        let productos = [];
+        let empresaActual = 1;
+        let contadorProductos = 0;
+
+        // Inicializar facturación
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("🧾 Módulo de facturación cargando...");
             
-            // Verificar autenticación con el sistema correcto
+            // Verificar autenticación
             if (!window.auth || !window.auth.getCurrentUser()) {
                 console.log('❌ No autenticado, redirigiendo a login...');
                 window.location.href = '../login.html';
@@ -455,23 +927,566 @@
                 console.log('👤 Usuario cargado:', user.email);
             }
 
-            // Inicializar configuración
-            if (window.configuracionManager) {
-                window.configuracionManager.cargarTodaConfiguracion();
-            } else {
-                console.error('❌ ConfiguraciónManager no disponible');
-                // Cargar configuración directamente
-                cargarTodaConfiguracion();
-            }
+            // Obtener empresa actual
+            empresaActual = obtenerEmpresaActual();
+            cargarDatosEmpresa();
+            cargarFacturas();
+            cargarClientes();
+            cargarProductos();
+            actualizarEstadisticas();
             
-            console.log("✅ Configuración cargada correctamente");
+            // Establecer fecha actual por defecto
+            document.getElementById('facturaFecha').valueAsDate = new Date();
+            
+            console.log("✅ Facturación cargada correctamente");
         });
+
+        // Funciones del sistema multiempresa
+        function obtenerEmpresaActual() {
+            return parseInt(localStorage.getItem('empresa_actual') || '1');
+        }
+
+        function cambiarEmpresa() {
+            const selector = document.getElementById('empresaSwitcher');
+            const nuevaEmpresa = parseInt(selector.value);
+            
+            if (nuevaEmpresa !== empresaActual) {
+                empresaActual = nuevaEmpresa;
+                localStorage.setItem('empresa_actual', nuevaEmpresa.toString());
+                
+                // Recargar datos de la nueva empresa
+                cargarDatosEmpresa();
+                cargarFacturas();
+                cargarClientes();
+                cargarProductos();
+                actualizarEstadisticas();
+                
+                mostrarNotificacion(`Cambiado a empresa: ${selector.options[selector.selectedIndex].text}`, 'success');
+            }
+        }
+
+        async function cargarDatosEmpresa() {
+            try {
+                // Simular carga desde Supabase
+                console.log(`📊 Cargando datos de la empresa ${empresaActual} desde Supabase...`);
+                
+                // En un sistema real, aquí harías la llamada a Supabase
+                // const { data, error } = await supabase
+                //     .from('empresas')
+                //     .select('*')
+                //     .eq('id', empresaActual)
+                //     .single();
+                
+                // Por ahora usamos datos de ejemplo
+                const datosEmpresa = {
+                    id: empresaActual,
+                    nombre: empresaActual === 1 ? 'Berroa Studio S.R.L.' : 
+                           empresaActual === 2 ? 'Empresa Secundaria' : 'Otra Empresa',
+                    rnc: '123456789',
+                    telefono: '(809) 123-4567',
+                    email: 'info@empresa.com',
+                    direccion: 'Av. Principal #123, Santo Domingo'
+                };
+                
+                console.log('🏢 Datos de empresa cargados:', datosEmpresa.nombre);
+                return datosEmpresa;
+            } catch (error) {
+                console.error('❌ Error cargando datos de empresa:', error);
+                mostrarNotificacion('Error cargando datos de empresa', 'error');
+            }
+        }
+
+        // Funciones de navegación entre ventanas
+        function abrirVentana(ventana) {
+            // Actualizar dock
+            document.querySelectorAll('.dock-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.dock-item').classList.add('active');
+            
+            // Ocultar todas las ventanas
+            document.querySelectorAll('.window').forEach(win => {
+                win.classList.add('hidden');
+            });
+            
+            // Mostrar ventana seleccionada
+            document.getElementById(`ventana-${ventana}`).classList.remove('hidden');
+        }
+
+        function minimizarVentana(ventana) {
+            document.getElementById(`ventana-${ventana}`).classList.add('hidden');
+        }
+
+        function maximizarVentana(ventana) {
+            // Implementar lógica de maximizar si es necesario
+            console.log(`Maximizando ventana: ${ventana}`);
+        }
+
+        function cerrarVentana(ventana) {
+            document.getElementById(`ventana-${ventana}`).classList.add('hidden');
+        }
+
+        // Funciones de Facturas
+        function cargarFacturas() {
+            // Simular carga desde Supabase filtrada por empresa
+            console.log(`📋 Cargando facturas de la empresa ${empresaActual}...`);
+            
+            // Datos de ejemplo
+            facturas = [
+                {
+                    id: 1,
+                    numero: 'FACT-001',
+                    cliente: 'Juan Pérez',
+                    fecha: new Date().toISOString().split('T')[0],
+                    total: 15000,
+                    estado: 'pagada',
+                    empresa_id: empresaActual
+                },
+                {
+                    id: 2,
+                    numero: 'FACT-002', 
+                    cliente: 'María García',
+                    fecha: new Date().toISOString().split('T')[0],
+                    total: 8500,
+                    estado: 'pendiente',
+                    empresa_id: empresaActual
+                }
+            ];
+            
+            mostrarFacturas();
+        }
+
+        function mostrarFacturas() {
+            const tabla = document.getElementById('tablaFacturas');
+            const loading = document.getElementById('loadingFacturas');
+            const noFacturas = document.getElementById('noFacturas');
+            
+            loading.classList.add('hidden');
+            
+            if (facturas.length === 0) {
+                noFacturas.classList.remove('hidden');
+                tabla.innerHTML = '';
+                return;
+            }
+
+            noFacturas.classList.add('hidden');
+            tabla.innerHTML = '';
+
+            facturas.forEach(factura => {
+                const estado = factura.estado === 'pagada' ? 
+                    '<span class="px-2 py-1 bg-green-500 bg-opacity-20 text-green-400 text-xs rounded-full">Pagada</span>' :
+                    factura.estado === 'pendiente' ?
+                    '<span class="px-2 py-1 bg-yellow-500 bg-opacity-20 text-yellow-400 text-xs rounded-full">Pendiente</span>' :
+                    '<span class="px-2 py-1 bg-red-500 bg-opacity-20 text-red-400 text-xs rounded-full">Anulada</span>';
+
+                const fila = `
+                    <tr class="border-b border-gray-600 ${factura.estado === 'pendiente' ? 'estado-pendiente' : ''}">
+                        <td class="py-3 px-4 font-mono text-sm">${factura.numero}</td>
+                        <td class="py-3 px-4">
+                            <div class="font-medium">${factura.cliente}</div>
+                        </td>
+                        <td class="py-3 px-4 text-sm">${new Date(factura.fecha).toLocaleDateString()}</td>
+                        <td class="py-3 px-4 font-semibold">RD$${factura.total.toLocaleString()}</td>
+                        <td class="py-3 px-4">${estado}</td>
+                        <td class="py-3 px-4">
+                            <div class="flex gap-2">
+                                <button onclick="verFactura(${factura.id})" class="ubuntu-btn text-sm">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button onclick="editarFactura(${factura.id})" class="ubuntu-btn text-sm">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button onclick="anularFactura(${factura.id})" class="ubuntu-btn bg-red-500 bg-opacity-20 text-red-400 text-sm">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tabla.innerHTML += fila;
+            });
+        }
+
+        function nuevaFactura() {
+            abrirVentana('nueva-factura');
+            document.getElementById('formFactura').reset();
+            document.getElementById('productosContainer').innerHTML = '';
+            contadorProductos = 0;
+            actualizarTotales();
+            
+            // Generar número de factura automático
+            const nextNumber = facturas.length + 1;
+            document.getElementById('facturaNumero').value = `FACT-${nextNumber.toString().padStart(3, '0')}`;
+        }
+
+        function agregarProducto() {
+            contadorProductos++;
+            const productosContainer = document.getElementById('productosContainer');
+            
+            const productoHTML = `
+                <div class="producto-fila grid grid-cols-12 gap-2 items-center" id="producto-${contadorProductos}">
+                    <div class="col-span-5">
+                        <select class="ubuntu-input w-full producto-select" onchange="actualizarPrecio(${contadorProductos})">
+                            <option value="">Seleccionar producto...</option>
+                            ${productos.map(p => `<option value="${p.id}" data-precio="${p.precio_venta}">${p.nombre} - RD$${p.precio_venta}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="col-span-2">
+                        <input type="number" class="ubuntu-input w-full cantidad-input" value="1" min="1" onchange="actualizarTotalProducto(${contadorProductos})" oninput="actualizarTotalProducto(${contadorProductos})">
+                    </div>
+                    <div class="col-span-2">
+                        <input type="number" class="ubuntu-input w-full precio-input" readonly>
+                    </div>
+                    <div class="col-span-2">
+                        <input type="text" class="ubuntu-input w-full total-input" value="RD$0.00" readonly>
+                    </div>
+                    <div class="col-span-1">
+                        <button type="button" onclick="eliminarProducto(${contadorProductos})" class="ubuntu-btn bg-red-500 bg-opacity-20 text-red-400 w-full">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            productosContainer.innerHTML += productoHTML;
+        }
+
+        function eliminarProducto(id) {
+            document.getElementById(`producto-${id}`).remove();
+            actualizarTotales();
+        }
+
+        function actualizarPrecio(idProducto) {
+            const select = document.querySelector(`#producto-${idProducto} .producto-select`);
+            const precioInput = document.querySelector(`#producto-${idProducto} .precio-input`);
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (selectedOption.value) {
+                precioInput.value = selectedOption.getAttribute('data-precio');
+                actualizarTotalProducto(idProducto);
+            } else {
+                precioInput.value = '';
+                actualizarTotalProducto(idProducto);
+            }
+        }
+
+        function actualizarTotalProducto(idProducto) {
+            const cantidadInput = document.querySelector(`#producto-${idProducto} .cantidad-input`);
+            const precioInput = document.querySelector(`#producto-${idProducto} .precio-input`);
+            const totalInput = document.querySelector(`#producto-${idProducto} .total-input`);
+            
+            const cantidad = parseInt(cantidadInput.value) || 0;
+            const precio = parseFloat(precioInput.value) || 0;
+            const total = cantidad * precio;
+            
+            totalInput.value = `RD$${total.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+            actualizarTotales();
+        }
+
+        function actualizarTotales() {
+            let subtotal = 0;
+            
+            document.querySelectorAll('.producto-fila').forEach(fila => {
+                const totalInput = fila.querySelector('.total-input');
+                const totalValue = parseFloat(totalInput.value.replace('RD$', '').replace(/,/g, '')) || 0;
+                subtotal += totalValue;
+            });
+            
+            const itbis = subtotal * 0.18;
+            const total = subtotal + itbis;
+            
+            document.getElementById('subtotalFactura').textContent = `RD$${subtotal.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+            document.getElementById('itbisFactura').textContent = `RD$${itbis.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+            document.getElementById('totalFactura').textContent = `RD$${total.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
+        }
+
+        // Funciones de Clientes
+        function cargarClientes() {
+            // Simular carga desde Supabase filtrada por empresa
+            console.log(`👥 Cargando clientes de la empresa ${empresaActual}...`);
+            
+            clientes = [
+                {
+                    id: 1,
+                    codigo: 'CLI-001',
+                    nombre: 'Juan Pérez',
+                    identificacion: '001-1234567-8',
+                    telefono: '(809) 123-4567',
+                    email: 'juan@example.com',
+                    direccion: 'Calle Principal #123',
+                    empresa_id: empresaActual
+                },
+                {
+                    id: 2,
+                    codigo: 'CLI-002',
+                    nombre: 'María García', 
+                    identificacion: '402-9876543-1',
+                    telefono: '(809) 987-6543',
+                    email: 'maria@example.com',
+                    direccion: 'Av. Libertad #456',
+                    empresa_id: empresaActual
+                }
+            ];
+            
+            mostrarClientes();
+            actualizarSelectClientes();
+        }
+
+        function mostrarClientes() {
+            const tabla = document.getElementById('tablaClientes');
+            tabla.innerHTML = '';
+
+            clientes.forEach(cliente => {
+                const fila = `
+                    <tr class="border-b border-gray-600">
+                        <td class="py-3 px-4 font-mono text-sm">${cliente.codigo}</td>
+                        <td class="py-3 px-4">
+                            <div class="font-medium">${cliente.nombre}</div>
+                            <div class="text-sm text-gray-400">${cliente.email}</div>
+                        </td>
+                        <td class="py-3 px-4 text-sm">${cliente.identificacion}</td>
+                        <td class="py-3 px-4 text-sm">${cliente.telefono}</td>
+                        <td class="py-3 px-4">
+                            <div class="flex gap-2">
+                                <button onclick="editarCliente(${cliente.id})" class="ubuntu-btn text-sm">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button onclick="eliminarCliente(${cliente.id})" class="ubuntu-btn bg-red-500 bg-opacity-20 text-red-400 text-sm">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tabla.innerHTML += fila;
+            });
+        }
+
+        function actualizarSelectClientes() {
+            const select = document.getElementById('facturaCliente');
+            select.innerHTML = '<option value="">Seleccionar cliente...</option>';
+            
+            clientes.forEach(cliente => {
+                select.innerHTML += `<option value="${cliente.id}">${cliente.nombre} - ${cliente.identificacion}</option>`;
+            });
+        }
+
+        function cargarDatosCliente() {
+            const select = document.getElementById('facturaCliente');
+            const clienteId = parseInt(select.value);
+            const identificacionInput = document.getElementById('clienteIdentificacion');
+            
+            if (clienteId) {
+                const cliente = clientes.find(c => c.id === clienteId);
+                if (cliente) {
+                    identificacionInput.value = cliente.identificacion;
+                }
+            } else {
+                identificacionInput.value = '';
+            }
+        }
+
+        // Funciones de Productos
+        function cargarProductos() {
+            // Simular carga desde Supabase filtrada por empresa
+            console.log(`📦 Cargando productos de la empresa ${empresaActual}...`);
+            
+            productos = [
+                {
+                    id: 1,
+                    codigo: 'PROD-001',
+                    nombre: 'Laptop Dell Inspiron 15',
+                    precio_venta: 55000,
+                    stock: 8,
+                    empresa_id: empresaActual
+                },
+                {
+                    id: 2,
+                    codigo: 'PROD-002',
+                    nombre: 'Mouse Inalámbrico Logitech',
+                    precio_venta: 1200,
+                    stock: 25,
+                    empresa_id: empresaActual
+                },
+                {
+                    id: 3,
+                    codigo: 'PROD-003',
+                    nombre: 'Teclado Mecánico RGB',
+                    precio_venta: 2500,
+                    stock: 15,
+                    empresa_id: empresaActual
+                }
+            ];
+        }
+
+        // Funciones de Estadísticas
+        function actualizarEstadisticas() {
+            const hoy = new Date().toISOString().split('T')[0];
+            
+            const totalFacturas = facturas.length;
+            const facturasHoy = facturas.filter(f => f.fecha === hoy).length;
+            const facturasPendientes = facturas.filter(f => f.estado === 'pendiente').length;
+            const totalFacturado = facturas.reduce((sum, f) => sum + f.total, 0);
+            
+            document.getElementById('totalFacturas').textContent = totalFacturas;
+            document.getElementById('facturasHoy').textContent = facturasHoy;
+            document.getElementById('facturasPendientes').textContent = facturasPendientes;
+            document.getElementById('totalFacturado').textContent = `RD$${totalFacturado.toLocaleString()}`;
+        }
+
+        // Funciones de Modal Cliente
+        function abrirModalCliente() {
+            document.getElementById('modalCliente').style.display = 'flex';
+            document.getElementById('tituloModalCliente').textContent = 'Nuevo Cliente';
+            document.getElementById('formCliente').reset();
+        }
+
+        function cerrarModalCliente() {
+            document.getElementById('modalCliente').style.display = 'none';
+        }
+
+        // Funciones de Utilidad
+        function mostrarNotificacion(mensaje, tipo = 'info') {
+            // Crear notificación estilo Ubuntu
+            const notificacion = document.createElement('div');
+            notificacion.className = `fixed top-4 right-4 ubuntu-glass p-4 rounded-lg border-l-4 ${
+                tipo === 'info' ? 'border-blue-400' : 
+                tipo === 'success' ? 'border-green-400' : 'border-red-400'
+            } z-50`;
+            notificacion.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <i class="bi bi-${tipo === 'info' ? 'info-circle' : tipo === 'success' ? 'check-circle' : 'exclamation-triangle'} text-${tipo === 'info' ? 'blue' : tipo === 'success' ? 'green' : 'red'}-400"></i>
+                    <span>${mensaje}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notificacion);
+            
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                notificacion.remove();
+            }, 3000);
+        }
 
         function logout() {
             if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
                 console.log('👋 Cerrando sesión...');
                 window.auth.logout();
                 window.location.href = '../login.html';
+            }
+        }
+
+        // Manejo del formulario de factura
+        document.getElementById('formFactura').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validar que hay al menos un producto
+            if (contadorProductos === 0) {
+                mostrarNotificacion('Debe agregar al menos un producto', 'error');
+                return;
+            }
+            
+            // Calcular totales finales
+            const subtotal = parseFloat(document.getElementById('subtotalFactura').textContent.replace('RD$', '').replace(/,/g, ''));
+            const itbis = parseFloat(document.getElementById('itbisFactura').textContent.replace('RD$', '').replace(/,/g, ''));
+            const total = parseFloat(document.getElementById('totalFactura').textContent.replace('RD$', '').replace(/,/g, ''));
+            
+            // Crear objeto factura
+            const nuevaFactura = {
+                id: facturas.length + 1,
+                numero: document.getElementById('facturaNumero').value,
+                cliente_id: parseInt(document.getElementById('facturaCliente').value),
+                cliente: document.getElementById('facturaCliente').options[document.getElementById('facturaCliente').selectedIndex].text.split(' - ')[0],
+                fecha: document.getElementById('facturaFecha').value,
+                vencimiento: document.getElementById('facturaVencimiento').value,
+                subtotal: subtotal,
+                itbis: itbis,
+                total: total,
+                estado: 'pendiente',
+                empresa_id: empresaActual,
+                productos: obtenerProductosFactura()
+            };
+            
+            // Agregar a la lista (en un sistema real, guardar en Supabase)
+            facturas.push(nuevaFactura);
+            
+            // Actualizar interfaz
+            mostrarFacturas();
+            actualizarEstadisticas();
+            abrirVentana('facturas');
+            
+            mostrarNotificacion(`Factura ${nuevaFactura.numero} creada correctamente`, 'success');
+        });
+
+        function obtenerProductosFactura() {
+            const productosFactura = [];
+            
+            document.querySelectorAll('.producto-fila').forEach(fila => {
+                const select = fila.querySelector('.producto-select');
+                const cantidad = fila.querySelector('.cantidad-input').value;
+                const precio = fila.querySelector('.precio-input').value;
+                const total = fila.querySelector('.total-input').value.replace('RD$', '').replace(/,/g, '');
+                
+                if (select.value) {
+                    productosFactura.push({
+                        producto_id: parseInt(select.value),
+                        producto_nombre: select.options[select.selectedIndex].text.split(' - ')[0],
+                        cantidad: parseInt(cantidad),
+                        precio: parseFloat(precio),
+                        total: parseFloat(total)
+                    });
+                }
+            });
+            
+            return productosFactura;
+        }
+
+        function cancelarFactura() {
+            if (confirm('¿Estás seguro de que deseas cancelar esta factura?')) {
+                abrirVentana('facturas');
+            }
+        }
+
+        function guardarBorrador() {
+            mostrarNotificacion('Factura guardada como borrador', 'info');
+        }
+
+        // Funciones de filtrado
+        function filtrarFacturas() {
+            // Implementar lógica de filtrado
+            console.log('Filtrando facturas...');
+        }
+
+        function abrirBusquedaAvanzada() {
+            mostrarNotificacion('Búsqueda avanzada abierta', 'info');
+        }
+
+        function exportarFacturas() {
+            mostrarNotificacion('Exportando facturas...', 'info');
+        }
+
+        // Funciones placeholder para acciones adicionales
+        function verFactura(id) {
+            mostrarNotificacion(`Viendo factura ${id}`, 'info');
+        }
+
+        function editarFactura(id) {
+            mostrarNotificacion(`Editando factura ${id}`, 'info');
+        }
+
+        function anularFactura(id) {
+            if (confirm('¿Estás seguro de que deseas anular esta factura?')) {
+                mostrarNotificacion(`Factura ${id} anulada`, 'success');
+            }
+        }
+
+        function editarCliente(id) {
+            mostrarNotificacion(`Editando cliente ${id}`, 'info');
+        }
+
+        function eliminarCliente(id) {
+            if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+                mostrarNotificacion(`Cliente ${id} eliminado`, 'success');
             }
         }
     </script>

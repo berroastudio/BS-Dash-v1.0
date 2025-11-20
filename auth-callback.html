@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticación - BS Dash</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #2D0922, #1a0a15);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .ubuntu-glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            text-align: center;
+            color: white;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #E95420;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .success { 
+            color: #10B981; 
+        }
+        
+        .error { 
+            color: #EF4444; 
+        }
+        
+        .debug-info {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.5rem;
+            text-align: left;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="ubuntu-glass">
+        <div class="spinner" id="spinner"></div>
+        <h2 class="text-xl font-bold mb-2" id="statusTitle">Procesando autenticación...</h2>
+        <p class="text-gray-300" id="statusMessage">Por favor espera mientras completamos tu acceso.</p>
+        
+        <div class="debug-info hidden" id="debugInfo">
+            <strong>Información de Depuración:</strong>
+            <div id="debugContent" class="mt-1"></div>
+        </div>
+    </div>
+
+    <script src="js/microsoft-graph.js"></script>
+    <script>
+        console.log('🔄 auth-callback.html cargado');
+        console.log('📍 URL completa:', window.location.href);
+        console.log('🔍 Hash URL:', window.location.hash);
+        
+        // Mostrar información de depuración
+        document.getElementById('debugInfo').classList.remove('hidden');
+        document.getElementById('debugContent').innerHTML = `
+            <div><strong>URL:</strong> ${window.location.href}</div>
+            <div><strong>Hash:</strong> ${window.location.hash || 'No hay hash'}</div>
+            <div><strong>Origen:</strong> ${window.location.origin}</div>
+            <div><strong>Token presente:</strong> ${window.location.hash.includes('access_token') ? '✅ SÍ' : '❌ NO'}</div>
+        `;
+        
+        function procesarAutenticacion() {
+            if (window.location.hash.includes('access_token')) {
+                console.log('✅ Token de acceso detectado en URL');
+                
+                document.getElementById('statusTitle').textContent = '✅ Autenticación exitosa';
+                document.getElementById('statusTitle').classList.add('success');
+                document.getElementById('statusMessage').textContent = 'Redirigiendo al dashboard...';
+                document.getElementById('spinner').style.borderTopColor = '#10B981';
+                
+                // El archivo microsoft-graph.js se encargará del procesamiento
+                console.log('✅ Redirigiendo en 2 segundos...');
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+                
+            } else if (window.location.hash.includes('error')) {
+                const hashParams = new URLSearchParams(window.location.hash.substring(1));
+                const error = hashParams.get('error');
+                const errorDesc = hashParams.get('error_description');
+                
+                document.getElementById('statusTitle').textContent = '❌ Error de autenticación';
+                document.getElementById('statusTitle').classList.add('error');
+                document.getElementById('statusMessage').innerHTML = `
+                    ${errorDesc || 'Error desconocido en la autenticación'}<br><br>
+                    <a href="../index.html" class="text-orange-400 underline font-semibold">Volver al login</a>
+                `;
+                document.getElementById('spinner').style.display = 'none';
+                
+                console.error('❌ Error de autenticación:', error, errorDesc);
+                
+            } else {
+                document.getElementById('statusTitle').textContent = '⏳ Esperando autenticación...';
+                document.getElementById('statusMessage').innerHTML = `
+                    Si esta página no redirige automáticamente,<br>
+                    <a href="../index.html" class="text-orange-400 underline font-semibold">haz clic aquí para volver al login</a>
+                `;
+                
+                console.log('ℹ️ No se detectó token ni error en la URL');
+            }
+        }
+        
+        // Procesar después de un breve delay para asegurar que microsoft-graph.js esté listo
+        setTimeout(procesarAutenticacion, 500);
+    </script>
+</body>
+</html>
