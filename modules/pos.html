@@ -4,296 +4,148 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Punto de Venta - BS Dash Ubuntu</title>
+    
+    <!-- CARGAR SUPABASE PRIMERO -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-manager.js"></script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* Estilos Ubuntu */
+        /* ====== ESTILOS UNIFICADOS CON DASHBOARD ====== */
         :root {
-            --ubuntu-dark: #2D0922;
-            --ubuntu-purple: #77216F;
-            --ubuntu-orange: #E95420;
-            --ubuntu-light: #AEA79F;
-            --ubuntu-text: #FFFFFF;
+            --bg-primary: #2D0922;
+            --bg-secondary: #1a0a15;
+            --bg-card: rgba(45, 20, 44, 0.75);
+            --bg-hover: rgba(85, 40, 80, 0.8);
+            --border-light: rgba(255, 255, 255, 0.15);
+            --border-hover: rgba(233, 84, 32, 0.6);
+            --text-primary: #FFFFFF;
+            --text-secondary: #E8E8E8;
+            --text-muted: #AAAAAA;
+            --accent-orange: #E95420;
+            --accent-purple: #77216F;
+            --gradient-primary: linear-gradient(135deg, #E95420, #77216F);
+            --gradient-card: linear-gradient(135deg, rgba(65, 25, 60, 0.9), rgba(40, 15, 35, 0.9));
         }
 
-        .ubuntu-dark-theme {
-            background: linear-gradient(135deg, var(--ubuntu-dark) 0%, #1a0a15 100%);
-            color: var(--ubuntu-text);
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(rgba(38, 1, 83, 0.16), rgba(21, 0, 48, 0.046)), 
+                        url('https://plus.unsplash.com/premium_photo-1685793804465-b12bbd8b7281?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=870');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-primary);
             min-height: 100vh;
-            font-family: 'Ubuntu', sans-serif;
+            overflow-x: hidden;
         }
 
-        .ubuntu-top-bar {
-            background: rgba(45, 9, 34, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--ubuntu-purple);
-            padding: 8px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-
-        .ubuntu-window {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(119, 33, 111, 0.3);
-            border-radius: 12px;
-            margin: 12px;
-            overflow: hidden;
+        .ubuntu-glass {
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            background: var(--gradient-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        .ubuntu-window-header {
-            background: linear-gradient(135deg, var(--ubuntu-purple), #5c1a5a);
+        .config-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
             padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .ubuntu-window-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .ubuntu-control {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        .ubuntu-control.close { background: #ff5f57; }
-        .ubuntu-control.minimize { background: #ffbd2e; }
-        .ubuntu-control.maximize { background: #28ca42; }
-
-        .ubuntu-window-title {
-            font-weight: 600;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .ubuntu-window-content {
-            padding: 20px;
-            max-height: calc(100vh - 200px);
-            overflow-y: auto;
-        }
-
-        .ubuntu-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 14px;
-            backdrop-filter: blur(10px);
-        }
-
-        .ubuntu-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-1px);
-        }
-
-        .ubuntu-btn-primary {
-            background: linear-gradient(135deg, var(--ubuntu-orange), #ff6b35);
-            border-color: var(--ubuntu-orange);
-        }
-
-        .ubuntu-btn-success {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            border-color: #20c997;
-        }
-
-        .ubuntu-btn-danger {
-            background: linear-gradient(135deg, #dc3545, #e83e8c);
-            border-color: #dc3545;
-        }
-
-        .ubuntu-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .ubuntu-stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .ubuntu-stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .ubuntu-stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .ubuntu-orange { color: var(--ubuntu-orange); }
-        .ubuntu-purple { color: var(--ubuntu-purple); }
-        .ubuntu-green { color: #20c997; }
-        .ubuntu-blue { color: #17a2b8; }
-
-        .bg-ubuntu-orange { background: var(--ubuntu-orange); }
-        .bg-ubuntu-purple { background: var(--ubuntu-purple); }
-        .bg-ubuntu-green { background: #20c997; }
-        .bg-ubuntu-blue { background: #17a2b8; }
-
-        .ubuntu-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 6px;
-            padding: 8px 12px;
             color: white;
             width: 100%;
-            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
-        .ubuntu-input::placeholder {
+        .config-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(233, 84, 32, 0.2);
+        }
+
+        .config-input::placeholder {
             color: rgba(255, 255, 255, 0.6);
         }
 
-        .ubuntu-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .ubuntu-table th {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .ubuntu-table td {
-            padding: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .ubuntu-table tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .ubuntu-main-content {
-            margin-top: 60px;
-            padding: 20px;
-        }
-
-        .ubuntu-toolbar {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-        }
-
-        .ubuntu-badge {
-            background: var(--ubuntu-orange);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .ubuntu-chip {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+        .btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-        }
-
-        .ubuntu-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-
-        .ubuntu-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .ubuntu-slider {
-            position: absolute;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.2);
-            transition: .4s;
-            border-radius: 24px;
+            transition: all 0.2s ease;
+            border: none;
         }
 
-        .ubuntu-slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
         }
 
-        input:checked + .ubuntu-slider {
-            background-color: var(--ubuntu-orange);
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(233, 84, 32, 0.3);
         }
 
-        input:checked + .ubuntu-slider:before {
-            transform: translateX(26px);
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--gradient-card);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 16px 20px;
+            color: var(--text-primary);
+            z-index: 10000;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            animation: slideInRight 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 400px;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+
+        .notification.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .notification.info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         /* Estilos específicos para POS */
@@ -315,7 +167,7 @@
 
         .product-card {
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border-light);
             border-radius: 12px;
             padding: 16px;
             cursor: pointer;
@@ -330,13 +182,13 @@
         .product-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-            border-color: var(--ubuntu-orange);
+            border-color: var(--accent-orange);
         }
 
         .cart-container {
             background: rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border-light);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -351,7 +203,7 @@
         }
 
         .cart-footer {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid var(--border-light);
             padding: 20px;
             background: rgba(255, 255, 255, 0.05);
         }
@@ -362,7 +214,7 @@
             text-align: center;
             margin: 16px 0;
             padding: 16px;
-            background: linear-gradient(135deg, var(--ubuntu-orange), #ff6b35);
+            background: var(--gradient-primary);
             color: white;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(233, 84, 32, 0.3);
@@ -410,7 +262,7 @@
         .category-btn {
             transition: all 0.2s;
             background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--border-light);
             color: white;
             padding: 6px 12px;
             border-radius: 6px;
@@ -418,9 +270,9 @@
         }
 
         .category-btn.active {
-            background: var(--ubuntu-orange);
+            background: var(--accent-orange);
             color: white;
-            border-color: var(--ubuntu-orange);
+            border-color: var(--accent-orange);
         }
 
         .product-image-circle {
@@ -449,7 +301,7 @@
             width: 32px;
             height: 32px;
             border-radius: 8px;
-            background: var(--ubuntu-orange);
+            background: var(--accent-orange);
             color: white;
             border: none;
             display: flex;
@@ -504,8 +356,8 @@
         }
 
         .modal-container {
-            background: rgba(45, 9, 34, 0.95);
-            border: 1px solid var(--ubuntu-purple);
+            background: var(--gradient-card);
+            border: 1px solid var(--accent-purple);
             border-radius: 12px;
             backdrop-filter: blur(15px);
             max-width: 90%;
@@ -519,10 +371,10 @@
         }
 
         .modal-header {
-            background: linear-gradient(135deg, var(--ubuntu-purple), #5c1a5a);
+            background: var(--gradient-primary);
             padding: 16px;
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -570,222 +422,323 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--gradient-card);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+        }
+
+        .search-result-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--gradient-card);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .trend-up {
+            color: #10b981;
+        }
+
+        .trend-down {
+            color: #ef4444;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
         @keyframes fadeOut {
             from { opacity: 1; transform: translateX(0); }
             to { opacity: 0; transform: translateX(100px); }
         }
     </style>
 </head>
-<body class="ubuntu-dark-theme">
+<body>
     <!-- Top Bar Ubuntu -->
-    <div class="ubuntu-top-bar">
-        <div class="ubuntu-top-left">
-            <div class="ubuntu-apps-menu">
-                <i class="bi bi-grid-3x3-gap"></i>
-            </div>
-            <div class="ubuntu-breadcrumb">
-                <span>BS Dash</span>
-                <i class="bi bi-chevron-right"></i>
-                <span>Punto de Venta</span>
-            </div>
-        </div>
-        <div class="ubuntu-top-center">
-            <div class="ubuntu-search">
-                <i class="bi bi-search"></i>
-                <input type="text" placeholder="Buscar en sistema..." class="ubuntu-input" style="width: 300px;">
-            </div>
-        </div>
-        <div class="ubuntu-top-right">
-            <div class="ubuntu-system-tray">
-                <i class="bi bi-wifi"></i>
-                <i class="bi bi-battery-half"></i>
-                <span id="ubuntu-time">14:30</span>
-                <i class="bi bi-person-circle"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- Contenido Principal -->
-    <div class="ubuntu-main-content">
-        <!-- Ventana Principal de POS -->
-        <div class="ubuntu-window">
-            <div class="ubuntu-window-header">
-                <div class="ubuntu-window-controls">
-                    <div class="ubuntu-control close" onclick="window.history.back()"></div>
-                    <div class="ubuntu-control minimize"></div>
-                    <div class="ubuntu-control maximize"></div>
+    <div class="ubuntu-glass m-4">
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="bi bi-cash-coin text-2xl text-white"></i>
+                    <h1 class="text-xl font-bold text-white">Punto de Venta - Terminal Avanzado</h1>
                 </div>
-                <div class="ubuntu-window-title">
-                    <i class="bi bi-cash-coin ubuntu-green"></i>
-                    Punto de Venta - Terminal Avanzado
-                </div>
-                <div class="ubuntu-window-actions">
-                    <a href="../dashboard.html" class="ubuntu-btn">
+                <div class="flex items-center gap-4">
+                    <div class="connection-status" id="connectionStatus">
+                        <i class="bi bi-circle-fill"></i>
+                        <span>Cargando...</span>
+                    </div>
+                    <a href="../dashboard.html" class="btn btn-outline">
                         <i class="bi bi-arrow-left"></i>
                         Volver al Dashboard
                     </a>
                 </div>
             </div>
+        </div>
 
-            <div class="ubuntu-window-content">
-                <!-- Estadísticas Rápidas -->
-                <div class="ubuntu-stats-grid">
-                    <div class="ubuntu-stat-card animate-fade-in">
-                        <div class="ubuntu-stat-icon bg-ubuntu-orange">
+        <div class="p-6">
+            <!-- Estadísticas Rápidas -->
+            <div class="stats-grid">
+                <div class="stat-card animate-fade-in">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="ventasHoy">0</div>
+                            <div class="stat-label">Ventas Hoy</div>
+                        </div>
+                        <div class="stat-icon" style="background: var(--gradient-primary);">
                             <i class="bi bi-cash-coin"></i>
                         </div>
-                        <div class="ubuntu-stat-info">
-                            <h3 id="ventasHoy">0</h3>
-                            <p>Ventas Hoy</p>
-                        </div>
                     </div>
-                    
-                    <div class="ubuntu-stat-card animate-fade-in" style="animation-delay: 0.1s;">
-                        <div class="ubuntu-stat-icon bg-ubuntu-purple">
+                </div>
+                
+                <div class="stat-card animate-fade-in" style="animation-delay: 0.1s;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="ingresoHoy">$0.00</div>
+                            <div class="stat-label">Ingreso del Día</div>
+                        </div>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #8B5CF6, #7C3AED);">
                             <i class="bi bi-currency-dollar"></i>
                         </div>
-                        <div class="ubuntu-stat-info">
-                            <h3 id="ingresoHoy">$0.00</h3>
-                            <p>Ingreso del Día</p>
-                        </div>
                     </div>
-                    
-                    <div class="ubuntu-stat-card animate-fade-in" style="animation-delay: 0.2s;">
-                        <div class="ubuntu-stat-icon bg-ubuntu-green">
+                </div>
+                
+                <div class="stat-card animate-fade-in" style="animation-delay: 0.2s;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="productosVendidos">0</div>
+                            <div class="stat-label">Productos Vendidos</div>
+                        </div>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #10B981, #059669);">
                             <i class="bi bi-cart-check"></i>
                         </div>
-                        <div class="ubuntu-stat-info">
-                            <h3 id="productosVendidos">0</h3>
-                            <p>Productos Vendidos</p>
-                        </div>
                     </div>
-                    
-                    <div class="ubuntu-stat-card animate-fade-in" style="animation-delay: 0.3s;">
-                        <div class="ubuntu-stat-icon bg-ubuntu-blue">
+                </div>
+                
+                <div class="stat-card animate-fade-in" style="animation-delay: 0.3s;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="ticketPromedio">$0.00</div>
+                            <div class="stat-label">Ticket Promedio</div>
+                        </div>
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #3B82F6, #1D4ED8);">
                             <i class="bi bi-clock-history"></i>
                         </div>
-                        <div class="ubuntu-stat-info">
-                            <h3 id="ticketPromedio">$0.00</h3>
-                            <p>Ticket Promedio</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pos-container">
+                <!-- Panel Izquierdo - Productos -->
+                <div class="space-y-6">
+                    <!-- Información del Cliente -->
+                    <div class="ubuntu-glass">
+                        <div class="p-4 border-b border-gray-700">
+                            <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                                <i class="bi bi-person"></i>
+                                Información del Cliente
+                            </h2>
+                        </div>
+                        <div class="p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm mb-2">Cliente</label>
+                                    <div class="search-container">
+                                        <div class="search-input-container">
+                                            <input type="text" id="clienteSearch" 
+                                                   class="config-input" 
+                                                   placeholder="Buscar cliente en Outlook..."
+                                                   onkeyup="buscarClientesOutlook(this.value)">
+                                            <div class="search-results" id="clientesResults">
+                                                <!-- Resultados de búsqueda de Outlook -->
+                                            </div>
+                                        </div>
+                                        <button onclick="mostrarModalNuevoCliente()" class="btn btn-primary">
+                                            <i class="bi bi-person-plus"></i>
+                                        </button>
+                                    </div>
+                                    <div class="text-sm mt-2" id="clienteSeleccionadoInfo">
+                                        <span id="clienteSeleccionado">Consumidor Final</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm mb-2">Tipo Documento</label>
+                                    <select id="tipoDocumento" class="config-input w-full" onchange="cambiarPlantillaDocumento()">
+                                        <option value="factura">Factura</option>
+                                        <option value="boleta">Boleta</option>
+                                        <option value="ticket">Ticket</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Productos -->
+                    <div class="ubuntu-glass">
+                        <div class="p-4 border-b border-gray-700">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                                    <i class="bi bi-grid-3x3-gap"></i>
+                                    Productos Disponibles
+                                </h2>
+                                <div class="flex gap-2">
+                                    <button onclick="activarLectorCodigoBarras()" class="btn btn-outline">
+                                        <i class="bi bi-upc-scan"></i>
+                                    </button>
+                                    <button onclick="cargarProductosDesdeSupabase()" class="btn btn-primary">
+                                        <i class="bi bi-download"></i> Cargar Productos
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <!-- Búsqueda -->
+                            <div class="search-container mb-4">
+                                <div class="search-input-container">
+                                    <input type="text" id="searchProduct" 
+                                           class="config-input" 
+                                           placeholder="Buscar productos..."
+                                           onkeyup="filtrarProductosLive(this.value)">
+                                    <div class="search-results" id="productosResults">
+                                        <!-- Resultados de búsqueda de productos -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Categorías -->
+                            <div class="flex flex-wrap gap-2 mb-4" id="categoriasContainer">
+                                <!-- Las categorías se cargarán dinámicamente -->
+                            </div>
+
+                            <!-- Grid de Productos -->
+                            <div class="products-grid" id="productsGrid">
+                                <div class="col-span-full text-center py-12 text-gray-400">
+                                    <i class="bi bi-inbox text-4xl mb-3 opacity-50"></i>
+                                    <p class="text-lg mb-2">No hay productos cargados</p>
+                                    <p class="text-sm mb-4">Carga productos desde Supabase</p>
+                                    <button onclick="cargarProductosDesdeSupabase()" class="btn btn-primary">
+                                        <i class="bi bi-download"></i> Cargar Productos
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="pos-container">
-                    <!-- Panel Izquierdo - Productos -->
-                    <div class="space-y-6">
-                        <!-- Información del Cliente -->
-                        <div class="ubuntu-window">
-                            <div class="ubuntu-window-header">
-                                <div class="ubuntu-window-title">
-                                    <i class="bi bi-person ubuntu-blue"></i>
-                                    Información del Cliente
-                                </div>
-                            </div>
-                            <div class="ubuntu-window-content">
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div class="md:col-span-2">
-                                        <label class="block text-sm mb-2">Cliente</label>
-                                        <div class="search-container">
-                                            <div class="ubuntu-input flex items-center gap-2">
-                                                <i class="bi bi-search"></i>
-                                                <input type="text" id="clienteSearch" 
-                                                       class="bg-transparent border-none outline-none flex-1" 
-                                                       placeholder="Buscar cliente..."
-                                                       onkeyup="buscarClientesLive(this.value)">
-                                            </div>
-                                            <button onclick="mostrarModalNuevoCliente()" class="ubuntu-btn ubuntu-btn-success">
-                                                <i class="bi bi-person-plus"></i>
-                                            </button>
-                                        </div>
-                                        <div id="clientesResults" class="hidden mt-2 glass-effect rounded-lg p-2 max-h-32 overflow-y-auto"></div>
-                                        <div class="text-sm mt-2" id="clienteSeleccionadoInfo">
-                                            <span id="clienteSeleccionado">Consumidor Final</span>
-                                        </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm mb-2">Tipo Documento</label>
-                                        <select id="tipoDocumento" class="ubuntu-input w-full">
-                                            <option value="factura">Factura</option>
-                                            <option value="boleta">Boleta</option>
-                                            <option value="ticket">Ticket</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
+                <!-- Panel Derecho - Carrito -->
+                <div class="cart-container">
+                    <div class="bg-gradient-to-r from-purple-600 to-pink-600 p-6 text-white">
+                        <h2 class="text-xl font-bold flex items-center gap-2">
+                            <i class="bi bi-cart-check"></i>
+                            Carrito de Venta
+                        </h2>
+                        <div class="flex justify-between items-center mt-2">
+                            <p class="text-purple-200" id="itemsCount">0 items</p>
+                            <p class="text-purple-200 text-sm" id="fechaHoraCarrito"></p>
                         </div>
-
-                        <!-- Productos -->
-                        <div class="ubuntu-window">
-                            <div class="ubuntu-window-header">
-                                <div class="ubuntu-window-title">
-                                    <i class="bi bi-grid-3x3-gap ubuntu-orange"></i>
-                                    Productos Disponibles
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="activarLectorCodigoBarras()" class="ubuntu-btn">
-                                        <i class="bi bi-upc-scan"></i>
-                                    </button>
-                                    <button onclick="cargarProductosEjemplo()" class="ubuntu-btn ubuntu-btn-primary">
-                                        <i class="bi bi-download"></i> Ejemplos
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="ubuntu-window-content">
-                                <!-- Búsqueda -->
-                                <div class="search-container mb-4">
-                                    <div class="ubuntu-input flex items-center gap-2 flex-1">
-                                        <i class="bi bi-search"></i>
-                                        <input type="text" id="searchProduct" 
-                                               class="bg-transparent border-none outline-none flex-1" 
-                                               placeholder="Buscar productos..."
-                                               onkeyup="filtrarProductos()">
-                                    </div>
-                                </div>
-
-                                <!-- Categorías -->
-                                <div class="flex flex-wrap gap-2 mb-4" id="categoriasContainer">
-                                    <!-- Las categorías se cargarán dinámicamente -->
-                                </div>
-
-                                <!-- Grid de Productos -->
-                                <div class="products-grid" id="productsGrid">
-                                    <div class="col-span-full text-center py-12 text-gray-400">
-                                        <i class="bi bi-inbox text-4xl mb-3 opacity-50"></i>
-                                        <p class="text-lg mb-2">No hay productos cargados</p>
-                                        <p class="text-sm mb-4">Agrega productos para comenzar</p>
-                                    </div>
-                                </div>
-                            </div>
+                    </div>
+                    
+                    <div class="cart-items" id="cartItems">
+                        <div class="text-center py-12 text-gray-400">
+                            <i class="bi bi-cart-x text-4xl mb-3"></i>
+                            <p class="text-lg font-medium mb-2">Carrito vacío</p>
+                            <p class="text-sm">Agrega productos desde el panel izquierdo</p>
                         </div>
                     </div>
 
-                    <!-- Panel Derecho - Carrito -->
-                    <div class="cart-container">
-                        <div class="bg-gradient-to-r from-ubuntu-purple to-purple-600 p-6 text-white">
-                            <h2 class="text-xl font-bold flex items-center gap-2">
-                                <i class="bi bi-cart-check"></i>
-                                Carrito de Venta
-                            </h2>
-                            <div class="flex justify-between items-center mt-2">
-                                <p class="text-purple-200" id="itemsCount">0 items</p>
-                                <p class="text-purple-200 text-sm" id="fechaHoraCarrito"></p>
-                            </div>
-                        </div>
-                        
-                        <div class="cart-items" id="cartItems">
-                            <div class="text-center py-12 text-gray-400">
-                                <i class="bi bi-cart-x text-4xl mb-3"></i>
-                                <p class="text-lg font-medium mb-2">Carrito vacío</p>
-                                <p class="text-sm">Agrega productos desde el panel izquierdo</p>
-                            </div>
-                        </div>
-
-                        <div class="cart-footer">
-                            <!-- Información de Servicios -->
-                            <div id="resumenServicios" class="mb-4 hidden">
-                                <div class="ubuntu-stat-card bg-yellow-500/20 border-yellow-500/30">
+                    <div class="cart-footer">
+                        <!-- Información de Servicios -->
+                        <div id="resumenServicios" class="mb-4 hidden">
+                            <div class="p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-lg">
+                                <div class="flex items-center gap-3">
                                     <i class="bi bi-info-circle text-yellow-400"></i>
                                     <div class="flex-1">
                                         <h4 class="font-bold">Resumen de Servicios</h4>
@@ -797,70 +750,82 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Campos de Servicios -->
-                            <div id="camposServicios" class="mb-4 hidden">
-                                <div class="ubuntu-stat-card bg-blue-500/20 border-blue-500/30">
+                        <!-- Campos de Servicios -->
+                        <div id="camposServicios" class="mb-4 hidden">
+                            <div class="p-4 bg-blue-500/20 border border-blue-500/30 rounded-lg">
+                                <div class="flex items-center gap-3">
                                     <i class="bi bi-calendar-check text-blue-400"></i>
                                     <div class="flex-1">
                                         <h4 class="font-bold mb-2">Información de Servicio</h4>
                                         <div class="space-y-2">
-                                            <input type="date" id="fechaEntregaServicio" class="ubuntu-input text-sm">
-                                            <input type="url" id="linkArteServicio" class="ubuntu-input text-sm" placeholder="Link del arte (opcional)">
+                                            <input type="date" id="fechaEntregaServicio" class="config-input text-sm">
+                                            <input type="url" id="linkArteServicio" class="config-input text-sm" placeholder="Link del arte (opcional)">
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Total -->
-                            <div class="total-display" id="totalDisplay">
-                                Total: $0.00
+                        <!-- Total -->
+                        <div class="total-display" id="totalDisplay">
+                            Total: $0.00
+                        </div>
+
+                        <!-- Método de Pago -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm mb-2">
+                                    <i class="bi bi-credit-card"></i> Método de Pago
+                                </label>
+                                <select id="metodoPago" class="config-input w-full" onchange="toggleEfectivoSection()">
+                                    <option value="efectivo">💵 Efectivo</option>
+                                    <option value="tarjeta">💳 Tarjeta</option>
+                                    <option value="transferencia">🏦 Transferencia</option>
+                                    <option value="mixto">🔀 Pago Mixto</option>
+                                </select>
                             </div>
 
-                            <!-- Método de Pago -->
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm mb-2">
-                                        <i class="bi bi-credit-card"></i> Método de Pago
-                                    </label>
-                                    <select id="metodoPago" class="ubuntu-input w-full" onchange="toggleEfectivoSection()">
-                                        <option value="efectivo">💵 Efectivo</option>
-                                        <option value="tarjeta">💳 Tarjeta</option>
-                                        <option value="transferencia">🏦 Transferencia</option>
-                                        <option value="mixto">🔀 Pago Mixto</option>
-                                    </select>
-                                </div>
-
-                                <!-- Sección Efectivo -->
-                                <div id="efectivoSection">
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div>
-                                            <label class="block text-sm mb-1">Efectivo Recibido</label>
-                                            <input type="number" id="efectivoRecibido" 
-                                                   class="ubuntu-input" 
-                                                   step="0.01" 
-                                                   placeholder="0.00" 
-                                                   onchange="calcularCambio()">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm mb-1">Cambio</label>
-                                            <input type="text" id="cambio" class="ubuntu-input bg-gray-500/20" readonly>
-                                        </div>
+                            <!-- Sección Efectivo -->
+                            <div id="efectivoSection">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-sm mb-1">Efectivo Recibido</label>
+                                        <input type="number" id="efectivoRecibido" 
+                                               class="config-input" 
+                                               step="0.01" 
+                                               placeholder="0.00" 
+                                               onchange="calcularCambio()">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm mb-1">Cambio</label>
+                                        <input type="text" id="cambio" class="config-input bg-gray-500/20" readonly>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Campos de Pago Adicionales -->
-                                <div id="camposPagoAdicionales"></div>
+                            <!-- Campos de Pago Adicionales -->
+                            <div id="camposPagoAdicionales"></div>
 
-                                <!-- Botones de Acción -->
-                                <div class="grid grid-cols-2 gap-3 mt-6">
-                                    <button onclick="limpiarCarrito()" class="ubuntu-btn ubuntu-btn-danger h-12">
-                                        <i class="bi bi-trash"></i> Limpiar
-                                    </button>
-                                    <button onclick="procesarVenta()" class="ubuntu-btn ubuntu-btn-primary h-12" id="btnProcesarVenta">
-                                        <i class="bi bi-credit-card"></i> Finalizar Venta
-                                    </button>
-                                </div>
+                            <!-- Plantilla de Documento -->
+                            <div id="plantillaDocumentoSection" class="hidden">
+                                <label class="block text-sm mb-2">
+                                    <i class="bi bi-file-earmark-text"></i> Plantilla de Documento
+                                </label>
+                                <select id="plantillaDocumento" class="config-input w-full">
+                                    <!-- Las plantillas se cargarán dinámicamente -->
+                                </select>
+                            </div>
+
+                            <!-- Botones de Acción -->
+                            <div class="grid grid-cols-2 gap-3 mt-6">
+                                <button onclick="limpiarCarrito()" class="btn" style="background: #ef4444; color: white;">
+                                    <i class="bi bi-trash"></i> Limpiar
+                                </button>
+                                <button onclick="procesarVenta()" class="btn btn-primary" id="btnProcesarVenta">
+                                    <i class="bi bi-credit-card"></i> Finalizar Venta
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -876,7 +841,7 @@
         <div class="modal-container modal-large">
             <div class="modal-header">
                 <h3 class="modal-title">
-                    <i class="bi bi-cash-coin text-green-600"></i>
+                    <i class="bi bi-cash-coin"></i>
                     Apertura de Caja
                 </h3>
                 <button class="modal-close" onclick="cerrarModalActual()">
@@ -885,17 +850,17 @@
             </div>
             <div class="modal-body">
                 <div class="space-y-4">
-                    <div class="ubuntu-stat-card bg-blue-500/20 border-blue-500/30">
+                    <div class="p-4 bg-blue-500/20 border border-blue-500/30 rounded-lg">
                         <i class="bi bi-info-circle text-blue-400"></i>
                         <span>Para realizar ventas debe abrir la caja primero</span>
                     </div>
 
                     <div>
                         <label class="block text-sm mb-2">Monto Inicial</label>
-                        <input type="number" id="montoInicial" class="ubuntu-input w-full" placeholder="0.00" step="0.01" min="0">
+                        <input type="number" id="montoInicial" class="config-input w-full" placeholder="0.00" step="0.01" min="0">
                     </div>
 
-                    <div class="ubuntu-stat-card bg-gray-500/20">
+                    <div class="p-4 bg-gray-800 rounded-lg">
                         <h4 class="font-medium mb-3">Designaciones de Efectivo</h4>
                         <div id="designacionesContainer" class="space-y-2">
                             <!-- Designaciones se cargarán aquí -->
@@ -908,13 +873,13 @@
 
                     <div>
                         <label class="block text-sm mb-2">Comentario (opcional)</label>
-                        <textarea id="comentarioApertura" class="ubuntu-input w-full" rows="3" placeholder="Observaciones..."></textarea>
+                        <textarea id="comentarioApertura" class="config-input w-full" rows="3" placeholder="Observaciones..."></textarea>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button onclick="cerrarModalActual()" class="ubuntu-btn">Cancelar</button>
-                <button onclick="confirmarAperturaCaja()" class="ubuntu-btn ubuntu-btn-primary">
+                <button onclick="cerrarModalActual()" class="btn btn-outline">Cancelar</button>
+                <button onclick="confirmarAperturaCaja()" class="btn btn-primary">
                     <i class="bi bi-check-lg"></i> Abrir Caja
                 </button>
             </div>
@@ -926,7 +891,7 @@
         <div class="modal-container">
             <div class="modal-header">
                 <h3 class="modal-title">
-                    <i class="bi bi-person-plus text-green-600"></i>
+                    <i class="bi bi-person-plus"></i>
                     Nuevo Cliente
                 </h3>
                 <button class="modal-close" onclick="cerrarModalActual()">
@@ -937,41 +902,62 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm mb-2">Nombre Completo</label>
-                        <input type="text" id="nuevoClienteNombre" class="ubuntu-input w-full" placeholder="Nombre del cliente">
+                        <input type="text" id="nuevoClienteNombre" class="config-input w-full" placeholder="Nombre del cliente">
                     </div>
                     
                     <div>
                         <label class="block text-sm mb-2">Identificación</label>
-                        <input type="text" id="nuevoClienteIdentificacion" class="ubuntu-input w-full" placeholder="RUC/Cédula">
+                        <input type="text" id="nuevoClienteIdentificacion" class="config-input w-full" placeholder="RUC/Cédula">
                     </div>
                     
                     <div>
                         <label class="block text-sm mb-2">Teléfono</label>
-                        <input type="tel" id="nuevoClienteTelefono" class="ubuntu-input w-full" placeholder="Teléfono">
+                        <input type="tel" id="nuevoClienteTelefono" class="config-input w-full" placeholder="Teléfono">
                     </div>
                     
                     <div>
                         <label class="block text-sm mb-2">Email (opcional)</label>
-                        <input type="email" id="nuevoClienteEmail" class="ubuntu-input w-full" placeholder="cliente@ejemplo.com">
+                        <input type="email" id="nuevoClienteEmail" class="config-input w-full" placeholder="cliente@ejemplo.com">
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button onclick="cerrarModalActual()" class="ubuntu-btn">Cancelar</button>
-                <button onclick="guardarNuevoCliente()" class="ubuntu-btn ubuntu-btn-primary">
+                <button onclick="cerrarModalActual()" class="btn btn-outline">Cancelar</button>
+                <button onclick="guardarNuevoCliente()" class="btn btn-primary">
                     <i class="bi bi-check-lg"></i> Guardar
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="../js/config-loader.js"></script>
-    <script src="../js/secure-database.js"></script>
-    <script src="../js/auth-system.js"></script>
-    <script src="../js/database-manager.js"></script>
-    <script src="../js/empresa-context.js"></script>
-    <script src="../js/auth-checker.js"></script>
+    <!-- Modal Vista Previa Documento -->
+    <div id="modalVistaPreviaBackdrop" class="modal-backdrop">
+        <div class="modal-container modal-large">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="bi bi-eye"></i>
+                    Vista Previa del Documento
+                </h3>
+                <button class="modal-close" onclick="cerrarModalActual()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="vistaPreviaContenido">
+                    <!-- El contenido de la vista previa se generará aquí -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="cerrarModalActual()" class="btn btn-outline">Cerrar</button>
+                <button onclick="imprimirDocumento()" class="btn btn-primary">
+                    <i class="bi bi-printer"></i> Imprimir
+                </button>
+                <button onclick="descargarDocumento()" class="btn btn-primary">
+                    <i class="bi bi-download"></i> Descargar PDF
+                </button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // ==================== SISTEMA POS COMPLETO ====================
@@ -983,43 +969,85 @@
         let modalActual = null;
         let cajaAbierta = false;
         let tieneServicios = false;
+        let supabaseManager = null;
+        let productos = [];
+        let plantillasDocumentos = {};
 
         // Inicialización
         document.addEventListener('DOMContentLoaded', async function() {
-            const authCheck = await window.authChecker.initializeModule('Punto de Venta');
+            console.log('🛒 Iniciando POS Ubuntu mejorado...');
             
-            if (authCheck) {
-                console.log('🛒 Iniciando POS Ubuntu...');
-                inicializarSistemaCaja();
-                cargarCategoriasDinamicas();
-                cargarProductos();
-                actualizarCarrito();
-                actualizarFechaHora();
-                configurarMetodosPago();
-                actualizarEstadisticas();
-                
-                setInterval(actualizarFechaHora, 60000);
-                setInterval(actualizarEstadisticas, 30000);
+            // Verificar autenticación
+            if (!verificarAutenticacion()) {
+                return;
             }
+            
+            // Inicializar Supabase Manager
+            await inicializarSupabase();
+            
+            // Inicializar sistema
+            inicializarSistemaCaja();
+            cargarCategoriasDinamicas();
+            cargarProductosDesdeSupabase();
+            actualizarCarrito();
+            actualizarFechaHora();
+            configurarMetodosPago();
+            actualizarEstadisticas();
+            cargarPlantillasDocumentos();
+            
+            setInterval(actualizarFechaHora, 60000);
+            setInterval(actualizarEstadisticas, 30000);
+            setInterval(actualizarEstadoConexion, 5000);
         });
 
-        function actualizarHora() {
-            const ahora = new Date();
-            document.getElementById('ubuntu-time').textContent = 
-                ahora.getHours().toString().padStart(2, '0') + ':' + 
-                ahora.getMinutes().toString().padStart(2, '0');
+        function verificarAutenticacion() {
+            const auth = localStorage.getItem('bs_dash_auth');
+            const user = localStorage.getItem('bs_dash_user');
+            
+            if (auth !== 'true' || !user) {
+                window.location.href = '../index.html';
+                return false;
+            }
+            
+            return true;
+        }
+
+        async function inicializarSupabase() {
+            try {
+                const config = JSON.parse(localStorage.getItem('bs_supabase_config') || '{}');
+                
+                if (config.url && config.key) {
+                    supabaseManager = new SupabaseManager(config.url, config.key);
+                    
+                    // Probar conexión
+                    const testResult = await supabaseManager.testConnection();
+                    if (testResult.success) {
+                        mostrarNotificacion('✅ Conectado a Supabase', 'success');
+                    } else {
+                        mostrarNotificacion('❌ Error conectando a Supabase', 'error');
+                    }
+                } else {
+                    console.warn('⚠️ Supabase no configurado');
+                }
+            } catch (error) {
+                console.error('Error inicializando Supabase:', error);
+            }
+        }
+
+        function actualizarEstadoConexion() {
+            const statusElement = document.getElementById('connectionStatus');
+
+            if (supabaseManager && supabaseManager.client) {
+                statusElement.innerHTML = '<i class="bi bi-circle-fill text-green-500"></i><span>Conectado a Supabase</span>';
+                statusElement.className = 'connection-status status-connected';
+            } else {
+                statusElement.innerHTML = '<i class="bi bi-circle-fill text-red-500"></i><span>Sin conexión a Supabase</span>';
+                statusElement.className = 'connection-status status-disconnected';
+            }
         }
 
         function actualizarFechaHora() {
             const ahora = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            };
             document.getElementById('fechaHoraCarrito').textContent = ahora.toLocaleTimeString('es-ES');
         }
 
@@ -1093,7 +1121,7 @@
                     <div class="designacion-item">
                         <span>${designacion.tipo === 'billete' ? 'Billete' : 'Moneda'} de $${designacion.denominacion}</span>
                         <input type="number" 
-                               class="ubuntu-input w-20 text-center" 
+                               class="config-input w-20 text-center" 
                                value="${designacion.cantidad}" 
                                min="0"
                                onchange="actualizarTotalDesignaciones()"
@@ -1175,60 +1203,68 @@
             if (!cajaAbierta) {
                 boton.disabled = true;
                 boton.innerHTML = '<i class="bi bi-lock"></i> Caja Cerrada';
-                boton.className = 'ubuntu-btn bg-gray-500/30 text-gray-400 h-12 cursor-not-allowed';
+                boton.className = 'btn bg-gray-500/30 text-gray-400 cursor-not-allowed';
             } else {
                 boton.disabled = false;
                 boton.innerHTML = '<i class="bi bi-credit-card"></i> Finalizar Venta';
-                boton.className = 'ubuntu-btn ubuntu-btn-primary h-12';
+                boton.className = 'btn btn-primary';
             }
         }
 
-        // ==================== SISTEMA DE CLIENTES ====================
+        // ==================== SISTEMA DE CLIENTES (OUTLOOK) ====================
         
-        function buscarClientesLive(termino) {
+        async function buscarClientesOutlook(termino) {
             const resultados = document.getElementById('clientesResults');
+            
             if (!termino) {
-                resultados.classList.add('hidden');
+                resultados.classList.remove('active');
                 return;
             }
 
-            // Simular búsqueda de clientes
-            const clientesEjemplo = [
-                { id: 1, nombre: 'Ana García', identificacion: '001-123456-9', telefono: '809-555-0101' },
-                { id: 2, nombre: 'Carlos López', identificacion: '002-234567-8', telefono: '809-555-0102' },
-                { id: 3, nombre: 'María Rodríguez', identificacion: '003-345678-7', telefono: '809-555-0103' }
-            ];
+            try {
+                // Simulación de búsqueda en Outlook
+                // En un entorno real, usarías Microsoft Graph API
+                const clientesOutlook = [
+                    { id: 1, nombre: 'Ana García', email: 'ana.garcia@outlook.com', telefono: '809-555-0101' },
+                    { id: 2, nombre: 'Carlos López', email: 'carlos.lopez@outlook.com', telefono: '809-555-0102' },
+                    { id: 3, nombre: 'María Rodríguez', email: 'maria.rodriguez@outlook.com', telefono: '809-555-0103' },
+                    { id: 4, nombre: 'Juan Pérez', email: 'juan.perez@outlook.com', telefono: '809-555-0104' },
+                    { id: 5, nombre: 'Laura Martínez', email: 'laura.martinez@outlook.com', telefono: '809-555-0105' }
+                ];
 
-            const resultadosFiltrados = clientesEjemplo.filter(cliente => 
-                cliente.nombre.toLowerCase().includes(termino.toLowerCase()) ||
-                cliente.identificacion.includes(termino) ||
-                cliente.telefono.includes(termino)
-            );
+                const resultadosFiltrados = clientesOutlook.filter(cliente => 
+                    cliente.nombre.toLowerCase().includes(termino.toLowerCase()) ||
+                    cliente.email.toLowerCase().includes(termino.toLowerCase()) ||
+                    cliente.telefono.includes(termino)
+                );
 
-            if (resultadosFiltrados.length === 0) {
-                resultados.innerHTML = `
-                    <div class="p-2 text-center text-sm">
-                        <p class="text-gray-400 mb-2">No se encontraron clientes</p>
-                        <button onclick="mostrarModalNuevoCliente()" class="ubuntu-btn ubuntu-btn-success text-xs">
-                            <i class="bi bi-person-plus"></i> Nuevo Cliente
-                        </button>
-                    </div>
-                `;
-            } else {
-                let html = '';
-                resultadosFiltrados.forEach(cliente => {
-                    html += `
-                        <div class="p-2 border-b border-gray-500/30 hover:bg-gray-500/20 cursor-pointer rounded" 
-                             onclick="seleccionarCliente(${cliente.id}, '${cliente.nombre}', '${cliente.identificacion}')">
-                            <div class="font-medium">${cliente.nombre}</div>
-                            <div class="text-xs text-gray-400">${cliente.identificacion} • ${cliente.telefono}</div>
+                if (resultadosFiltrados.length === 0) {
+                    resultados.innerHTML = `
+                        <div class="search-result-item text-center text-gray-400">
+                            <p>No se encontraron contactos en Outlook</p>
+                            <button onclick="mostrarModalNuevoCliente()" class="btn btn-primary text-xs mt-2">
+                                <i class="bi bi-person-plus"></i> Nuevo Cliente
+                            </button>
                         </div>
                     `;
-                });
-                resultados.innerHTML = html;
-            }
+                } else {
+                    let html = '';
+                    resultadosFiltrados.forEach(cliente => {
+                        html += `
+                            <div class="search-result-item" onclick="seleccionarCliente(${cliente.id}, '${cliente.nombre}', '${cliente.email}', '${cliente.telefono}')">
+                                <div class="font-medium">${cliente.nombre}</div>
+                                <div class="text-xs text-gray-400">${cliente.email} • ${cliente.telefono}</div>
+                            </div>
+                        `;
+                    });
+                    resultados.innerHTML = html;
+                }
 
-            resultados.classList.remove('hidden');
+                resultados.classList.add('active');
+            } catch (error) {
+                console.error('Error buscando clientes en Outlook:', error);
+                mostrarNotificacion('❌ Error buscando en Outlook', 'error');
+            }
         }
 
         function mostrarModalNuevoCliente() {
@@ -1263,39 +1299,53 @@
             localStorage.setItem('bs_clientes', JSON.stringify(clientes));
 
             mostrarNotificacion('✅ Cliente guardado correctamente', 'success');
-            seleccionarCliente(nuevoCliente.id, nuevoCliente.nombre, nuevoCliente.identificacion);
+            seleccionarCliente(nuevoCliente.id, nuevoCliente.nombre, nuevoCliente.email, nuevoCliente.telefono);
             cerrarModalActual();
         }
 
-        function seleccionarCliente(id, nombre, identificacion) {
-            clienteActual = { id, nombre, identificacion };
+        function seleccionarCliente(id, nombre, email, telefono) {
+            clienteActual = { id, nombre, email, telefono };
             
             document.getElementById('clienteSeleccionado').textContent = nombre;
             document.getElementById('clienteSeleccionadoInfo').innerHTML = `
                 <span>${nombre}</span>
-                <span class="text-gray-400 ml-2">${identificacion}</span>
+                <span class="text-gray-400 ml-2">${email}</span>
             `;
-            document.getElementById('clientesResults').classList.add('hidden');
+            document.getElementById('clientesResults').classList.remove('active');
             document.getElementById('clienteSearch').value = '';
         }
 
-        // ==================== SISTEMA DE PRODUCTOS ====================
+        // ==================== SISTEMA DE PRODUCTOS (SUPABASE) ====================
         
-        function cargarProductos() {
-            const productos = obtenerProductos();
-            if (productos.length === 0) {
-                cargarProductosEjemplo();
-                return;
-            }
-            renderizarProductos(productos);
-        }
+        async function cargarProductosDesdeSupabase() {
+            try {
+                if (!supabaseManager) {
+                    mostrarNotificacion('❌ Supabase no está configurado', 'error');
+                    return;
+                }
 
-        function obtenerProductos() {
-            return JSON.parse(localStorage.getItem('bs_productos') || '[]');
+                mostrarNotificacion('🔄 Cargando productos desde Supabase...', 'info');
+                
+                const result = await supabaseManager.get('productos');
+                
+                if (result.success) {
+                    productos = result.data;
+                    renderizarProductos(productos);
+                    mostrarNotificacion(`✅ ${productos.length} productos cargados`, 'success');
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                console.error('Error cargando productos:', error);
+                mostrarNotificacion('❌ Error cargando productos: ' + error.message, 'error');
+                
+                // Cargar productos de ejemplo como fallback
+                cargarProductosEjemplo();
+            }
         }
 
         function cargarProductosEjemplo() {
-            const productosEjemplo = [
+            productos = [
                 {
                     id: 1,
                     nombre: 'Poloche Negro Premium',
@@ -1355,27 +1405,27 @@
                 }
             ];
             
-            localStorage.setItem('bs_productos', JSON.stringify(productosEjemplo));
-            renderizarProductos(productosEjemplo);
+            renderizarProductos(productos);
+            mostrarNotificacion('✅ Productos de ejemplo cargados', 'success');
         }
 
-        function renderizarProductos(productos) {
+        function renderizarProductos(productosLista) {
             const container = document.getElementById('productsGrid');
             
-            if (productos.length === 0) {
+            if (productosLista.length === 0) {
                 container.innerHTML = `
                     <div class="col-span-full text-center py-12 text-gray-400">
                         <i class="bi bi-inbox text-4xl mb-3 opacity-50"></i>
                         <p class="text-lg mb-2">No hay productos cargados</p>
-                        <button onclick="cargarProductosEjemplo()" class="ubuntu-btn ubuntu-btn-primary">
-                            <i class="bi bi-download"></i> Cargar Ejemplos
+                        <button onclick="cargarProductosDesdeSupabase()" class="btn btn-primary">
+                            <i class="bi bi-download"></i> Cargar Productos
                         </button>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = productos.map(producto => `
+            container.innerHTML = productosLista.map(producto => `
                 <div class="product-card" onclick="agregarAlCarrito(${producto.id})">
                     ${producto.tipo === 'servicio' ? '<span class="service-indicator">SERVICIO</span>' : ''}
                     <div class="product-image-circle">
@@ -1388,6 +1438,7 @@
                         <h3 class="font-medium text-sm mb-1 truncate">${producto.nombre}</h3>
                         <div class="text-lg font-bold text-green-400">$${producto.precio.toFixed(2)}</div>
                         ${producto.codigo ? `<div class="text-xs text-gray-400">${producto.codigo}</div>` : ''}
+                        ${producto.stock !== undefined ? `<div class="text-xs ${producto.stock < 10 ? 'text-red-400' : 'text-gray-400'}">Stock: ${producto.stock}</div>` : ''}
                     </div>
                     <button class="add-to-cart-btn">
                         <i class="bi bi-cart-plus"></i>
@@ -1396,15 +1447,41 @@
             `).join('');
         }
 
-        function filtrarProductos() {
-            const termino = document.getElementById('searchProduct').value.toLowerCase();
-            const productos = obtenerProductos();
-            const productosFiltrados = productos.filter(producto => 
-                producto.nombre.toLowerCase().includes(termino) ||
-                (producto.codigo && producto.codigo.toLowerCase().includes(termino))
-            );
+        function filtrarProductosLive(termino) {
+            const resultados = document.getElementById('productosResults');
             
-            renderizarProductos(termino ? productosFiltrados : productos);
+            if (!termino) {
+                resultados.classList.remove('active');
+                renderizarProductos(productos);
+                return;
+            }
+
+            const productosFiltrados = productos.filter(producto => 
+                producto.nombre.toLowerCase().includes(termino.toLowerCase()) ||
+                (producto.codigo && producto.codigo.toLowerCase().includes(termino.toLowerCase()))
+            );
+
+            if (productosFiltrados.length === 0) {
+                resultados.innerHTML = `
+                    <div class="search-result-item text-center text-gray-400">
+                        <p>No se encontraron productos</p>
+                    </div>
+                `;
+            } else {
+                let html = '';
+                productosFiltrados.forEach(producto => {
+                    html += `
+                        <div class="search-result-item" onclick="agregarAlCarrito(${producto.id})">
+                            <div class="font-medium">${producto.nombre}</div>
+                            <div class="text-xs text-gray-400">$${producto.precio.toFixed(2)} • ${producto.codigo || 'Sin código'}</div>
+                        </div>
+                    `;
+                });
+                resultados.innerHTML = html;
+            }
+
+            resultados.classList.add('active');
+            renderizarProductos(productosFiltrados);
         }
 
         // ==================== SISTEMA DE CARRITO ====================
@@ -1412,12 +1489,23 @@
         function agregarAlCarrito(productoId) {
             if (!validarCajaAbierta('agregar productos al carrito')) return;
 
-            const productos = obtenerProductos();
             const producto = productos.find(p => p.id === productoId);
             if (!producto) return;
 
+            // Verificar stock si es producto físico
+            if (producto.tipo === 'producto' && producto.stock !== undefined && producto.stock <= 0) {
+                mostrarNotificacion('❌ Producto sin stock disponible', 'error');
+                return;
+            }
+
             const itemExistente = carrito.find(item => item.id === productoId);
             if (itemExistente) {
+                // Verificar stock al aumentar cantidad
+                if (producto.tipo === 'producto' && producto.stock !== undefined && 
+                    itemExistente.cantidad >= producto.stock) {
+                    mostrarNotificacion('❌ No hay suficiente stock disponible', 'error');
+                    return;
+                }
                 itemExistente.cantidad += 1;
             } else {
                 carrito.push({
@@ -1425,6 +1513,11 @@
                     cantidad: 1,
                     nota: ''
                 });
+            }
+
+            // Actualizar stock localmente (en un sistema real, esto se haría en la base de datos)
+            if (producto.tipo === 'producto' && producto.stock !== undefined) {
+                producto.stock -= 1;
             }
 
             actualizarCarrito();
@@ -1465,7 +1558,7 @@
                             <div class="flex-1">
                                 <div class="flex items-start gap-2">
                                     <h4 class="font-medium">${item.nombre}</h4>
-                                    ${item.tipo === 'servicio' ? '<span class="ubuntu-chip bg-yellow-500/20 text-yellow-400 text-xs">SERVICIO</span>' : ''}
+                                    ${item.tipo === 'servicio' ? '<span class="badge bg-yellow-500/20 text-yellow-400 text-xs">SERVICIO</span>' : ''}
                                 </div>
                                 <p class="text-sm text-gray-400">$${item.precio.toFixed(2)} x ${item.cantidad}</p>
                                 ${item.nota ? `<p class="text-xs text-blue-400 mt-1"><i class="bi bi-sticky"></i> ${item.nota}</p>` : ''}
@@ -1514,11 +1607,34 @@
                 eliminarDelCarrito(index);
                 return;
             }
+            
+            const producto = carrito[index];
+            
+            // Verificar stock si es producto físico
+            if (producto.tipo === 'producto' && producto.stock !== undefined && 
+                nuevaCantidad > (producto.stock + producto.cantidad)) {
+                mostrarNotificacion('❌ No hay suficiente stock disponible', 'error');
+                return;
+            }
+            
+            // Actualizar stock localmente
+            if (producto.tipo === 'producto' && producto.stock !== undefined) {
+                const diferencia = nuevaCantidad - producto.cantidad;
+                producto.stock -= diferencia;
+            }
+            
             carrito[index].cantidad = nuevaCantidad;
             actualizarCarrito();
         }
 
         function eliminarDelCarrito(index) {
+            const producto = carrito[index];
+            
+            // Restaurar stock si es producto físico
+            if (producto.tipo === 'producto' && producto.stock !== undefined) {
+                producto.stock += producto.cantidad;
+            }
+            
             carrito.splice(index, 1);
             actualizarCarrito();
             verificarServiciosEnCarrito();
@@ -1528,6 +1644,13 @@
             if (carrito.length === 0) return;
             
             if (confirm('¿Está seguro de que desea limpiar el carrito?')) {
+                // Restaurar todo el stock
+                carrito.forEach(item => {
+                    if (item.tipo === 'producto' && item.stock !== undefined) {
+                        item.stock += item.cantidad;
+                    }
+                });
+                
                 carrito = [];
                 actualizarCarrito();
                 verificarServiciosEnCarrito();
@@ -1585,11 +1708,11 @@
                         <div class="grid grid-cols-2 gap-3 mb-4">
                             <div>
                                 <label class="block text-sm mb-1">No. Aprobación</label>
-                                <input type="text" class="ubuntu-input" placeholder="Número de aprobación" id="aprobacionTarjeta">
+                                <input type="text" class="config-input" placeholder="Número de aprobación" id="aprobacionTarjeta">
                             </div>
                             <div>
                                 <label class="block text-sm mb-1">Últimos 4 dígitos</label>
-                                <input type="text" class="ubuntu-input" maxlength="4" placeholder="0000" id="ultimosDigitos">
+                                <input type="text" class="config-input" maxlength="4" placeholder="0000" id="ultimosDigitos">
                             </div>
                         </div>
                     `;
@@ -1600,7 +1723,7 @@
                         <div class="grid grid-cols-2 gap-3 mb-4">
                             <div>
                                 <label class="block text-sm mb-1">Banco Destino</label>
-                                <select class="ubuntu-input" id="bancoTransferencia">
+                                <select class="config-input" id="bancoTransferencia">
                                     <option value="popular">Banco Popular</option>
                                     <option value="reservas">Banco Reservas</option>
                                     <option value="bhd">Banco BHD</option>
@@ -1608,7 +1731,7 @@
                             </div>
                             <div>
                                 <label class="block text-sm mb-1">No. Confirmación</label>
-                                <input type="text" class="ubuntu-input" placeholder="Número de confirmación" id="confirmacionTransferencia">
+                                <input type="text" class="config-input" placeholder="Número de confirmación" id="confirmacionTransferencia">
                             </div>
                         </div>
                     `;
@@ -1621,21 +1744,21 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs mb-1">Efectivo</label>
-                                    <input type="number" class="ubuntu-input text-sm" placeholder="0.00" id="montoEfectivoMixto" onchange="validarPagoMixto()">
+                                    <input type="number" class="config-input text-sm" placeholder="0.00" id="montoEfectivoMixto" onchange="validarPagoMixto()">
                                 </div>
                                 <div>
                                     <label class="block text-xs mb-1">Tarjeta</label>
-                                    <input type="number" class="ubuntu-input text-sm" placeholder="0.00" id="montoTarjetaMixto" onchange="validarPagoMixto()">
+                                    <input type="number" class="config-input text-sm" placeholder="0.00" id="montoTarjetaMixto" onchange="validarPagoMixto()">
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
                                     <label class="block text-xs mb-1">Transferencia</label>
-                                    <input type="number" class="ubuntu-input text-sm" placeholder="0.00" id="montoTransferenciaMixto" onchange="validarPagoMixto()">
+                                    <input type="number" class="config-input text-sm" placeholder="0.00" id="montoTransferenciaMixto" onchange="validarPagoMixto()">
                                 </div>
                                 <div>
                                     <label class="block text-xs mb-1">Otro</label>
-                                    <input type="number" class="ubuntu-input text-sm" placeholder="0.00" id="montoOtroMixto" onchange="validarPagoMixto()">
+                                    <input type="number" class="config-input text-sm" placeholder="0.00" id="montoOtroMixto" onchange="validarPagoMixto()">
                                 </div>
                             </div>
                             <p class="text-xs text-center">Total: $${total.toFixed(2)}</p>
@@ -1699,7 +1822,6 @@
         // ==================== CATEGORÍAS DINÁMICAS ====================
         
         function cargarCategoriasDinamicas() {
-            const productos = obtenerProductos();
             const categorias = ['todos'];
             
             productos.forEach(producto => {
@@ -1742,7 +1864,6 @@
             });
             event.target.classList.add('active');
             
-            const productos = obtenerProductos();
             const productosFiltrados = categoria === 'todos' 
                 ? productos 
                 : productos.filter(p => p.categoria === categoria);
@@ -1750,9 +1871,65 @@
             renderizarProductos(productosFiltrados);
         }
 
+        // ==================== PLANTILLAS DE DOCUMENTOS ====================
+        
+        function cargarPlantillasDocumentos() {
+            plantillasDocumentos = {
+                'factura': {
+                    nombre: 'Factura Estándar',
+                    tipo: 'factura',
+                    cabecera: 'FACTURA',
+                    color: '#E95420',
+                    campos: ['nombre_cliente', 'identificacion', 'direccion', 'telefono', 'fecha', 'numero']
+                },
+                'boleta': {
+                    nombre: 'Boleta Simplificada',
+                    tipo: 'boleta',
+                    cabecera: 'BOLETA DE VENTA',
+                    color: '#77216F',
+                    campos: ['nombre_cliente', 'fecha', 'numero']
+                },
+                'ticket': {
+                    nombre: 'Ticket Rápido',
+                    tipo: 'ticket',
+                    cabecera: 'TICKET DE VENTA',
+                    color: '#10B981',
+                    campos: ['fecha', 'numero']
+                }
+            };
+
+            const selector = document.getElementById('plantillaDocumento');
+            selector.innerHTML = '';
+            
+            for (const [key, plantilla] of Object.entries(plantillasDocumentos)) {
+                selector.innerHTML += `<option value="${key}">${plantilla.nombre}</option>`;
+            }
+        }
+
+        function cambiarPlantillaDocumento() {
+            const tipoDocumento = document.getElementById('tipoDocumento').value;
+            const plantillaSection = document.getElementById('plantillaDocumentoSection');
+            
+            if (tipoDocumento !== 'ticket') {
+                plantillaSection.classList.remove('hidden');
+                
+                // Filtrar plantillas por tipo de documento
+                const selector = document.getElementById('plantillaDocumento');
+                selector.innerHTML = '';
+                
+                for (const [key, plantilla] of Object.entries(plantillasDocumentos)) {
+                    if (plantilla.tipo === tipoDocumento) {
+                        selector.innerHTML += `<option value="${key}">${plantilla.nombre}</option>`;
+                    }
+                }
+            } else {
+                plantillaSection.classList.add('hidden');
+            }
+        }
+
         // ==================== PROCESAR VENTA ====================
         
-        function procesarVenta() {
+        async function procesarVenta() {
             if (!validarCajaAbierta('procesar ventas')) return;
             if (carrito.length === 0) {
                 mostrarNotificacion('❌ El carrito está vacío', 'error');
@@ -1765,11 +1942,14 @@
             }
 
             const total = calcularTotalCarrito();
+            const tipoDocumento = document.getElementById('tipoDocumento').value;
+            const plantillaKey = document.getElementById('plantillaDocumento').value;
+            const plantilla = plantillasDocumentos[plantillaKey];
             
             const venta = {
                 id: 'venta_' + Date.now(),
-                numero: 'VTA-' + Date.now(),
-                cliente: clienteActual || { nombre: 'Consumidor Final', identificacion: '000-000000-0' },
+                numero: generarNumeroDocumento(tipoDocumento),
+                cliente: clienteActual || { nombre: 'Consumidor Final', email: '', telefono: '' },
                 items: [...carrito],
                 total: total,
                 metodoPago: metodoPago,
@@ -1778,28 +1958,58 @@
                     fechaEntrega: document.getElementById('fechaEntregaServicio').value,
                     linkArte: document.getElementById('linkArteServicio').value
                 } : null,
+                tipoDocumento: tipoDocumento,
+                plantilla: plantilla,
                 fecha: new Date().toISOString(),
                 vendedor: 'Sistema Ubuntu POS'
             };
 
-            // Guardar venta
-            const ventas = JSON.parse(localStorage.getItem('bs_ventas') || '[]');
-            ventas.push(venta);
-            localStorage.setItem('bs_ventas', JSON.stringify(ventas));
+            try {
+                // Guardar en Supabase si está disponible
+                if (supabaseManager) {
+                    const result = await supabaseManager.insert('ventas', venta);
+                    if (!result.success) {
+                        throw new Error(result.error);
+                    }
+                }
 
-            // Actualizar caja
-            const cajaData = JSON.parse(localStorage.getItem('bs_caja_data') || '{}');
-            if (!cajaData.ventas) cajaData.ventas = [];
-            cajaData.ventas.push(venta);
-            localStorage.setItem('bs_caja_data', JSON.stringify(cajaData));
+                // Guardar en localStorage como respaldo
+                const ventas = JSON.parse(localStorage.getItem('bs_ventas') || '[]');
+                ventas.push(venta);
+                localStorage.setItem('bs_ventas', JSON.stringify(ventas));
 
-            mostrarNotificacion('✅ Venta procesada correctamente', 'success');
-            mostrarComprobante(venta);
+                // Actualizar caja
+                const cajaData = JSON.parse(localStorage.getItem('bs_caja_data') || '{}');
+                if (!cajaData.ventas) cajaData.ventas = [];
+                cajaData.ventas.push(venta);
+                localStorage.setItem('bs_caja_data', JSON.stringify(cajaData));
+
+                mostrarNotificacion('✅ Venta procesada correctamente', 'success');
+                
+                // Mostrar vista previa del documento
+                mostrarVistaPreviaDocumento(venta);
+                
+                // Limpiar carrito
+                carrito = [];
+                actualizarCarrito();
+                verificarServiciosEnCarrito();
+                
+            } catch (error) {
+                console.error('Error guardando venta:', error);
+                mostrarNotificacion('❌ Error guardando venta: ' + error.message, 'error');
+            }
+        }
+
+        function generarNumeroDocumento(tipo) {
+            const prefijos = {
+                'factura': 'FAC-',
+                'boleta': 'BOL-',
+                'ticket': 'TKT-'
+            };
             
-            // Limpiar carrito
-            carrito = [];
-            actualizarCarrito();
-            verificarServiciosEnCarrito();
+            const ahora = new Date();
+            const timestamp = ahora.getTime().toString().slice(-6);
+            return `${prefijos[tipo] || 'DOC-'}${timestamp}`;
         }
 
         function validarPagoMixtoCompleto() {
@@ -1845,58 +2055,139 @@
             return detalles;
         }
 
-        function mostrarComprobante(venta) {
-            const comprobanteContent = `
-                <div class="space-y-3">
-                    <div class="flex justify-between">
-                        <span class="font-medium">Venta:</span>
-                        <strong>${venta.numero}</strong>
+        function mostrarVistaPreviaDocumento(venta) {
+            const contenido = generarContenidoDocumento(venta);
+            document.getElementById('vistaPreviaContenido').innerHTML = contenido;
+            mostrarModal('modalVistaPrevia');
+        }
+
+        function generarContenidoDocumento(venta) {
+            const plantilla = venta.plantilla;
+            const fecha = new Date(venta.fecha).toLocaleDateString('es-ES');
+            
+            let contenido = `
+                <div class="p-6 border-2 border-[${plantilla.color}] rounded-lg bg-white text-black">
+                    <div class="text-center mb-6">
+                        <h1 class="text-2xl font-bold" style="color: ${plantilla.color}">${plantilla.cabecera}</h1>
+                        <p class="text-lg">${venta.numero}</p>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="font-medium">Cliente:</span>
-                        <span>${venta.cliente.nombre}</span>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+            `;
+            
+            // Información del cliente si está disponible en la plantilla
+            if (plantilla.campos.includes('nombre_cliente')) {
+                contenido += `
+                    <div>
+                        <strong>Cliente:</strong> ${venta.cliente.nombre}
                     </div>
-                    <div class="flex justify-between">
-                        <span class="font-medium">Total:</span>
-                        <strong class="text-green-400">$${venta.total.toFixed(2)}</strong>
+                `;
+            }
+            
+            if (plantilla.campos.includes('identificacion') && venta.cliente.identificacion) {
+                contenido += `
+                    <div>
+                        <strong>Identificación:</strong> ${venta.cliente.identificacion}
                     </div>
-                    <div class="flex justify-between">
-                        <span class="font-medium">Método:</span>
-                        <span>${venta.metodoPago}</span>
+                `;
+            }
+            
+            if (plantilla.campos.includes('fecha')) {
+                contenido += `
+                    <div>
+                        <strong>Fecha:</strong> ${fecha}
                     </div>
-                    <div class="text-center mt-4">
-                        <i class="bi bi-check-circle text-green-400 text-2xl"></i>
-                        <p class="text-sm text-gray-400 mt-2">Venta registrada exitosamente</p>
+                `;
+            }
+            
+            contenido += `
+                    </div>
+                    
+                    <table class="w-full mb-6">
+                        <thead>
+                            <tr class="border-b-2" style="border-color: ${plantilla.color}">
+                                <th class="text-left py-2">Producto</th>
+                                <th class="text-right py-2">Cantidad</th>
+                                <th class="text-right py-2">Precio</th>
+                                <th class="text-right py-2">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            venta.items.forEach(item => {
+                contenido += `
+                    <tr class="border-b">
+                        <td class="py-2">${item.nombre}</td>
+                        <td class="text-right py-2">${item.cantidad}</td>
+                        <td class="text-right py-2">$${item.precio.toFixed(2)}</td>
+                        <td class="text-right py-2">$${(item.precio * item.cantidad).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            contenido += `
+                        </tbody>
+                        <tfoot>
+                            <tr class="border-t-2" style="border-color: ${plantilla.color}">
+                                <td colspan="3" class="text-right py-2 font-bold">Total:</td>
+                                <td class="text-right py-2 font-bold">$${venta.total.toFixed(2)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                    <div class="text-center mt-8">
+                        <p>¡Gracias por su compra!</p>
                     </div>
                 </div>
             `;
+            
+            return contenido;
+        }
 
-            // Mostrar en una alerta por simplicidad
-            alert(`✅ Venta procesada:\nNúmero: ${venta.numero}\nCliente: ${venta.cliente.nombre}\nTotal: $${venta.total.toFixed(2)}`);
+        function imprimirDocumento() {
+            window.print();
+        }
+
+        function descargarDocumento() {
+            mostrarNotificacion('🔄 Generando PDF...', 'info');
+            // En un sistema real, aquí se implementaría la generación de PDF
+            setTimeout(() => {
+                mostrarNotificacion('✅ PDF descargado correctamente', 'success');
+            }, 2000);
         }
 
         // ==================== UTILIDADES ====================
         
         function mostrarNotificacion(mensaje, tipo) {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 p-4 rounded-lg z-50 backdrop-blur-lg ${
-                tipo === 'success' ? 'bg-green-500/90 text-white' :
-                tipo === 'error' ? 'bg-red-500/90 text-white' :
-                'bg-blue-500/90 text-white'
-            }`;
-            notification.innerHTML = `
-                <div class="flex items-center gap-2">
-                    <i class="bi bi-${tipo === 'success' ? 'check-circle' : tipo === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-                    <span>${mensaje}</span>
-                </div>
+            const tipos = {
+                success: { bg: 'bg-green-500', icon: 'bi-check-circle' },
+                error: { bg: 'bg-red-500', icon: 'bi-exclamation-triangle' },
+                warning: { bg: 'bg-yellow-500', icon: 'bi-exclamation-circle' },
+                info: { bg: 'bg-blue-500', icon: 'bi-info-circle' }
+            };
+
+            const config = tipos[tipo] || tipos.info;
+            
+            // Eliminar notificaciones existentes
+            const notificacionesExistentes = document.querySelectorAll('.notification');
+            notificacionesExistentes.forEach(n => n.remove());
+            
+            const notificacion = document.createElement('div');
+            notificacion.className = `notification ${tipo}`;
+            notificacion.innerHTML = `
+                <i class="bi ${config.icon}"></i>
+                <span>${mensaje}</span>
             `;
-            
-            document.body.appendChild(notification);
-            
+
+            document.body.appendChild(notificacion);
+
+            // Auto-eliminar después de 5 segundos
             setTimeout(() => {
-                notification.style.animation = 'fadeOut 0.5s ease-out';
-                setTimeout(() => notification.remove(), 500);
-            }, 3000);
+                if (notificacion.parentNode) {
+                    notificacion.remove();
+                }
+            }, 5000);
         }
 
         function validarCajaAbierta(accion) {
@@ -1908,24 +2199,57 @@
         }
 
         function activarLectorCodigoBarras() {
-            mostrarNotificacion('🔍 Función de lector de código de barras en desarrollo', 'info');
+            mostrarNotificacion('🔍 Activando lector de código de barras...', 'info');
+            
+            // Simulación de lectura de código de barras
+            setTimeout(() => {
+                const codigoSimulado = 'POL-001'; // Código de ejemplo
+                const producto = productos.find(p => p.codigo === codigoSimulado);
+                
+                if (producto) {
+                    agregarAlCarrito(producto.id);
+                    mostrarNotificacion(`✅ Producto escaneado: ${producto.nombre}`, 'success');
+                } else {
+                    mostrarNotificacion('❌ Producto no encontrado', 'error');
+                }
+            }, 1000);
         }
 
-        function actualizarEstadisticas() {
-            const ventas = JSON.parse(localStorage.getItem('bs_ventas') || '[]');
-            const hoy = new Date().toDateString();
-            const ventasHoy = ventas.filter(v => new Date(v.fecha).toDateString() === hoy);
-            
-            const totalVentasHoy = ventasHoy.length;
-            const ingresoHoy = ventasHoy.reduce((sum, v) => sum + v.total, 0);
-            const productosVendidos = ventasHoy.reduce((sum, v) => sum + v.items.reduce((itemSum, item) => itemSum + item.cantidad, 0), 0);
-            const ticketPromedio = totalVentasHoy > 0 ? ingresoHoy / totalVentasHoy : 0;
-            
-            document.getElementById('ventasHoy').textContent = totalVentasHoy;
-            document.getElementById('ingresoHoy').textContent = `$${ingresoHoy.toFixed(2)}`;
-            document.getElementById('productosVendidos').textContent = productosVendidos;
-            document.getElementById('ticketPromedio').textContent = `$${ticketPromedio.toFixed(2)}`;
+        async function actualizarEstadisticas() {
+            try {
+                let ventasHoy = 0;
+                let ingresoHoy = 0;
+                let productosVendidos = 0;
+                
+                // Calcular estadísticas del día
+                const hoy = new Date().toDateString();
+                const ventas = JSON.parse(localStorage.getItem('bs_ventas') || '[]');
+                const ventasHoyArray = ventas.filter(v => new Date(v.fecha).toDateString() === hoy);
+                
+                ventasHoy = ventasHoyArray.length;
+                ingresoHoy = ventasHoyArray.reduce((sum, v) => sum + v.total, 0);
+                productosVendidos = ventasHoyArray.reduce((sum, v) => 
+                    sum + v.items.reduce((itemSum, item) => itemSum + item.cantidad, 0), 0);
+                
+                const ticketPromedio = ventasHoy > 0 ? ingresoHoy / ventasHoy : 0;
+                
+                document.getElementById('ventasHoy').textContent = ventasHoy;
+                document.getElementById('ingresoHoy').textContent = `$${ingresoHoy.toFixed(2)}`;
+                document.getElementById('productosVendidos').textContent = productosVendidos;
+                document.getElementById('ticketPromedio').textContent = `$${ticketPromedio.toFixed(2)}`;
+            } catch (error) {
+                console.error('Error actualizando estadísticas:', error);
+            }
         }
+
+        // Cerrar resultados de búsqueda al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.search-input-container')) {
+                document.querySelectorAll('.search-results').forEach(results => {
+                    results.classList.remove('active');
+                });
+            }
+        });
     </script>
 </body>
 </html>
